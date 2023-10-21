@@ -1,6 +1,7 @@
 github_users:
   - torvalds
   - alshedivat
+  - djdhillxn
 
 github_repos:
   - alshedivat/al-folio
@@ -10,3 +11,5 @@ github_repos:
   - FortAwesome/Font-Awesome
   - jpswalsh/academicons
   - mathjax/MathJax
+  - djdhillxn/beans-dataset
+  - djdhillxn/warfarin
