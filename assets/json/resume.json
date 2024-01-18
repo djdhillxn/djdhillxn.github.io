@@ -24,6 +24,17 @@
   },
   "work": [
     {
+      "name": "HILABS INC",
+      "position": "Data Scientist",
+      "url": "https://www.hilabs.com",
+      "startDate": "2023-07-17",
+      "endDate": "",
+      "summary": "Heathcare Data Interoperability",
+      "highlights": [
+        "Natural Language Processing"
+      ]
+    },
+    {
       "name": "Microsoft India R&D",
       "position": "Data and Applied Scientist Intern",
       "url": "",
