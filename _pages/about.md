@@ -2,7 +2,7 @@
 layout: about
 title: About
 permalink: /
-subtitle: Machine Learning Enthusiast | Wannabe Athlete
+subtitle: Machine Learning Enthusiast | Track Athlete
 
 profile:
   align: right
