@@ -1,11 +1,10 @@
 ---
 layout: page
-title: project 2
-description: a project that redirects to another website
-img: assets/img/7.jpg
-redirect: https://unsplash.com
+title: Estimation of the Warfarin Dose
+description: mandatory course project for the CS234 Reinforcement Learning.
+img: assets/img/1.jpg
 importance: 3
-category: work
+category: college
 ---
 
 Every project has a beautiful feature showcase page.

@@ -1,10 +1,11 @@
 ---
 layout: page
-title: project 4
-description: a project with a background image
-img: assets/img/1.jpg
+title: Text Analysis Pipeline for Topic Modeling and Clustering
+description: a project that i must complete by sunday evening
+img: assets/img/7.jpg
+redirect: https://unsplash.com
 importance: 3
-category: college
+category: work
 ---
 
 Every project has a beautiful feature showcase page.
