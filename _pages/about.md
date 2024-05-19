@@ -6,7 +6,7 @@ subtitle: Machine Learning Enthusiast | Track Athlete
 
 profile:
   align: right
-  image: hilltop.jpeg
+  image: suitup.png
   image_circular: true # crops the image to make it circular
   more_info: >
 
