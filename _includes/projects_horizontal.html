@@ -1,6 +1,6 @@
 <div class="card-item col">
-  {%- if project.redirect -%}
-  <a href="{{ project.redirect }}">
+  {%- if project.github -%}
+  <a href="{{ project.github }}" target="_blank">
   {%- else -%}
   <a href="{{ project.url | relative_url }}">
   {%- endif -%}
