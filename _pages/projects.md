@@ -2,7 +2,6 @@
 layout: page
 title: Projects
 permalink: /projects/
-description: why am I showing you these projects?
 nav: true
 nav_order: 1
 display_categories: [college, work]
