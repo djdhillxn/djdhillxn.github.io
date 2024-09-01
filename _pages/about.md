@@ -16,7 +16,10 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false  # includes social icons at the bottom of the page
 ---
 
-Here is my [CV](/assets/pdf/djdhillxn_cv.pdf). In dire search of research internships.
+Here is my [CV](/assets/pdf/djdhillxn_cv.pdf).
+
+I am an Associate Data Scientist at Gartner, with a strong foundation in Machine Learning and Natural Language Processing. I hold a degree in Electronics and Communication Engineering from IIT Roorkee. My work involves leveraging advanced data-driven techniques to solve complex problems, and I am passionate about applying my research interests to create impactful solutions. I am always open to research collaborations and opportunities to contribute to innovative projects.
+
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quam elit, imperdiet non pretium at, efficitur sed dui. Aenean est leo, dapibus nec diam porta, egestas aliquet purus. Duis malesuada velit ut lacus facilisis imperdiet. Suspendisse finibus magna eget viverra feugiat. Proin eleifend ipsum a hendrerit hendrerit. Mauris tristique elit sapien, sed tempor lectus molestie accumsan. In scelerisque faucibus enim in vehicula. Aliquam fermentum maximus dolor eget semper.
 
