@@ -16,18 +16,13 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false  # includes social icons at the bottom of the page
 ---
 
-[Curriculum Vitae](/assets/pdf/djdhillxn_cv.pdf) 
 
 [Curriculum Vitae](https://docs.google.com/document/d/1TZZjmOKlhYRZZQDhMl0TL-UP1qwSboQ94PQj-k8gr90/edit?usp=sharing)
 
-[Research Statement](https://docs.google.com/document/d/1Jo1nMzHaeKXYoHVlVNM24bFuCHBMswXOrya6eSNfL6c/edit?usp=sharing)
-
 Currently an **Associate Data Scientist** at **Gartner Inc.**
 
-Openly seeking reasearch assistantships.
-
 Areas of Interest: **Natural Language Processing**, **Graph Neural Networks** \\
-[Research Statement](research_statement) Read this for detailed motivation.. helpful if we are to colab! \\
+[Research Statement](https://docs.google.com/document/d/1Jo1nMzHaeKXYoHVlVNM24bFuCHBMswXOrya6eSNfL6c/edit?usp=sharing) Read this for detailed motivation.. helpful if we are to colab! \\
 [Projects](/projects) Find here a non-exhaustive list of self-directed projects repositories.
 
 Bachelor of Technology, Electronics and Communication Engineering \\
@@ -42,7 +37,6 @@ Repetitive Reads and Courses: \\
 *Machine Learning Engineering* Andriy Burkov \\
 *CS224W: Machine Learning with Graphs* Jure Leskovec \\
 *Statistics 110: Probability* Joe Blitzstein
-
 
 When not typing: 007, Sopranos \\
 Dearest Author: Malcolm Gladwell \\
