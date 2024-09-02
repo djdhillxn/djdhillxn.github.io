@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Mission Statement
-permalink: /mission_statement
+title: Research Statement
+permalink: /research_statement
 nav: true
 nav_order: 2
 ---
