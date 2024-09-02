@@ -1,7 +1,7 @@
 ---
 layout: page
-title: Research Statement
-permalink: /research_statement
+title: Blogs
+permalink: /blogs
 nav: true
 nav_order: 2
 ---
