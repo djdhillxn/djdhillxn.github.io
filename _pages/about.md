@@ -6,7 +6,7 @@ permalink: /
 
 profile:
   align: right
-  image: suitup.png
+  image: cabo_de_rama.jpeg
   image_circular: true # crops the image to make it circular
   more_info: >
 
