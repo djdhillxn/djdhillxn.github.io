@@ -6,8 +6,8 @@ permalink: /
 
 profile:
   align: right
-  image: cabo_de_rama.jpeg
-  image_circular: true # crops the image to make it circular
+  image: cold_diet_coke_in_sun.jpg
+  image_circular: false # crops the image to make it circular
   more_info: >
 
 news: true  # includes a list of news items
