@@ -16,28 +16,40 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false  # includes social icons at the bottom of the page
 ---
 
+Areas of Interest: **Natural Language Processing**, **Graph Neural Networks**
 
-[Curriculum Vitae](https://docs.google.com/document/d/1TZZjmOKlhYRZZQDhMl0TL-UP1qwSboQ94PQj-k8gr90/edit?usp=sharing)
+## [Projects](/projects) 
 
-Currently an **Associate Data Scientist** at **Gartner Inc.**
+**A curated collection of my self-directed projects in the form of repositories.**
+*language models, titanic dataset, linear arm bandits, autoencoders, and more.* \
+Must check out by clicking on the header above.
 
-Areas of Interest: **Natural Language Processing**, **Graph Neural Networks** \\
-[Research Statement](https://docs.google.com/document/d/1Jo1nMzHaeKXYoHVlVNM24bFuCHBMswXOrya6eSNfL6c/edit?usp=sharing) Read this for detailed motivation.. helpful if we are to colab! \\
-[Projects](/projects) Find here a non-exhaustive list of self-directed projects repositories.
+### <span style="color:blue">Trabajar</span>
+**Associate Data Scientist** at **Gartner Inc.**, Mar 2024 - Present
 
+### <span style="color:orange">Education</span>
 Bachelor of Technology, Electronics and Communication Engineering \\
 **Indian Institute of Technology Roorkee**
 
-Emails: [dhillondheeraj84@gmail.com](mailto:dhillondheeraj84@gmail.com) \| [dheeraj_d@ec.iitr.ac.in](mailto:dheeraj_d@ec.iitr.ac.in)  \\
-Socials: [LinkedIn](https://www.linkedin.com/in/djdhillxn/) \| [X](https://x.com/djdhillxn) \| [GitHub](https://github.com/djdhillxn)
+### <span style="color:gray">Documentos</span>
+[Curriculum Vitae](https://docs.google.com/document/d/1TZZjmOKlhYRZZQDhMl0TL-UP1qwSboQ94PQj-k8gr90/edit?usp=sharing) \\
+[Research Statement](https://docs.google.com/document/d/1Jo1nMzHaeKXYoHVlVNM24bFuCHBMswXOrya6eSNfL6c/edit?usp=sharing)
 
-Repetitive Reads and Courses: \\
+### <span style="color:red">Contact</span>
+[dhillondheeraj84@gmail.com](mailto:dhillondheeraj84@gmail.com) \
+[dheeraj_d@ec.iitr.ac.in](mailto:dheeraj_d@ec.iitr.ac.in) \
+[LinkedIn](https://www.linkedin.com/in/djdhillxn/) \
+[GitHub](https://github.com/djdhillxn) \
+[Twitter](https://x.com/djdhillxn)
+
+#### Repetitive Reads
 *The Elements of Statistical Learning* Hastie, Tibshirani, Friedman \\
 *Speech and Language Processing* Dan Jurafsky, James Martin \\
 *Machine Learning Engineering* Andriy Burkov \\
 *CS224W: Machine Learning with Graphs* Jure Leskovec \\
 *Statistics 110: Probability* Joe Blitzstein
 
+#### Until It Sleeps
 When not typing: 007, Sopranos \\
 Dearest Author: Malcolm Gladwell \\
 Favorite Restaurant: Mom's Spaghetti \\
