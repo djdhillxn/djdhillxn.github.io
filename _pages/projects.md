@@ -2,11 +2,15 @@
 layout: page
 title: Projects
 permalink: /projects/
+description: actionable insights and pragmatic programming experiences derived from each
 nav: true
 nav_order: 1
 display_categories: [college, work]
 horizontal: true
 ---
+
+title takes to detailed demo page \
+directly go to github repo by via the **cat** symbol
 
 <!-- pages/projects.md -->
 <div class="projects">
