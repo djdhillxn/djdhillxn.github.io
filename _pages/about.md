@@ -41,16 +41,3 @@ Bachelor of Technology, Electronics and Communication Engineering \\
 [LinkedIn](https://www.linkedin.com/in/djdhillxn/) \
 [GitHub](https://github.com/djdhillxn) \
 [Twitter](https://x.com/djdhillxn)
-
-#### Repetitive Reads
-*The Elements of Statistical Learning* Hastie, Tibshirani, Friedman \\
-*Speech and Language Processing* Dan Jurafsky, James Martin \\
-*Machine Learning Engineering* Andriy Burkov \\
-*CS224W: Machine Learning with Graphs* Jure Leskovec \\
-*Statistics 110: Probability* Joe Blitzstein
-
-#### Until It Sleeps
-When not typing: 007, Sopranos \\
-Dearest Author: Malcolm Gladwell \\
-Favorite Restaurant: Mom's Spaghetti \\
-Annual New Year's Eve Spot: Hilltop Goa
