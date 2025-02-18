@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Word Guesser
-description: may - july 2023; implemented n-gram language models for guessing strategy for the word guess challenge
+description: implemented n-gram language models for guessing strategy for the word guess challenge
 importance: -1
 category: college
 github: "https://github.com/djdhillxn/lexinet"

@@ -8,9 +8,7 @@ nav_order: 1
 display_categories: [college, work]
 horizontal: true
 ---
-
-title takes to detailed demo page \
-directly go to github repo by via the **cat** symbol
+The **cat** symbol goes to projects **github**. 
 
 <!-- pages/projects.md -->
 <div class="projects">
