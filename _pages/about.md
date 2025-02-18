@@ -28,12 +28,20 @@ Must check out by clicking on the header above.
 **Associate Data Scientist** at **Gartner Inc.**, Mar 2024 - Present
 
 ### <span style="color:orange">Education</span>
-Bachelor of Technology, Electronics and Communication Engineering \\
-**Indian Institute of Technology Roorkee**
+Bachelor of Technology, Electronics and Communication Engineering
+
+
+<!--
+Additional academic details can be added here:
+- Honors and awards
+- Relevant coursework
+- Thesis or project highlights
 
 ### <span style="color:gray">Documentos</span>
 [Curriculum Vitae](https://docs.google.com/document/d/1TZZjmOKlhYRZZQDhMl0TL-UP1qwSboQ94PQj-k8gr90/edit?usp=sharing) \\
 [Research Statement](https://docs.google.com/document/d/1Jo1nMzHaeKXYoHVlVNM24bFuCHBMswXOrya6eSNfL6c/edit?usp=sharing)
+
+-->
 
 ### <span style="color:red">Contact</span>
 [dhillondheeraj84@gmail.com](mailto:dhillondheeraj84@gmail.com) \
