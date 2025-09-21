@@ -34,6 +34,10 @@ All projects' implementations are open-source at [GitHub](https://github.com/djd
 
 Google scholar: [Dheeraj Dhillon](https://scholar.google.com/citations?user=njVX6ngAAAAJ&hl=en)
 
+[ORCID](https://orcid.org/0009-0002-0234-124X)
+
+[IEEE Xplore](https://ieeexplore.ieee.org/author/542676216429361)
+
 ### <span style="color:gray">education and work experience</span>
 **University of Wisconsin-Madison** August 2025 - Present \
 Masters of Science, Computer Science \
