@@ -19,7 +19,7 @@ social: false  # includes social icons at the bottom of the page
 <!--Areas of Interest: **Natural Language Processing**, **Graph Neural Networks**-->
 Machine Learning Enthusiast.
 
-# [Projects](/projects) 
+### [projects](/projects) 
 A curated collection of my self-directed projects in the form of repositories. \
 The topics range from broad areas of statistical algorithms, reinforcement learning, natural language processing, neural networks.
 
@@ -29,15 +29,26 @@ keywords: language models, titanic dataset, linear arm bandits, autoencoders, ar
 Must check out by clicking on the header above. \
 All projects' implementations are open-source at [GitHub](https://github.com/djdhillxn)
 
-# <span style="color:gray">Work, Academics, and Contacts</span>
-Data Scientist at **Gartner Inc.**, Mar 2024 - Present \
+### publications
+[InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging](https://ieeexplore.ieee.org/document/11149967)
+
+Google scholar: [Dheeraj Dhillon](https://scholar.google.com/citations?user=njVX6ngAAAAJ&hl=en)
+
+### <span style="color:gray">education and work experience</span>
+**University of Wisconsin-Madison** August 2025 - Present \
+Masters of Science, Computer Science \
+Data Scientist at **Gartner Inc.**, Mar 2024 - August 2025 \
 <!--### <span style="color:orange">Academics</span>-->
 Bachelor of Technology, Electronics and Communication Engineering \
 **Indian Institute of Technology Roorkee** \
 <!--### <span style="color:red">Contact</span>-->
+
+### contact
+[ddhillon@wisc.edu](mailto:ddhillon@wisc.edu) \
 [dheeraj_d@ec.iitr.ac.in](mailto:dheeraj_d@ec.iitr.ac.in) \
 [dhillondheeraj84@gmail.com](mailto:dhillondheeraj84@gmail.com) \
-[LinkedIn](https://www.linkedin.com/in/djdhillxn/) | [Twitter](https://x.com/djdhillxn)
+[LinkedIn](https://www.linkedin.com/in/djdhillxn/) \ 
+[Twitter](https://x.com/djdhillxn)
 
 <!--
 Additional academic details can be added here:
