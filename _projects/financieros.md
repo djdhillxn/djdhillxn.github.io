@@ -2,7 +2,7 @@
 layout: page
 title: Financial
 description: Projects on financial data based on the elements of statistical learning.
-importance: -1
+importance: 3
 category: college
 github: "https://github.com/djdhillxn/financieros"
 ---
