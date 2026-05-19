@@ -3,7 +3,7 @@ layout: page
 title: Word Guesser
 description: bidirectional character n-gram language models for word generation and Hangman word guessing challenge
 github: "https://github.com/djdhillxn/lexinet"
-importance: -1
+importance: -2
 category: college
 ---
 
