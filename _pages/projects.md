@@ -2,13 +2,14 @@
 layout: page
 title: Projects
 permalink: /projects/
-description: actionable insights and pragmatic programming experiences derived from each
+description: #actionable insights and pragmatic programming experiences derived from each
 nav: true
 nav_order: 1
 display_categories: [college, work]
 horizontal: true
 ---
-The **cat** symbol goes to projects **github**. 
+The **cat** symbol goes to projects **github**. The spotify insights dashboard can be found here.
+
 
 <!-- pages/projects.md -->
 <div class="projects">
