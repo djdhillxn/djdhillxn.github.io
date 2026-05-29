@@ -19,6 +19,13 @@ strong {
   color: var(--global-text-color);
 }
 
+strong,
+b,
+strong a,
+b a {
+  font-weight: 700 !important;
+}
+
 hr {
   border-top: 1px solid var(--global-divider-color);
 }
