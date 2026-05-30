@@ -7,7 +7,7 @@
     name: "missing-liked-songs",
     render() {
       return `
-        <section class="spotify-panel" data-missing-panel>
+        <section class="spotify-panel spotify-panel-accent spotify-panel-recommendations" data-missing-panel>
           <h3 class="spotify-panel-title">Recommendations to enhance the playlists with adding songs that I have liked but are not part of any specific playlist.</h3>
           <div class="spotify-panel-subtitle">These are saved songs that do not appear in any named playlist. Suggestions use artist overlap with existing playlists(using jaccard similarity).</div>
           <div class="spotify-controls"><input class="spotify-search" data-missing-search placeholder="Search song, artist, album, or suggested playlist..."></div>

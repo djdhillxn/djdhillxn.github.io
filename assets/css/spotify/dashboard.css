@@ -4,6 +4,10 @@
   --spotify-text: var(--global-text-color, #111827);
   --spotify-muted: var(--global-text-color-light, #6b7280);
   --spotify-accent: #1db954;
+  --spotify-affinity: #d94f70;
+  --spotify-affinity-rgb: 217, 79, 112;
+  --spotify-recommendation: #b76ad7;
+  --spotify-recommendation-rgb: 183, 106, 215;
   margin: 2rem 0;
   color: var(--spotify-text);
 }
@@ -73,6 +77,34 @@
   background: var(--spotify-card-bg);
   border-radius: 1rem;
   padding: 1rem;
+}
+
+.spotify-panel-affinity {
+  --spotify-section-accent: var(--spotify-affinity);
+  --spotify-section-accent-rgb: var(--spotify-affinity-rgb);
+}
+
+.spotify-panel-recommendations {
+  --spotify-section-accent: var(--spotify-recommendation);
+  --spotify-section-accent-rgb: var(--spotify-recommendation-rgb);
+}
+
+.spotify-panel-accent .spotify-panel-title,
+.spotify-panel-accent .spotify-link {
+  color: var(--spotify-section-accent);
+}
+
+.spotify-panel-accent .spotify-pill {
+  border-color: rgba(var(--spotify-section-accent-rgb), 0.34);
+  color: var(--spotify-section-accent);
+  background: rgba(var(--spotify-section-accent-rgb), 0.08);
+}
+
+.spotify-panel-accent .spotify-search:focus,
+.spotify-panel-accent .spotify-select:focus {
+  border-color: rgba(var(--spotify-section-accent-rgb), 0.55);
+  outline: 0;
+  box-shadow: 0 0 0 0.15rem rgba(var(--spotify-section-accent-rgb), 0.12);
 }
 
 .spotify-stat-label {
