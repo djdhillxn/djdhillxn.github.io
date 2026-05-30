@@ -3,7 +3,7 @@ layout: page
 title: TRPO and PPO
 description: Policy gradients methods in reinforcement learning
 importance: -3
-category: college
+category: RL
 github: "https://github.com/djdhillxn/trpo"
 ---
 

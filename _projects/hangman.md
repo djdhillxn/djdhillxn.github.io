@@ -4,7 +4,7 @@ title: Word Guesser
 description: bidirectional character n-gram language models for word generation and Hangman word guessing challenge
 github: "https://github.com/djdhillxn/lexinet"
 importance: -2
-category: college
+category: NLP
 ---
 
 <link rel="stylesheet" href="{{ '/assets/css/lexinet/word_generator.css' | relative_url }}">

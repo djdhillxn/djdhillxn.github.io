@@ -5,11 +5,10 @@ permalink: /projects/
 description: #actionable insights and pragmatic programming experiences derived from each
 nav: true
 nav_order: 1
-display_categories: [college, work]
+display_categories: [NLP, RL, ML] #, music, other]
 horizontal: true
 ---
-The **cat** symbol goes to projects **github**. The spotify insights dashboard can be found here.
-
+The **cat** symbol goes to projects **github**. 
 
 <!-- pages/projects.md -->
 <div class="projects">

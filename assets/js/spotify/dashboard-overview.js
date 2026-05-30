@@ -10,9 +10,13 @@
       const generated = data.generated_at ? new Date(data.generated_at).toLocaleString() : "unknown";
       return `
         <section class="spotify-hero">
-          <div class="spotify-kicker">Spotify Library Intelligence</div>
+          <div class="spotify-kicker">Spotify Insights</div>
           <div class="spotify-title">What I curate, what I save, and what I forgot to organize.</div>
-          <div class="spotify-subtitle">This dashboard analyzes playlists and liked songs from the Spotify Web API. It measures artist dominance, playlist diversity, overlap, and saved songs that are missing from named playlists.</div>
+          <div class="spotify-subtitle">
+          This dashboard analyzes playlists and liked songs from the Spotify Web API. 
+          It measures artist dominance, playlist diversity, overlap, and saved songs that are missing from named playlists.
+          It is sort of a spotify library intelligence.
+          </div>
           <div class="spotify-updated">Generated: ${esc(generated)}</div>
         </section>
         <div class="spotify-stat-grid">
