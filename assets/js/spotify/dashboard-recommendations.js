@@ -8,8 +8,8 @@
     render() {
       return `
         <section class="spotify-panel" data-missing-panel>
-          <h3 class="spotify-panel-title">Liked songs missing from playlists</h3>
-          <div class="spotify-panel-subtitle">These are saved songs that do not appear in any named playlist. Suggestions use artist overlap with existing playlists.</div>
+          <h3 class="spotify-panel-title">Recommendations to enhance the playlists with adding songs that I have liked but are not part of any specific playlist.</h3>
+          <div class="spotify-panel-subtitle">These are saved songs that do not appear in any named playlist. Suggestions use artist overlap with existing playlists(using jaccard similarity).</div>
           <div class="spotify-controls"><input class="spotify-search" data-missing-search placeholder="Search song, artist, album, or suggested playlist..."></div>
           <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>Track</th><th>Artist</th><th>Album</th><th>Suggested playlist</th><th>Saved</th><th></th></tr></thead><tbody data-missing-body></tbody></table></div>
         </section>`;

@@ -39,7 +39,9 @@
           <section class="spotify-panel">
             <h3 class="spotify-panel-title">Spotify affinity: long-term artists</h3>
             <div class="spotify-panel-subtitle">Spotify's calculated top artists, separate from playlist counts.</div>
-            ${barList(longTerm, "rank", "artist_name", (v) => `rank ${fmt.format(v)}`, 10)}
+            <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>#</th><th>Artist</th></tr></thead><tbody>
+              ${longTerm.slice(0, 10).map((row, i) => `<tr><td>${esc(row.rank || i + 1)}</td><td>${row.spotify_url ? `<a class="spotify-link" href="${esc(row.spotify_url)}" target="_blank" rel="noopener">${esc(row.artist_name)}</a>` : esc(row.artist_name)}</td></tr>`).join("")}
+            </tbody></table></div>
           </section>
           <section class="spotify-panel">
             <h3 class="spotify-panel-title">Spotify affinity: long-term tracks</h3>

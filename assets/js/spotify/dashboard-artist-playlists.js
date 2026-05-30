@@ -3,6 +3,10 @@
 
   const { barList, esc, fmt, registerSection, statCard } = window.SpotifyDashboard;
 
+  function visiblePlaylists(data) {
+    return (data.playlists || []).filter((playlist) => Number(playlist.total_tracks || 0) > 0);
+  }
+
   registerSection({
     name: "artist-landscape",
     render(data) {
@@ -25,7 +29,7 @@
   registerSection({
     name: "playlist-explorer",
     render(data) {
-      const playlists = data.playlists || [];
+      const playlists = visiblePlaylists(data);
       if (!playlists.length) return "";
       const options = playlists.map((p, i) => `<option value="${i}">${esc(p.name)} (${fmt.format(p.total_tracks || 0)} tracks)</option>`).join("");
       return `
@@ -40,7 +44,7 @@
       const select = root.querySelector("[data-playlist-select]");
       const output = root.querySelector("[data-playlist-output]");
       if (!select || !output) return;
-      const playlists = data.playlists || [];
+      const playlists = visiblePlaylists(data);
       const render = () => {
         const playlist = playlists[Number(select.value || 0)];
         if (!playlist) return;
