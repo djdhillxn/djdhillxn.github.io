@@ -1,0 +1,254 @@
+.spotify-dashboard {
+  --spotify-card-bg: var(--global-card-bg-color, #ffffff);
+  --spotify-border: var(--global-divider-color, rgba(0, 0, 0, 0.12));
+  --spotify-text: var(--global-text-color, #111827);
+  --spotify-muted: var(--global-text-color-light, #6b7280);
+  --spotify-accent: #1db954;
+  margin: 2rem 0;
+  color: var(--spotify-text);
+}
+
+.spotify-dashboard * {
+  box-sizing: border-box;
+}
+
+.spotify-loading,
+.spotify-error {
+  padding: 1rem;
+  border: 1px solid var(--spotify-border);
+  border-radius: 1rem;
+  background: var(--spotify-card-bg);
+}
+
+.spotify-error {
+  border-color: #ef4444;
+}
+
+.spotify-hero {
+  padding: 1.4rem;
+  border: 1px solid var(--spotify-border);
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, rgba(29, 185, 84, 0.14), rgba(29, 185, 84, 0.02));
+  margin-bottom: 1.25rem;
+}
+
+.spotify-kicker {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--spotify-accent);
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.spotify-title {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.05;
+  margin-bottom: 0.6rem;
+}
+
+.spotify-subtitle {
+  color: var(--spotify-muted);
+  max-width: 58rem;
+  line-height: 1.6;
+}
+
+.spotify-updated {
+  color: var(--spotify-muted);
+  margin-top: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.spotify-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 0.8rem;
+  margin: 1.2rem 0;
+}
+
+.spotify-stat-card,
+.spotify-panel {
+  border: 1px solid var(--spotify-border);
+  background: var(--spotify-card-bg);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.spotify-stat-label {
+  color: var(--spotify-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.3rem;
+}
+
+.spotify-stat-value {
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+
+.spotify-grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+@media (max-width: 820px) {
+  .spotify-grid-two {
+    grid-template-columns: 1fr;
+  }
+}
+
+.spotify-panel-title {
+  font-size: 1.15rem;
+  font-weight: 750;
+  margin: 0 0 0.3rem;
+}
+
+.spotify-panel-subtitle {
+  color: var(--spotify-muted);
+  font-size: 0.92rem;
+  margin-bottom: 0.9rem;
+}
+
+.spotify-bar-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.62rem;
+}
+
+.spotify-bar-row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1.1fr) minmax(160px, 2fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+  .spotify-bar-row {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+}
+
+.spotify-bar-label {
+  font-weight: 650;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.spotify-bar-track {
+  height: 0.75rem;
+  background: rgba(29, 185, 84, 0.13);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.spotify-bar-fill {
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background: var(--spotify-accent);
+}
+
+.spotify-bar-value {
+  color: var(--spotify-muted);
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+}
+
+.spotify-controls {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.spotify-select,
+.spotify-search {
+  border: 1px solid var(--spotify-border);
+  background: var(--spotify-card-bg);
+  color: var(--spotify-text);
+  border-radius: 0.7rem;
+  padding: 0.6rem 0.75rem;
+  min-height: 2.5rem;
+}
+
+.spotify-select {
+  min-width: min(100%, 300px);
+}
+
+.spotify-search {
+  min-width: min(100%, 320px);
+  flex: 1;
+}
+
+.spotify-table-wrap {
+  overflow-x: auto;
+}
+
+.spotify-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.spotify-table th,
+.spotify-table td {
+  padding: 0.68rem 0.55rem;
+  border-bottom: 1px solid var(--spotify-border);
+  vertical-align: top;
+}
+
+.spotify-table th {
+  color: var(--spotify-muted);
+  text-align: left;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.spotify-muted {
+  color: var(--spotify-muted);
+}
+
+.spotify-pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(29, 185, 84, 0.3);
+  color: var(--spotify-accent);
+  border-radius: 999px;
+  padding: 0.14rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.spotify-link {
+  color: var(--spotify-accent);
+  font-weight: 650;
+}
+
+.spotify-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.2rem 0 1rem;
+}
+
+.spotify-tab {
+  border: 1px solid var(--spotify-border);
+  background: transparent;
+  color: var(--spotify-text);
+  border-radius: 999px;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+}
+
+.spotify-tab[aria-pressed="true"] {
+  background: var(--spotify-accent);
+  color: #ffffff;
+  border-color: var(--spotify-accent);
+}
