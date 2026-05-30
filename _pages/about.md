@@ -20,9 +20,9 @@ social: false  # includes social icons at the bottom of the page
 Hi there, from one Machine Learning enthusiast to another!
 
 **TL;DR**
-I am Dheeraj, current pursuing a MS in Computer Science at UW-Madison where I will be graduating in May 2027. I have two years of industry experience as a data scientist at two organizations including Gartner and  HiLabs, a startup based on healthcare data interoperability. I completed my undergrad in ECE at IIT Roorkee. Here is my **[resume](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
+I am Dheeraj, current pursuing a MS in Computer Science at UW-Madison where I will be graduating in May 2027. I have two years of industry experience as a data scientist at two organizations: Gartner and  HiLabs, a startup based on healthcare data interoperability. I completed my undergrad in ECE at IIT Roorkee. Here is my **[resume](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
 
-I am looking for opportunities that will challenge me to solve meaningful problems by making use of methodologies in my domain of study which spans Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight.
+I am looking for opportunities that will challenge me to solve meaningful problems by making use of methodologies in my domain of study which spans Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the applications/use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight.
 
 I am actively looking for internship opportunities for Summer and Fall 2026 to work as a ML researcher, or applied scientist, or data scientist. Ping me on email/linkedin, I would be happy to connect! 
 
