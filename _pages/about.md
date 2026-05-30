@@ -65,6 +65,7 @@ I am very happy when I am listening to music, and this has led me to create a lo
 over at [spotify](https://open.spotify.com/user/316evrj3akm6ieuhefckw6kpj6eq?si=bc183398ab8946d0).
 I am also working on a project to make the playlists better, more inclusive of songs, that you may not have already added to your spotify playlists. 
 My spotify insights dashboard can be found [here](/projects/spotify).
+I also made a lyric search engine app, find [here](/projects/stanlyric).
 
 <!--Must check out by clicking on the header above. \
 All projects' implementations are open-source at [GitHub](https://github.com/djdhillxn)

@@ -8,7 +8,7 @@ category: NLP
 
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/stanlyric.css' | relative_url }}">
 
-StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: **type a lyric fragment and identify the songs most likely to contain it.** It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API.
+StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: **type a lyric fragment and identify the songs most likely to contain it.** It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API. Find the code for training the retrieval model [here](https://github.com/djdhillxn/stanlyric).
 
 <div
   class="stanlyric-app"
