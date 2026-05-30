@@ -214,3 +214,32 @@
   .lexi-demo { padding: 0.85rem; }
   .lexi-slot { width: 27px; height: 34px; font-size: 0.95rem; }
 }
+
+.lexi-demo-divider {
+  border-top: 1px solid var(--global-divider-color, #e6ebf2);
+  margin: 1.35rem 0;
+}
+
+.lexi-demo-header-secondary {
+  margin-top: 0.2rem;
+}
+
+.lexi-controls-guess {
+  grid-template-columns: minmax(220px, 1fr);
+}
+
+.lexi-control-wide {
+  max-width: 560px;
+}
+
+.lexi-guess-word {
+  margin: 0.8rem 0 0.45rem;
+}
+
+.lexi-win {
+  color: #1c8f6a;
+}
+
+.lexi-loss {
+  color: #a23b3b;
+}

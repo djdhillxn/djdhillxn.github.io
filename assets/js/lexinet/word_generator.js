@@ -1,11 +1,12 @@
-/* LexiNet browser word generator.
- * Expects a compact model JSON exported by scripts/export_lexinet_web_model.py.
+/* LexiNet browser demos.
+ * Expects a compact model JSON exported by src/export_lexinet_web_model.py.
  */
 (function () {
   "use strict";
 
   const DEFAULT_MODEL_URL = "/assets/json/lexinet/lexinet_web_model_3_5.json";
   const DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz";
+  const MAX_LIVES = 6;
 
   function xmur3(str) {
     let h = 1779033703 ^ str.length;
@@ -46,7 +47,7 @@
   }
 
   function availableOrders(model) {
-    return Object.keys(model.orders)
+    return Object.keys(model.orders || {})
       .map((order) => Number(order))
       .filter((order) => Number.isFinite(order))
       .sort((a, b) => a - b);
@@ -54,20 +55,11 @@
 
   function chooseNForWordLength(wordLength, model) {
     const orders = availableOrders(model);
-    if (!orders.length) {
-      throw new Error("No model orders were loaded.");
-    }
+    if (!orders.length) throw new Error("No model orders were loaded.");
     const hasOrder = (n) => orders.includes(n);
     if (wordLength <= 2 && hasOrder(3)) return 3;
     if (wordLength === 3 && hasOrder(4)) return 4;
     return Math.max(...orders);
-  }
-
-  function normalizeMode(mode) {
-    const value = String(mode || "best").toLowerCase();
-    if (value === "best") return "bidirectional";
-    if (["bidirectional", "forward", "backward"].includes(value)) return value;
-    throw new Error("mode must be one of: best, bidirectional, forward, backward");
   }
 
   function probabilityConfigForWordLength(wordLength) {
@@ -80,7 +72,7 @@
     }
     return {
       useInterpolation: true,
-      smoothingFactor: 0,
+      smoothingFactor: 0.05,
       giveRandomProbToSparsity: false,
     };
   }
@@ -95,9 +87,9 @@
   function calculateForwardProbability(model, prefix, letter, n, config) {
     const order = model.orders[String(n)];
     let forwardProb = 0;
+
     if (order && order.ngrams) {
-      const key = prefix.join("");
-      const counter = order.ngrams[key];
+      const counter = order.ngrams[prefix.join("")];
       if (counter) {
         const forwardCount = Number(counter[letter] || 0) + config.smoothingFactor;
         const totalCount = getCounterTotal(counter) + config.smoothingFactor * DEFAULT_ALPHABET.length;
@@ -118,9 +110,9 @@
   function calculateBackwardProbability(model, suffix, letter, n, config) {
     const order = model.orders[String(n)];
     let reverseProb = 0;
+
     if (order && order.ngramsRev) {
-      const key = suffix.join("");
-      const counter = order.ngramsRev[key];
+      const counter = order.ngramsRev[suffix.join("")];
       if (counter) {
         const reverseCount = Number(counter[letter] || 0) + config.smoothingFactor;
         const totalCount = getCounterTotal(counter) + config.smoothingFactor * DEFAULT_ALPHABET.length;
@@ -143,6 +135,7 @@
     const lowestOrder = model.orders[String(Math.min(...orders))];
     const unigrams = lowestOrder.unigrams || {};
     const candidates = [];
+
     for (let position = 0; position < currentWord.length; position += 1) {
       if (currentWord[position] !== "_") continue;
       for (const letter of DEFAULT_ALPHABET) {
@@ -152,36 +145,21 @@
     return candidates;
   }
 
-  function generationCandidateScores(model, currentWord, n, mode) {
-    const normalizedMode = normalizeMode(mode);
+  function generationCandidateScores(model, currentWord, n) {
     const config = probabilityConfigForWordLength(currentWord.length);
-    const padded = [
-      ...Array(n - 1).fill("^"),
-      ...currentWord,
-      ...Array(n - 1).fill("$"),
-    ];
+    const padded = [...Array(n - 1).fill("^"), ...currentWord, ...Array(n - 1).fill("$")];
     const candidates = [];
 
     for (let wordIndex = 0; wordIndex < currentWord.length; wordIndex += 1) {
       if (currentWord[wordIndex] !== "_") continue;
       const paddedIndex = wordIndex + n - 1;
+      const prefix = padded.slice(paddedIndex - (n - 1), paddedIndex);
+      const suffix = padded.slice(paddedIndex + 1, paddedIndex + n);
 
       for (const letter of DEFAULT_ALPHABET) {
-        let forwardProb = 1.0;
-        let reverseProb = 1.0;
-
-        if (["bidirectional", "forward"].includes(normalizedMode)) {
-          const prefix = padded.slice(paddedIndex - (n - 1), paddedIndex);
-          forwardProb = calculateForwardProbability(model, prefix, letter, n, config);
-        }
-        if (["bidirectional", "backward"].includes(normalizedMode)) {
-          const suffix = padded.slice(paddedIndex + 1, paddedIndex + n);
-          reverseProb = calculateBackwardProbability(model, suffix, letter, n, config);
-        }
-
-        let score = forwardProb * reverseProb;
-        if (normalizedMode === "forward") score = forwardProb;
-        if (normalizedMode === "backward") score = reverseProb;
+        const forwardProb = calculateForwardProbability(model, prefix, letter, n, config);
+        const reverseProb = calculateBackwardProbability(model, suffix, letter, n, config);
+        const score = forwardProb * reverseProb;
         if (score > 0) candidates.push({ position: wordIndex, letter, score, fallback: false });
       }
     }
@@ -193,6 +171,7 @@
     if (temperature <= 0) {
       return items.reduce((best, item) => (item.score > best.score ? item : best), items[0]);
     }
+
     const maxScore = Math.max(...items.map((item) => item.score));
     if (maxScore <= 0) return items[Math.floor(rng() * items.length)];
 
@@ -215,20 +194,15 @@
 
   function generateModelWord(model, options) {
     const wordLength = Number(options.wordLength || 8);
-    const mode = normalizeMode(options.mode || "best");
     const temperature = Number(options.temperature ?? 0.85);
     const rng = options.rng || Math.random;
-    const forcedOrder = Number(options.modelOrder || 0);
-    const nUsed = forcedOrder > 0 ? forcedOrder : chooseNForWordLength(wordLength, model);
-
-    if (!model.orders[String(nUsed)]) {
-      throw new Error(`No loaded model for n=${nUsed}. Available orders: ${availableOrders(model).join(", ")}`);
-    }
+    const nUsed = chooseNForWordLength(wordLength, model);
 
     const currentWord = Array(wordLength).fill("_");
     const trace = [];
+
     for (let step = 0; step < wordLength; step += 1) {
-      let candidates = generationCandidateScores(model, currentWord, nUsed, mode);
+      let candidates = generationCandidateScores(model, currentWord, nUsed);
       let usedFallback = false;
       if (!candidates.length) {
         candidates = fallbackGenerationScores(model, currentWord);
@@ -251,7 +225,6 @@
       word: currentWord.join(""),
       wordLength,
       nUsed,
-      mode,
       temperature,
       trace,
     };
@@ -267,13 +240,139 @@
     return words;
   }
 
+  function cleanSecretWord(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function validateSecretWord(value) {
+    const word = cleanSecretWord(value);
+    if (!word) throw new Error("Please enter one word.");
+    if (!/^[a-z]+$/.test(word)) throw new Error("Please use only English letters A-Z, no spaces or punctuation.");
+    if (word.length < 2 || word.length > 45) throw new Error("Please enter a word between 2 and 45 letters.");
+    return word;
+  }
+
+  function fallbackGuessScores(model, alreadyGuessedLetters) {
+    const orders = availableOrders(model);
+    const lowestOrder = model.orders[String(Math.min(...orders))];
+    const unigrams = lowestOrder.unigrams || {};
+    const guessed = new Set(alreadyGuessedLetters);
+    return DEFAULT_ALPHABET
+      .split("")
+      .filter((letter) => !guessed.has(letter))
+      .map((letter) => ({ letter, score: Number(unigrams[letter] || 1), fallback: true }));
+  }
+
+  function guessCandidateScores(model, knownWord, alreadyGuessedLetters, n) {
+    const wordLength = knownWord.length;
+    const config = probabilityConfigForWordLength(wordLength);
+    const knownLetters = new Set(knownWord.filter((letter) => letter !== "_"));
+    const blockedLetters = new Set([...alreadyGuessedLetters, ...knownLetters]);
+    const scores = new Map();
+    const padded = [...Array(n - 1).fill("^"), ...knownWord, ...Array(n - 1).fill("$")];
+
+    for (let wordIndex = 0; wordIndex < knownWord.length; wordIndex += 1) {
+      if (knownWord[wordIndex] !== "_") continue;
+      const paddedIndex = wordIndex + n - 1;
+      const prefix = padded.slice(paddedIndex - (n - 1), paddedIndex);
+      const suffix = padded.slice(paddedIndex + 1, paddedIndex + n);
+
+      for (const letter of DEFAULT_ALPHABET) {
+        if (blockedLetters.has(letter)) continue;
+        const forwardProb = calculateForwardProbability(model, prefix, letter, n, config);
+        const reverseProb = calculateBackwardProbability(model, suffix, letter, n, config);
+        const combinedProb = forwardProb * reverseProb;
+        if (combinedProb > 0) scores.set(letter, (scores.get(letter) || 0) + combinedProb);
+      }
+    }
+
+    return [...scores.entries()]
+      .map(([letter, score]) => ({ letter, score, fallback: false }))
+      .sort((a, b) => b.score - a.score || a.letter.localeCompare(b.letter));
+  }
+
+  function guessNextLetter(model, knownWord, alreadyGuessedLetters) {
+    const nUsed = chooseNForWordLength(knownWord.length, model);
+    let candidates = guessCandidateScores(model, knownWord, alreadyGuessedLetters, nUsed);
+    let usedFallback = false;
+
+    if (!candidates.length) {
+      candidates = fallbackGuessScores(model, alreadyGuessedLetters);
+      usedFallback = true;
+    }
+    if (!candidates.length) return null;
+
+    candidates.sort((a, b) => b.score - a.score || a.letter.localeCompare(b.letter));
+    return {
+      letter: candidates[0].letter,
+      nUsed,
+      usedFallback: usedFallback || candidates[0].fallback,
+      topCandidates: candidates.slice(0, 5),
+    };
+  }
+
+  function revealMatches(actualWord, knownWord, guessedLetter) {
+    let hit = false;
+    const next = knownWord.slice();
+    for (let i = 0; i < actualWord.length; i += 1) {
+      if (actualWord[i] === guessedLetter) {
+        next[i] = guessedLetter;
+        hit = true;
+      }
+    }
+    return { nextKnownWord: next, hit };
+  }
+
+  function playGuessingGame(model, actualWord, maxLives = MAX_LIVES) {
+    const target = validateSecretWord(actualWord);
+    let lives = maxLives;
+    const knownWord = Array(target.length).fill("_");
+    const alreadyGuessed = new Set();
+    const trace = [];
+
+    while (lives > 0 && knownWord.join("") !== target) {
+      const guess = guessNextLetter(model, knownWord, alreadyGuessed);
+      if (!guess) break;
+
+      alreadyGuessed.add(guess.letter);
+      const { nextKnownWord, hit } = revealMatches(target, knownWord, guess.letter);
+      if (!hit) lives -= 1;
+      for (let i = 0; i < knownWord.length; i += 1) knownWord[i] = nextKnownWord[i];
+
+      trace.push({
+        turn: trace.length + 1,
+        letter: guess.letter,
+        hit,
+        pattern: knownWord.join(""),
+        lives,
+        nUsed: guess.nUsed,
+        usedFallback: guess.usedFallback,
+        topCandidates: guess.topCandidates,
+      });
+    }
+
+    return {
+      actualWord: target,
+      finalPattern: knownWord.join(""),
+      won: knownWord.join("") === target,
+      livesRemaining: lives,
+      wrongGuesses: maxLives - lives,
+      guessesUsed: trace.length,
+      trace,
+    };
+  }
+
   function renderSlots(word) {
     return Array.from(word)
-      .map((letter) => `<span class="lexi-slot known">${escapeHtml(letter.toUpperCase())}</span>`)
+      .map((letter) => {
+        const known = letter !== "_";
+        const label = known ? letter.toUpperCase() : "";
+        return `<span class="lexi-slot${known ? " known" : ""}">${escapeHtml(label)}</span>`;
+      })
       .join("");
   }
 
-  function renderTrace(trace) {
+  function renderGeneratedTrace(trace) {
     if (!trace || !trace.length) return "";
     const rows = trace
       .map(
@@ -307,12 +406,50 @@
       <div class="lexi-status">Generated ${words.length} model word${words.length === 1 ? "" : "s"}</div>
       <div class="lexi-grid">
         <div class="lexi-stat"><div class="lexi-label">Word length</div><div class="lexi-value">${first.wordLength}</div></div>
-        <div class="lexi-stat"><div class="lexi-label">Model order</div><div class="lexi-value">n=${first.nUsed}</div></div>
-        <div class="lexi-stat"><div class="lexi-label">Mode</div><div class="lexi-value small">${escapeHtml(first.mode)}</div></div>
+        <div class="lexi-stat"><div class="lexi-label">Samples</div><div class="lexi-value">${words.length}</div></div>
         <div class="lexi-stat"><div class="lexi-label">Temperature</div><div class="lexi-value">${first.temperature}</div></div>
       </div>
       <div class="lexi-word-list">${cards}</div>
-      ${renderTrace(first.trace)}
+      ${renderGeneratedTrace(first.trace)}
+    </div>`;
+  }
+
+  function renderGuessTrace(trace) {
+    if (!trace || !trace.length) return "";
+    const rows = trace
+      .map((turn) => {
+        const top = (turn.topCandidates || [])
+          .map((item) => item.letter.toUpperCase())
+          .join(", ");
+        return `<tr>
+          <td>${turn.turn}</td>
+          <td><strong>${escapeHtml(turn.letter.toUpperCase())}</strong></td>
+          <td>${turn.hit ? "hit" : "miss"}</td>
+          <td>${escapeHtml(turn.pattern.toUpperCase().replaceAll("_", "·"))}</td>
+          <td>${turn.lives}</td>
+          <td>${escapeHtml(top)}</td>
+        </tr>`;
+      })
+      .join("");
+    return `<details class="lexi-trace" open><summary>Show guessing trace</summary>
+      <table class="lexi-history"><thead><tr><th>Turn</th><th>Guess</th><th>Result</th><th>Pattern</th><th>Lives</th><th>Top letters</th></tr></thead><tbody>${rows}</tbody></table>
+    </details>`;
+  }
+
+  function renderGuessResult(result) {
+    const status = result.won ? "The model got it." : "The word survived.";
+    const statusClass = result.won ? "lexi-win" : "lexi-loss";
+
+    return `<div class="lexi-results-panel">
+      <div class="lexi-status ${statusClass}">${status}</div>
+      <div class="lexi-word lexi-guess-word">${renderSlots(result.finalPattern)}</div>
+      <div class="lexi-generated-text">target: ${escapeHtml(result.actualWord)}</div>
+      <div class="lexi-grid">
+        <div class="lexi-stat"><div class="lexi-label">Lives left</div><div class="lexi-value">${result.livesRemaining}</div></div>
+        <div class="lexi-stat"><div class="lexi-label">Wrong guesses</div><div class="lexi-value">${result.wrongGuesses}</div></div>
+        <div class="lexi-stat"><div class="lexi-label">Total guesses</div><div class="lexi-value">${result.guessesUsed}</div></div>
+      </div>
+      ${renderGuessTrace(result.trace)}
     </div>`;
   }
 
@@ -324,75 +461,81 @@
     return response.json();
   }
 
-  function populateOrderSelect(select, model) {
-    const orders = availableOrders(model);
-    select.innerHTML = `<option value="0">Auto</option>${orders
-      .map((order) => `<option value="${order}">n=${order}</option>`)
-      .join("")}`;
-  }
-
-  async function initLexiNetGenerator(root) {
+  async function initLexiNetDemo(root) {
     const modelUrl = root.dataset.modelUrl || DEFAULT_MODEL_URL;
     const status = root.querySelector("[data-lexinet-status]");
-    const output = root.querySelector("[data-lexinet-output]");
-    const form = root.querySelector("[data-lexinet-form]");
-    const orderSelect = root.querySelector("[name='modelOrder']");
+    const generateForm = root.querySelector("[data-lexinet-generate-form]");
+    const guessForm = root.querySelector("[data-lexinet-guess-form]");
+    const generateOutput = root.querySelector("[data-lexinet-generate-output]");
+    const guessOutput = root.querySelector("[data-lexinet-guess-output]");
+    const buttons = root.querySelectorAll("button[type='submit']");
 
     try {
       status.textContent = "Loading compact n-gram tables...";
       const model = await loadModel(modelUrl);
       root.lexinetModel = model;
-      populateOrderSelect(orderSelect, model);
-      status.textContent = `Loaded model orders: ${availableOrders(model).map((n) => `n=${n}`).join(", ")}.`;
-      form.querySelector("button[type='submit']").disabled = false;
+      status.textContent = "Model loaded. Ready to play.";
+      buttons.forEach((button) => { button.disabled = false; });
     } catch (error) {
       status.textContent = error.message;
       status.classList.add("lexi-error");
       return;
     }
 
-    form.addEventListener("submit", (event) => {
+    generateForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      const data = new FormData(form);
+      const data = new FormData(generateForm);
       const options = {
         wordLength: Number(data.get("wordLength")),
         count: Number(data.get("count")),
         temperature: Number(data.get("temperature")),
-        mode: String(data.get("mode")),
-        modelOrder: Number(data.get("modelOrder")),
         seed: String(data.get("seed") || ""),
       };
       try {
         const words = generateModelWords(root.lexinetModel, options);
-        output.innerHTML = renderGeneratedWords(words);
+        generateOutput.innerHTML = renderGeneratedWords(words);
       } catch (error) {
-        output.innerHTML = `<div class="lexi-error">${escapeHtml(error.message)}</div>`;
+        generateOutput.innerHTML = `<div class="lexi-error">${escapeHtml(error.message)}</div>`;
       }
     });
 
-    form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+    guessForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const data = new FormData(guessForm);
+      try {
+        const result = playGuessingGame(root.lexinetModel, data.get("secretWord"), MAX_LIVES);
+        guessOutput.innerHTML = renderGuessResult(result);
+      } catch (error) {
+        guessOutput.innerHTML = `<div class="lexi-error">${escapeHtml(error.message)}</div>`;
+      }
+    });
+
+    generateForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
   }
 
   function initAll() {
-    document.querySelectorAll("[data-lexinet-generator]").forEach((root) => {
-      initLexiNetGenerator(root);
+    document.querySelectorAll("[data-lexinet-demo]").forEach((root) => {
+      initLexiNetDemo(root);
     });
   }
 
   const api = {
+    availableOrders,
+    calculateBackwardProbability,
+    calculateForwardProbability,
+    chooseNForWordLength,
     generateModelWord,
     generateModelWords,
-    calculateForwardProbability,
-    calculateBackwardProbability,
-    chooseNForWordLength,
-    availableOrders,
+    guessCandidateScores,
+    guessNextLetter,
+    playGuessingGame,
   };
 
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api;
   }
   if (typeof window !== "undefined") {
-    window.LexiNetGenerator = api;
+    window.LexiNet = api;
     if (document.readyState === "loading") {
       document.addEventListener("DOMContentLoaded", initAll);
     } else {

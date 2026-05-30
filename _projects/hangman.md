@@ -11,13 +11,13 @@ category: college
 
 Ever wondered English has so many words that you hear for the first time, and you wonder how do they even exist, and why haven't I heard about it ever before?
 
-kibosh, chicanery, bulwark, clandestine, and so on..
+kibosh, svengali, chicanery, bulwark, clandestine, and so on..
 This discovery of new words does not stop even after memorizing all the vocabulary words for the toefl, it goes on and on. It seems like there is some magical power in this language with the potential to generate make new words, give them a meaning, and wait for them to get popularized. This idea to potentially make up new words is not a novel idea at all, history is witness to so many words being brought into the popular culture for more than the last half milennia... more increasingly now than ever in the information age.
 
 
 
 
-<div class="lexi-demo" data-lexinet-generator data-model-url="{{ '/assets/json/lexinet/lexinet_web_model_3_5.json' | relative_url }}">
+<div class="lexi-demo" data-lexinet-demo data-model-url="{{ '/assets/json/lexinet/lexinet_web_model_3_5.json' | relative_url }}">
   <div class="lexi-demo-header">
     <div class="lexi-demo-kicker">Unravel some discoveries for yourself.</div>
     <div class="lexi-demo-title">Generate your new english word!</div>
@@ -26,7 +26,7 @@ This discovery of new words does not stop even after memorizing all the vocabula
     </div>
   </div>
 
-  <form data-lexinet-form>
+  <form data-lexinet-generate-form>
     <div class="lexi-controls">
       <div class="lexi-control">
         <label for="lexi-word-length">Word length</label>
@@ -41,20 +41,6 @@ This discovery of new words does not stop even after memorizing all the vocabula
         <input id="lexi-temperature" name="temperature" type="number" min="0" max="2" step="0.05" value="0.85" required>
       </div>
       <div class="lexi-control">
-        <label for="lexi-mode">Direction</label>
-        <select id="lexi-mode" name="mode">
-          <option value="best" selected>Bidirectional</option>
-          <option value="forward">Forward only</option>
-          <option value="backward">Backward only</option>
-        </select>
-      </div>
-      <div class="lexi-control">
-        <label for="lexi-order">Model order</label>
-        <select id="lexi-order" name="modelOrder">
-          <option value="0">Auto</option>
-        </select>
-      </div>
-      <div class="lexi-control">
         <label for="lexi-seed">Seed optional</label>
         <input id="lexi-seed" name="seed" type="text" placeholder="e.g. eminem">
       </div>
@@ -65,7 +51,32 @@ This discovery of new words does not stop even after memorizing all the vocabula
     </div>
   </form>
 
-  <div data-lexinet-output></div>
+  <div data-lexinet-generate-output></div>
+
+  <div class="lexi-demo-divider"></div>
+
+  <div class="lexi-demo-header lexi-demo-header-secondary">
+    <div class="lexi-demo-kicker">Now turn the tables.</div>
+    <div class="lexi-demo-title">Let the model guess your word</div>
+    <div class="lexi-demo-subtitle">
+      Type one English word, and the greedy n-gram player will try to uncover it with six wrong guesses allowed.
+    </div>
+  </div>
+
+  <form data-lexinet-guess-form>
+    <div class="lexi-controls lexi-controls-guess">
+      <div class="lexi-control lexi-control-wide">
+        <label for="lexi-secret-word">Your word</label>
+        <input id="lexi-secret-word" name="secretWord" type="text" value="clandestine" minlength="2" maxlength="45" pattern="[A-Za-z]+" autocomplete="off" required>
+      </div>
+    </div>
+    <div class="lexi-actions">
+      <button class="lexi-button" type="submit" disabled>Start guessing</button>
+      <span class="lexi-status-line">One word at a time. Letters only.</span>
+    </div>
+  </form>
+
+  <div data-lexinet-guess-output></div>
 </div>
 
 ### what to even do with this word
@@ -96,3 +107,7 @@ calculating perplexity scores \
 train dataset of 227,000 words
 
 <script src="{{ '/assets/js/lexinet/word_generator.js' | relative_url }}" defer></script>
+
+### technical note for the demos
+
+Both demos run entirely in the browser from compact JSON exports of the trained n-gram count tables. The generator begins with blank slots and repeatedly samples a `(position, letter)` pair using bidirectional context probabilities. Temperature controls how sharply those probabilities are used: low temperature favors the highest-probability letters, while high temperature allows more unusual choices. The guessing game is deterministic and greedier: given the visible pattern, it scores every unguessed letter across all blank positions using forward and reverse context probabilities, guesses the highest-scoring letter, reveals matches, and loses one life only on misses. For now, the site uses the strongest loaded public model order from n=3 to n=5; the local n=6 model can be swapped in later if the larger browser asset feels worth it.
