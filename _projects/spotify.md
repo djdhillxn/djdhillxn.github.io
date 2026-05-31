@@ -21,8 +21,34 @@ I have always treated music as a personal archive: playlists for phases, liked s
 
 The first version analyzes my Spotify playlists and liked songs using the Spotify Web API. It asks a simple question: **how well do my playlists represent the songs I have saved?**
 
-<div class="spotify-dashboard" data-spotify-dashboard data-dashboard-url="{{ '/assets/json/spotify/dashboard_data.json' | relative_url }}">
+<div class="spotify-dashboard" data-spotify-dashboard data-dashboard-url="{{ '/assets/json/spotify/dashboard_data.json' | relative_url }}" markdown="1">
+
+<!-- Move these slots to reorder the dashboard. Valid sections: overview, artist-landscape, playlist-explorer, diversity-and-overlap, top-items, missing-liked-songs. -->
+
+<div data-spotify-section="overview">
   <div class="spotify-loading">Loading Spotify library intelligence...</div>
+</div>
+
+<div data-spotify-section="artist-landscape"></div>
+
+<div data-spotify-section="playlist-explorer"></div>
+
+<div data-spotify-section="diversity-and-overlap"></div>
+
+<div data-spotify-section="top-items"></div>
+
+<!--<section class="spotify-narrative" markdown="1">-->
+
+## What is it good for?
+
+Absolutely nothing. Good song in Rush hour.
+
+This is placeholder text for the recommendations section. You can replace this with your own explanation of why the missing liked songs matter, how the suggested playlists are chosen, and what a reader should notice before opening the recommendation table.
+
+<!--</section>-->
+
+<div data-spotify-section="missing-liked-songs"></div>
+
 </div>
 
 <script src="{{ '/assets/js/spotify/dashboard-core.js' | relative_url }}" defer></script>
@@ -59,4 +85,3 @@ Finally, the Spotify affinity section is kept separate from the playlist-derived
 - oh yeah, the visualizations. i have so much opportunities to add graphs. Principal component analysis (PCA) is something we ought to do! andy konwinski.. what he said in the seminar.. and you i have also had similar thoughts to leverage machine learning in real life to make informed decisions. doing PCA here will be a starting point for me to get going to do ever better with my life... which i have so much capability to do.
 
 - the very basic statistical tools deployed here such as jaccard similarity and things, we should write about it. this, and other things we are obviously focusing on to do things efficiently. the hype cycle is following its trajectory very nicely as predicted. now my inclination to jump onto fancy things on the get go is slowing down, for the better. it is such a nice thing. it has made me more efficient, more systematic. You know, when i start off with them small things, it gives me the momentum, the confidency, more coherant with the headful of ideas that i have for everything. i am more productive this way, and i am able to incorporate the 
-

@@ -34,11 +34,44 @@
     sections.push(section);
   }
 
-  function renderDashboard(root, data) {
-    root.innerHTML = sections.map((section) => section.render(data)).join("");
-    sections.forEach((section) => {
-      if (section.update) section.update(root, data);
+  function renderSection(target, section, data) {
+    target.innerHTML = section.render(data);
+    if (section.update) section.update(target, data);
+  }
+
+  function renderSectionGroup(target, sectionList, data) {
+    target.innerHTML = sectionList.map((section) => section.render(data)).join("");
+    sectionList.forEach((section) => {
+      if (section.update) section.update(target, data);
     });
+  }
+
+  function renderDashboard(root, data) {
+    const mounts = root.querySelectorAll("[data-spotify-section]");
+    if (mounts.length) {
+      const sectionsByName = new Map(sections.map((section) => [section.name, section]));
+      const mountedSections = new Set();
+
+      mounts.forEach((mount) => {
+        const sectionName = mount.getAttribute("data-spotify-section");
+        const section = sectionsByName.get(sectionName);
+        if (!section) {
+          mount.innerHTML = `<div class="spotify-error"><strong>Unknown Spotify dashboard section.</strong><br><span class="spotify-muted">${esc(sectionName)}</span></div>`;
+          return;
+        }
+
+        mountedSections.add(sectionName);
+        renderSection(mount, section, data);
+      });
+
+      const rest = root.querySelector("[data-spotify-sections-rest]");
+      if (rest) {
+        renderSectionGroup(rest, sections.filter((section) => !mountedSections.has(section.name)), data);
+      }
+      return;
+    }
+
+    renderSectionGroup(root, sections, data);
   }
 
   async function init() {
