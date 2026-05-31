@@ -9,3 +9,7 @@ github: "https://github.com/djdhillxn/warfarin"
 ---
 
 Estimation of the warfarin dosage.
+
+Implemented Contextual bandits for learning online the dosages of warfarin, including LinUCB and LinTS.
+
+[github repo](https://github.com/djdhillxn/warfarin)
