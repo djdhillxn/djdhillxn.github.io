@@ -48,11 +48,11 @@ Finally, the Spotify affinity section is kept separate from the playlist-derived
 
 ## rough notes
 
-The things that we will add, let's write them down here. i have too many ideas in my head.
+<!-- The things that we will add, let's write them down here. i have too many ideas in my head.
 
-- i have obviously the inclination to showcase my NLP, Information retrieval/RAG skills, recommendataion skills and so much more. so i have the direction to follow immediately and the motivation for it as well.
+- i have obviously the inclination to showcase my NLP, Information retrieval/RAG skills, recommendataion skills and so much more. so i have the direction to follow immediately and the motivation for it as well. 
 
-- the book on recommendation systems by the prof who graduated from iit kanpur in 1996. i should read it. the content-based collaborative systems method and more. how to make use of it then? what are some useful practical things that i could do with the recommendation system methods?
+- the book on recommendation systems by the prof who graduated from iit kanpur in 1996. i should read it. the content-based collaborative systems method and more. how to make use of it then? what are some useful practical things that i could do with the recommendation system methods? -->
 
 - how about some unsupervised learning methods. to find insights from my system here. 
 

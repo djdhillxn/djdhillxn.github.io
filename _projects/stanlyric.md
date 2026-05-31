@@ -114,7 +114,7 @@ StanLyric is a lyric-first music search project. The first version focuses on on
 
 <script src="{{ '/assets/js/stanlyric/stanlyric.js' | relative_url }}" defer></script>
 
-## Technical report
+## Technical implementation
 
 StanLyric is an information-retrieval system over a lyrics corpus. Each song is treated as one document, and the user-provided lyric fragment is treated as a query. The current version uses BM25-Okapi because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
 
@@ -126,6 +126,7 @@ The evaluation protocol samples contiguous lyric fragments from known songs, hid
 
 StanLyric is kept separate from the Spotify dashboard for now. The Spotify project analyzes personal listening and playlist curation, while StanLyric focuses on lyric-level retrieval. Later, the two can be connected by using Spotify playlists as taste profiles and StanLyric as the lyrics-aware discovery layer.
 
-### Data note
+The lyrics corpus comes from the [Lyrics-MIDI-Dataset](https://huggingface.co/datasets/asigalov61/Lyrics-MIDI-Dataset)
+on Hugging Face. 
 
-The first corpus comes from the Lyrics-MIDI-Dataset on Hugging Face. The public portfolio version should show song metadata, retrieval scores, matched terms, and short snippets only. For local/offline development, the export script can include full lyric text in the browser artifact, but that should not be committed to a public GitHub Pages site unless you have the rights to redistribute the lyrics.
+<!-- The public portfolio version should show song metadata, retrieval scores, matched terms, and short snippets only. For local/offline development, the export script can include full lyric text in the browser artifact, but that should not be committed to a public GitHub Pages site unless you have the rights to redistribute the lyrics. -->
