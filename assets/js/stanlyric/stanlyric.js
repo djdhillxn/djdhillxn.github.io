@@ -365,20 +365,6 @@
     `;
   }
 
-  function renderMetrics(container, metricsPayload) {
-    if (!metricsPayload) {
-      container.innerHTML = '<p class="stanlyric-muted">No metrics artifact found yet. Run the offline evaluator and export the metrics JSON to populate this panel.</p>';
-      return;
-    }
-    const metrics = Array.isArray(metricsPayload) ? metricsPayload[0] : (metricsPayload.metrics || metricsPayload);
-    const keys = ['hit@1', 'hit@3', 'hit@5', 'hit@10', 'mrr@10', 'ndcg@10', 'recall@10', 'miss_rate@10'];
-    const cards = keys.filter((key) => metrics[key] !== undefined).map((key) => `
-      <div class="stanlyric-stat"><span>${escapeHtml(key)}</span><strong>${formatPercent(metrics[key], 1)}</strong></div>
-    `).join('');
-    const nQueries = metrics.n_queries ? `<p class="stanlyric-muted">Evaluation queries: ${Number(metrics.n_queries).toLocaleString()}</p>` : '';
-    container.innerHTML = `${nQueries}<div class="stanlyric-metrics">${cards || '<p class="stanlyric-muted">Metrics file loaded, but no standard retrieval metric keys were found.</p>'}</div>`;
-  }
-
   function setStatus(app, message, className = '') {
     const status = app.querySelector('[data-stanlyric-status]');
     if (!status) return;
@@ -390,8 +376,6 @@
     const urls = {
       index: app.dataset.indexUrl,
       sampleIndex: app.dataset.sampleIndexUrl,
-      metrics: app.dataset.metricsUrl,
-      sampleMetrics: app.dataset.sampleMetricsUrl,
     };
     const queryEl = app.querySelector('[data-stanlyric-query]');
     const topKEl = app.querySelector('[data-stanlyric-topk]');
@@ -402,7 +386,6 @@
     const explanationEl = app.querySelector('[data-stanlyric-explanation]');
     const chartEl = app.querySelector('[data-stanlyric-chart]');
     const resultsEl = app.querySelector('[data-stanlyric-results]');
-    const metricsEl = app.querySelector('[data-stanlyric-metrics]');
 
     let engine = null;
     let lastResults = [];
@@ -420,10 +403,6 @@
       .catch((error) => {
         setStatus(app, `Could not load index: ${error.message}`);
       });
-
-    fetchJsonWithFallback(urls.metrics, urls.sampleMetrics)
-      .then(({ payload }) => renderMetrics(metricsEl, payload))
-      .catch(() => renderMetrics(metricsEl, null));
 
     function runSearch() {
       if (!engine) return;

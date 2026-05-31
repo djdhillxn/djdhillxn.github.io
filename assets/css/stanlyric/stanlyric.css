@@ -356,12 +356,6 @@ body[data-theme='dark'] .stanlyric-app {
   font-weight: 800;
 }
 
-.stanlyric-metrics {
-  display: grid;
-  gap: 0.75rem;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
 .stanlyric-source-note {
   border-left: 3px solid var(--stan-accent);
   color: var(--stan-muted);
@@ -388,8 +382,7 @@ body[data-theme='dark'] .stanlyric-app {
     white-space: normal;
   }
 
-  .stanlyric-stat-grid,
-  .stanlyric-metrics {
+  .stanlyric-stat-grid {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -399,8 +392,7 @@ body[data-theme='dark'] .stanlyric-app {
 }
 
 @media (max-width: 540px) {
-  .stanlyric-stat-grid,
-  .stanlyric-metrics {
+  .stanlyric-stat-grid {
     grid-template-columns: 1fr;
   }
 

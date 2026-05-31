@@ -16,8 +16,6 @@ StanLyric is a lyric-first music search project. The first version focuses on on
   data-stanlyric-app
   data-index-url="{{ '/assets/json/stanlyric/stanlyric_web_index.json' | relative_url }}"
   data-sample-index-url="{{ '/assets/json/stanlyric/stanlyric_web_index.sample.json' | relative_url }}"
-  data-metrics-url="{{ '/assets/json/stanlyric/stanlyric_eval_metrics.json' | relative_url }}"
-  data-sample-metrics-url="{{ '/assets/json/stanlyric/stanlyric_eval_metrics.sample.json' | relative_url }}"
 >
   <section class="stanlyric-hero">
     <div>
@@ -29,7 +27,6 @@ StanLyric is a lyric-first music search project. The first version focuses on on
     </div>
     <div class="stanlyric-hero-card">
       <span class="stanlyric-pill">BM25-Okapi</span>
-      <span class="stanlyric-pill">Hit@k / MRR / NDCG</span>
       <span class="stanlyric-pill">static GitHub Pages app</span>
     </div>
   </section>
@@ -101,16 +98,6 @@ StanLyric is a lyric-first music search project. The first version focuses on on
     <div data-stanlyric-results></div>
   </section>
 
-  <!-- <section class="stanlyric-panel">
-    <div class="stanlyric-panel-header">
-      <div>
-        <p class="stanlyric-kicker">evaluation</p>
-        <h3>Retrieval metrics</h3>
-      </div>
-      <span class="stanlyric-muted">Computed offline using sampled lyric fragments with known target songs.</span>
-    </div>
-    <div data-stanlyric-metrics></div>
-  </section> -->
 </div>
 
 <script src="{{ '/assets/js/stanlyric/stanlyric.js' | relative_url }}" defer></script>
