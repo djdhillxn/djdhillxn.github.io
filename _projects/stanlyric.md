@@ -5,6 +5,7 @@ description: BM25 lyric-fragment search for identifying songs from remembered li
 importance: -4
 category: NLP
 img: assets/img/8milecover.jpg
+img_size: small
 ---
 
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/stanlyric.css' | relative_url }}">
