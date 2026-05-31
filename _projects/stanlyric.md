@@ -4,6 +4,7 @@ title: StanLyric
 description: BM25 lyric-fragment search for identifying songs from remembered lines
 importance: -4
 category: NLP
+img: assets/img/8milecover.jpg
 ---
 
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/stanlyric.css' | relative_url }}">
@@ -121,8 +122,6 @@ StanLyric is an information-retrieval system over a lyrics corpus. Each song is 
 The offline pipeline builds a browser-ready artifact from the prepared StanLyric corpus. The artifact stores song metadata, document lengths, inverse document frequency values, and an inverted index of token frequencies. At runtime, the browser tokenizes the query and computes BM25 scores only for matching postings. This keeps the portfolio page static while still allowing interactive retrieval.
 
 The explanation panel is intentionally simple: it shows which query terms appeared in the retrieved song, which query terms were missing, the term frequency inside the top song, each matched term's IDF, and the approximate BM25 contribution. This makes the system more transparent than a black-box recommender.
-
-The evaluation protocol samples contiguous lyric fragments from known songs, hides the song identity, retrieves the top candidates, and measures whether the correct song appears in the top ranks. The metrics include Hit@1, Hit@5, MRR@10, and NDCG@10. With one known relevant song per query, Recall@k is equivalent to Hit@k, but both are useful for connecting the project to standard retrieval terminology.
 
 StanLyric is kept separate from the Spotify dashboard for now. The Spotify project analyzes personal listening and playlist curation, while StanLyric focuses on lyric-level retrieval. Later, the two can be connected by using Spotify playlists as taste profiles and StanLyric as the lyrics-aware discovery layer.
 
