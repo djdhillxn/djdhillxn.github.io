@@ -26,10 +26,12 @@ StanLyric is a lyric-first music search project. The first version focuses on on
         Enter a few remembered lines. StanLyric tokenizes the fragment, scores the lyric corpus using BM25-Okapi, and explains why the top candidate was retrieved.
       </p>
     </div>
-    <div class="stanlyric-hero-card">
-      <span class="stanlyric-pill">BM25-Okapi</span>
-      <span class="stanlyric-pill">static GitHub Pages app</span>
-    </div>
+    <figure class="stanlyric-reference-figure">
+      <img src="{{ '/assets/img/eminems-lyric-sheet-when-he-was-on-the-set-of-8-mile-v0.webp' | relative_url }}" alt="Eminem lyric sheet from the set of 8 Mile" loading="lazy">
+      <figcaption>
+        Reference: <a href="https://www.reddit.com/r/HipHopImages/comments/248t86/eminems_lyric_sheet_when_he_was_on_the_set_of_8/">r/HipHopImages</a>
+      </figcaption>
+    </figure>
   </section>
 
   <section class="stanlyric-panel stanlyric-search-panel">

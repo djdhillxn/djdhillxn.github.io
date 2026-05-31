@@ -1,3 +1,36 @@
+.stanlyric-reference-figure {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.stanlyric-reference-figure img {
+  border: 1px solid rgba(120, 120, 120, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  display: block;
+  max-height: 520px;
+  object-fit: contain;
+  width: 100%;
+}
+
+.stanlyric-reference-figure figcaption {
+  color: var(--global-text-color-light, #666);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  margin-top: 0.45rem;
+  text-align: right;
+}
+
+.stanlyric-reference-figure a {
+  color: var(--global-theme-color);
+}
+
 .stanlyric-app {
   --stan-bg: rgba(255, 255, 255, 0.72);
   --stan-border: rgba(120, 120, 120, 0.22);
@@ -74,20 +107,6 @@ body[data-theme='dark'] .stanlyric-app {
   max-width: 760px;
 }
 
-.stanlyric-hero-card {
-  align-content: center;
-  background: linear-gradient(135deg, var(--stan-soft), transparent);
-  border: 1px solid var(--stan-border);
-  border-radius: 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.55rem;
-  padding: 1rem;
-  position: relative;
-  z-index: 1;
-}
-
-.stanlyric-pill,
 .stanlyric-chip {
   align-items: center;
   background: var(--stan-soft);
@@ -392,6 +411,15 @@ body[data-theme='dark'] .stanlyric-app {
 }
 
 @media (max-width: 540px) {
+  .stanlyric-reference-figure {
+    width: 100%;
+    margin: 0;
+  }
+
+  .stanlyric-reference-figure figcaption {
+    text-align: left;
+  }
+
   .stanlyric-stat-grid {
     grid-template-columns: 1fr;
   }
