@@ -27,11 +27,18 @@ I am looking for opportunities that will challenge me to solve meaningful proble
 I am actively looking for internship opportunities for Summer and Fall 2026 to work as a ML researcher, or applied scientist, or data scientist. Ping me on email/linkedin, I would be happy to connect! 
 
 <!--fellow enthusiast to another-->
-##### [My project space](/projects)
-I worked on a reinforcement learning project implementing TRPO and PPO policy gradient algorithms, 
+#### Project work
+See my projects page [here](/projects)
+
+- I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, 
 see [github](https://github.com/djdhillxn) and the **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**.
 
-### Research work
+- Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS.
+
+- Information retrieval system implemented to find songs based on lyric fragments using BM25.
+Find [here](/projects/stanlyric), the lyric search engine app.
+
+#### Research work
 InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, AVSS 2025.\
 Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
 
@@ -65,7 +72,6 @@ I am very happy when I am listening to music, and this has led me to create a lo
 over at [spotify](https://open.spotify.com/user/316evrj3akm6ieuhefckw6kpj6eq?si=bc183398ab8946d0).
 I am also working on a project to make the playlists better, more inclusive of songs, that you may not have already added to your spotify playlists. 
 My spotify insights dashboard can be found [here](/projects/spotify).
-I also made a lyric search engine app, find [here](/projects/stanlyric).
 
 <!--Must check out by clicking on the header above. \
 All projects' implementations are open-source at [GitHub](https://github.com/djdhillxn)
