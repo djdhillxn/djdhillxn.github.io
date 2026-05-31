@@ -9,3 +9,12 @@ category: ML
 ---
 
 dataset desc.
+
+[Github repo](https://github.com/djdhillxn/beans-dataset)
+
+Dry beans dataset consisting of 7 classes of beans.
+16 shape features of beans used for training classification models.
+
+See project report [here](/assets/pdf/dsg-beans.pdf)
+
+April 2021
