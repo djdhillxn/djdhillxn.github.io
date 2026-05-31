@@ -1421,27 +1421,9 @@ ${math}
     document.head.appendChild(script);
   }
 
-  const polyfills = [
-    {
-      name: 'WebComponents',
-      support: function() {
-        return 'customElements' in window &&
-               'attachShadow' in Element.prototype &&
-               'getRootNode' in Element.prototype &&
-               'content' in document.createElement('template') &&
-               'Promise' in window &&
-               'from' in Array;
-      },
-      url: 'https://distill.pub/third-party/polyfills/webcomponents-lite.js'
-    }, {
-      name: 'IntersectionObserver',
-      support: function() {
-        return 'IntersectionObserver' in window &&
-               'IntersectionObserverEntry' in window;
-      },
-      url: 'https://distill.pub/third-party/polyfills/intersection-observer.js'
-    },
-  ];
+  // Do not inject remote polyfill scripts at runtime. Modern browsers support the
+  // Distill features used here, and remote fallback loaders add supply-chain risk.
+  const polyfills = [];
 
   class Polyfills {
 
