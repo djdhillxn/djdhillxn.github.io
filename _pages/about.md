@@ -41,6 +41,8 @@ using PPO with reference SFT model and using trained reward model. See [codes](h
 - Information retrieval system implemented to find songs based on lyric fragments using BM25.
 Find [here](/projects/stanlyric), the lyric search engine app.
 
+- N-gram models for word guessing game, Hangman challenge. Implemented bidirectional ngrams models for n=3, 4, 5, and 6 with backoff to lower ngrams. Incorporated add-k and Kneser-Ney smoothing and interpolation.
+
 #### Research work
 InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
 Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).

@@ -6,6 +6,13 @@ nav: true
 nav_order: 2
 ---
 
+#### Reinforcement Learning
+
+In Spring 2026 at UW-Madison, I took a course on the Mathematical Principles of RL. With a core focus on theoretical derivations, I completed an extensive study of the policy gradient
+algorithms literature reading the papers on CPI, NPG, TRPO, and PPO. I also did a project implementing TRPO, NPG, and PPO algorithms and evaluating locomotion and Atari game tasks.
+See details [here](/projects/trpo)
+
+
 #### More work I feel good about looking back
 At Gartner, where research documents are a flagship offering, a major project I led sought to quantify the impact of each document’s readership on client retention.  From standard churn modeling, we get the high-level retention impact of monthly viewership frequencies but this project’s goal was to go one step further to find the fine-grained impact for each document, called Implied Value Rating (IVR). To calculate the IVR, I fitted Bayesian logistic regression models, one for each document, utilizing an additional document flag feature, pulling normalized document viewership coefficients from trained churn models to serve as priors. I led the implementation and productionization work for this IVR project, with the ideation for the methodology being a team effort. To translate this into actionable insights, I independently designed a system to identify the driving factors behind the IVR metrics using each document's intrinsic features. I leveraged transformer embeddings of section-wise text of documents to build a topic model hierarchy, aggregating these insights to extract document-level topic features.  Regressing these features against the IVR identified statistically significant topics driving user retention, directly linking writing topics to retention and serving as a starting point of using data science insights for content planning. I am proud to have led this workstream.
 
