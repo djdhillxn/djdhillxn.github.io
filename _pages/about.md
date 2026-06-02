@@ -28,28 +28,26 @@ I am actively looking for internship opportunities for Summer and Fall 2026 to w
 
 <!--fellow enthusiast to another-->
 #### Project work
-See my projects page [here](/projects)
+See my projects page [here](/projects) which goes into extensive details.
 
 - I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, 
 see [github](https://github.com/djdhillxn) and the **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**.
 
-- Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS.
+- Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS. Online learning on 5,528 patients data. Performed data cleaning and imputations using various methods.
 
 - Information retrieval system implemented to find songs based on lyric fragments using BM25.
 Find [here](/projects/stanlyric), the lyric search engine app.
 
 #### Research work
-InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, AVSS 2025.\
+InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
 Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
+See overview in my [work blogs](/blogs/).
 
-During my undergraduate studies, I led a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Working under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. The dataset covered varied and challenging environmental conditions, allowing us to test how different modeling choices generalized across settings. Fine-tuning pretrained YOLO models on this noisy dataset initially resulted in overfitting and poor recall in specific test locations. To address this, I systematically evaluated the impact of various preprocessing techniques on the input thermal frames. I found that inversion and bilateral filtering were the most effective techniques, improving contrast and reducing noise, respectively. Combining these techniques yielded even stronger results. Ultimately, I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
+#### Industry experiences
 
-[g scholar](https://scholar.google.com/citations?user=njVX6ngAAAAJ&hl=en), [ORCID](https://orcid.org/0009-0002-0234-124X)
-, [IEEE Xplore](https://ieeexplore.ieee.org/author/542676216429361)
-
-
-**More work I feel good about looking back**\
-At Gartner, where research documents are a flagship offering, a major project I led sought to quantify the impact of each document’s readership on client retention.  From standard churn modeling, we get the high-level retention impact of monthly viewership frequencies but this project’s goal was to go one step further to find the fine-grained impact for each document, called Implied Value Rating (IVR). To calculate the IVR, I fitted Bayesian logistic regression models, one for each document, utilizing an additional document flag feature, pulling normalized document viewership coefficients from trained churn models to serve as priors. I led the implementation and productionization work for this IVR project, with the ideation for the methodology being a team effort. To translate this into actionable insights, I independently designed a system to identify the driving factors behind the IVR metrics using each document's intrinsic features. I leveraged transformer embeddings of section-wise text of documents to build a topic model hierarchy, aggregating these insights to extract document-level topic features.  Regressing these features against the IVR identified statistically significant topics driving user retention, directly linking writing topics to retention and serving as a starting point of using data science insights for content planning. I am proud to have led this workstream.
+At Gartner, working as an associate data scientist in the client retention analytics team. 
+Before that, I worked at Hilabs, in Bangalore, as a data scientist in the Roster Automation team. 
+See my work details here in [my blog posts](/blogs/).
 
 <!-- **My work projects detailed**\
 I specialize in the domain of reinforcement learning and natural langauge sprocessing. 
@@ -66,7 +64,7 @@ The topics range from broad areas of statistical algorithms, reinforcement learn
 
 <!-- keywords: language models, titanic dataset, linear arm bandits, autoencoders, arima, lstm, monte carlo simulations, linear regression, logistic regression, and more. -->
 
-### music
+### My experiences with music
 
 I am very happy when I am listening to music, and this has led me to create a lot of playlists
 over at [spotify](https://open.spotify.com/user/316evrj3akm6ieuhefckw6kpj6eq?si=bc183398ab8946d0).
@@ -77,7 +75,7 @@ My spotify insights dashboard can be found [here](/projects/spotify).
 All projects' implementations are open-source at [GitHub](https://github.com/djdhillxn)
 !-->
 
-### <span style="color:gray">education and work experience</span>
+### <span style="color:gray">Education and work</span>
 **University of Wisconsin-Madison** August 2025 - Present \
 Masters of Science, Computer Science \
 Data Scientist at **Gartner Inc.**, Mar 2024 - August 2025 \
@@ -90,9 +88,12 @@ Bachelor of Technology, Electronics and Communication Engineering \
 ### Ping me here!
 [dhillondheeraj84@gmail.com](mailto:dhillondheeraj84@gmail.com) \
 [ddhillon@wisc.edu](mailto:ddhillon@wisc.edu) \
-[dheeraj_d@ec.iitr.ac.in](mailto:dheeraj_d@ec.iitr.ac.in) \
+[dheeraj_d@ec.iitr.ac.in](mailto:dheeraj_d@ec.iitr.ac.in) 
+
 [LinkedIn](https://www.linkedin.com/in/djdhillxn/) \ 
-[Twitter](https://x.com/djdhillxn)
+[Twitter](https://x.com/djdhillxn) \
+[g scholar](https://scholar.google.com/citations?user=njVX6ngAAAAJ&hl=en), [ORCID](https://orcid.org/0009-0002-0234-124X)
+, [IEEE Xplore](https://ieeexplore.ieee.org/author/542676216429361)
 
 <!--
 Additional academic details can be added here:
