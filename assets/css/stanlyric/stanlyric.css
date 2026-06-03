@@ -384,6 +384,10 @@ body[data-theme='dark'] .stanlyric-app {
   padding-left: 0.85rem;
 }
 
+.stanlyric-results-note {
+  margin: 0 0 1rem;
+}
+
 @media (max-width: 900px) {
   .stanlyric-hero,
   .stanlyric-grid {

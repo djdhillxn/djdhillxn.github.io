@@ -332,14 +332,17 @@
       container.innerHTML = '<p class="stanlyric-muted">No ranked results to show.</p>';
       return;
     }
-    container.innerHTML = `<div class="stanlyric-result-list">${results.map((row) => renderResultCard(row)).join('')}</div>`;
+    const snippetNote = results.some((row) => !row.snippet)
+      ? '<div class="stanlyric-source-note stanlyric-results-note">Matched lyric snippets are unavailable in this public web artifact because it was exported without lyric text.</div>'
+      : '';
+    container.innerHTML = `${snippetNote}<div class="stanlyric-result-list">${results.map((row) => renderResultCard(row)).join('')}</div>`;
   }
 
   function renderResultCard(row) {
     const matched = row.matched_terms.slice(0, 10).map((term) => `<span class="stanlyric-chip">${escapeHtml(term)}</span>`).join(' ');
     const snippet = row.snippet
       ? `<div class="stanlyric-snippet">${highlightTerms(row.snippet, new Set(row.matched_terms))}</div>`
-      : `<div class="stanlyric-source-note">Matched lyric snippet is not available because this web artifact was exported without lyric text. Re-export locally with <code>--include-full-lyrics</code> for private development only, or publish short licensed snippets.</div>`;
+      : '';
     const fullLyrics = row.full_lyrics
       ? `<details class="stanlyric-details"><summary>Show full lyrics from local artifact</summary><div class="stanlyric-full-lyrics">${highlightTerms(row.full_lyrics, new Set(row.matched_terms))}</div></details>`
       : '';
