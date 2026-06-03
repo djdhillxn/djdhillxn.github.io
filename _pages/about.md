@@ -29,19 +29,25 @@ I am actively looking for internship opportunities for Summer and Fall 2026 to w
 <!--fellow enthusiast to another-->
 #### Project work
 See my projects page [here](/projects) which goes into extensive details on each of the projects, and implementations are available at my [GitHub](https://github.com/djdhillxn).
+Brief summaries of select projects are:
 
-- I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, 
+- [TRPO/PPO](/projects/trpo) I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, 
 see [github](https://github.com/djdhillxn/trpo), the **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**, and overview [writeup](/blogs).
 
-- Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF
+- [RLHF](/projects/rlhf) Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF
 using PPO with reference SFT model and using trained reward model. See [codes](https://github.com/djdhillxn/trpo).
 
-- Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS. Online learning on 5,528 patients data. Performed data cleaning and imputations using various methods.
+- [Warfarin](/projects/warfarin) Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS. Online learning on 5,528 patients data. Performed data cleaning and imputations using various methods.
 
-- Information retrieval system implemented to find songs based on lyric fragments using BM25.
+- [StanLyric](/projects/stanlyric) Information retrieval system implemented to find songs based on lyric fragments using BM25.
 Find [here](/projects/stanlyric), the lyric search engine app.
 
-- N-gram models for word guessing game, Hangman challenge. Implemented bidirectional ngrams models for n=3, 4, 5, and 6 with backoff to lower ngrams. Incorporated add-k and Kneser-Ney smoothing and interpolation.
+- [WordPlay](/projects/hangman) N-gram models for word guessing game, Hangman challenge. Implemented bidirectional ngrams models for n=3, 4, 5, and 6 with backoff to lower ngrams. Incorporated add-k and Kneser-Ney smoothing and interpolation. **Generate your own new english words using the trained ngram models.**
+
+#### Coursework
+
+Machine Learning, Reinforcement Learning, 
+Game Theory, Operating Systems, Linear Optimization, Non-linear optimization
 
 #### Research work
 InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
