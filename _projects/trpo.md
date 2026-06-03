@@ -9,8 +9,12 @@ github: "https://github.com/djdhillxn/trpo"
 
 More recently, as part of my RL course project at UW-Madison, I performed a theoretical study on policy optimization that included reading the papers on Conservative Policy Iteration, Trust Region Policy Optimization, Natural Policy Gradient, and Proximal Policy Optimization. A major component of the project was studying the monotonic improvement proofs behind the theoretically justified policy improvement algorithms of CPI and TRPO. I analyzed how the surrogate objective and mixture-update constraints in CPI inspired the KL-divergence constraint in TRPO and the clipped objective in PPO. I implemented TRPO, PPO, and NPG in PyTorch to reproduce and benchmark a subset of the paper results, comparing their performance on several MuJoCo robotic locomotion and Atari game environments. I also designed ablation studies on the Hopper locomotion task by varying step-size magnitudes for NPG. This helped me underscore the role of adaptive step sizing and line search in TRPO in stabilizing policy updates and preventing catastrophic performance degradation. In the empirical experiments, the PPO implementation with the clipped objective achieved stronger results using only one-tenth of the sampled environment steps for the Hopper and Walker tasks.
 
-Find project report [here](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf). 
-The coding implemention is at the 
-[Github repo](\https://github.com/djdhillxn/trpo)
+Find project report [here](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf). The code implementation is at the [GitHub repo](https://github.com/djdhillxn/trpo).
 
 In the repository, we have also implemented parallel rollouts for faster simulation trajectory collection.
+
+
+
+<div class="trpo-demo-video">
+{% include video.html path="https://www.youtube.com/embed/_vJEdQ3Plu0" class="trpo-demo-iframe" width="800" height="480" title="TRPO trained Q*bert agent simulation" caption="A simulation rollout of the Q*bert agent trained with TRPO." %}
+</div>
