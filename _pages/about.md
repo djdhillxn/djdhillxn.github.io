@@ -31,7 +31,7 @@ I am actively looking for internship opportunities for Summer and Fall 2026 to w
 See my projects page [here](/projects) which goes into extensive details on each of the projects, and implementations are available at my [GitHub](https://github.com/djdhillxn).
 
 - I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, 
-see [github](https://github.com/djdhillxn/trpo), the **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**, and overview [writeup](/blogs/).
+see [github](https://github.com/djdhillxn/trpo), the **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**, and overview [writeup](/blogs).
 
 - Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF
 using PPO with reference SFT model and using trained reward model. See [codes](https://github.com/djdhillxn/trpo).
@@ -46,13 +46,13 @@ Find [here](/projects/stanlyric), the lyric search engine app.
 #### Research work
 InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
 Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
-See overview in my [work blogs](/blogs/).
+See overview in my [work blogs](/blogs).
 
 #### Industry experiences
 
 At Gartner, working as an associate data scientist in the client retention analytics team. 
 Before that, I worked at Hilabs, in Bangalore, as a data scientist in the Roster Automation team. 
-See my work details here in [my blog posts](/blogs/).
+See my work details here in [my blog posts](/blogs).
 
 <!-- **My work projects detailed**\
 I specialize in the domain of reinforcement learning and natural langauge sprocessing. 
