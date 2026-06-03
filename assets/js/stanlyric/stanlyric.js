@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  const DEFAULT_EXAMPLE = 'midnight road under neon rain city lights whisper my name';
+  const DEFAULT_EXAMPLE = "ope there goes rabbit, he choked, he's mad, but he won't give up that easy";
   const RESULT_METHOD = 'BM25-Okapi';
 
   function normalizeText(text) {
@@ -141,6 +141,10 @@
           title: doc.title || 'Untitled song',
           artist: doc.artist || 'Unknown artist',
           source: doc.source || '',
+          album: doc.album || doc.album_name || '',
+          year: doc.year || doc.release_year || '',
+          genre: doc.genre || doc.genres || '',
+          language: doc.language || '',
           lyrics_char_len: doc.lyrics_char_len || '',
           bm25_score: item.score,
           confidence: confidences[idx] || 0,
@@ -338,8 +342,39 @@
     container.innerHTML = `${snippetNote}<div class="stanlyric-result-list">${results.map((row) => renderResultCard(row)).join('')}</div>`;
   }
 
+  function formatMetadataValue(value) {
+    if (Array.isArray(value)) return value.filter(Boolean).join(', ');
+    return String(value || '').trim();
+  }
+
+  function renderSongMetadata(row) {
+    const fields = [
+      ['Album', row.album],
+      ['Year', row.year],
+      ['Genre', row.genre],
+      ['Language', row.language],
+      ['Lyric chars', row.lyrics_char_len],
+    ].map(([label, value]) => [label, formatMetadataValue(value)])
+      .filter(([, value]) => value);
+
+    if (!fields.length) return '';
+    return `<div class="stanlyric-result-meta">${fields.map(([label, value]) => `<span><strong>${escapeHtml(label)}</strong> ${escapeHtml(value)}</span>`).join('')}</div>`;
+  }
+
+  function renderResultIds(row) {
+    const ids = [
+      ['Dataset ID', row.doc_id],
+      ['Source hash', row.source],
+    ].filter(([, value]) => value);
+
+    if (!ids.length) return '';
+    return `<p class="stanlyric-result-id">${ids.map(([label, value]) => `<span><strong>${escapeHtml(label)}</strong> ${escapeHtml(value)}</span>`).join('')}</p>`;
+  }
+
   function renderResultCard(row) {
     const matched = row.matched_terms.slice(0, 10).map((term) => `<span class="stanlyric-chip">${escapeHtml(term)}</span>`).join(' ');
+    const metadata = renderSongMetadata(row);
+    const resultIds = renderResultIds(row);
     const snippet = row.snippet
       ? `<div class="stanlyric-snippet">${highlightTerms(row.snippet, new Set(row.matched_terms))}</div>`
       : '';
@@ -351,10 +386,11 @@
         <div class="stanlyric-result-head">
           <div>
             <p class="stanlyric-result-title">${escapeHtml(row.title)}</p>
-            <p class="stanlyric-muted">${escapeHtml(row.artist)} ${row.source ? ` · ${escapeHtml(row.source)}` : ''}</p>
+            <p class="stanlyric-muted">${escapeHtml(row.artist)}</p>
           </div>
           <span class="stanlyric-rank">#${row.rank}</span>
         </div>
+        ${metadata}
         <div class="stanlyric-controls" aria-label="result statistics">
           <span class="stanlyric-chip"><strong>score</strong> ${formatNumber(row.bm25_score, 3)}</span>
           <span class="stanlyric-chip"><strong>confidence</strong> ${formatPercent(row.confidence, 1)}</span>
@@ -362,6 +398,7 @@
           <span class="stanlyric-chip"><strong>method</strong> ${escapeHtml(row.method)}</span>
         </div>
         <p class="stanlyric-muted">Matched terms: ${matched || 'none'}</p>
+        ${resultIds}
         ${snippet}
         ${fullLyrics}
       </article>

@@ -44,7 +44,7 @@ StanLyric is a lyric-first music search project. The first version focuses on on
     </div>
 
     <label class="stanlyric-label" for="stanlyric-query">Lyrics you remember</label>
-    <textarea id="stanlyric-query" data-stanlyric-query rows="5" placeholder="e.g. midnight road under neon rain city lights whisper my name"></textarea>
+    <textarea id="stanlyric-query" data-stanlyric-query rows="5" placeholder="e.g. ope there goes rabbit, he choked, he's mad, but he won't give up that easy"></textarea>
 
     <div class="stanlyric-controls">
       <label>

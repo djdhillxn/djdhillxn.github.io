@@ -338,6 +338,24 @@ body[data-theme='dark'] .stanlyric-app {
   margin: 0;
 }
 
+.stanlyric-result-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.8rem;
+  margin-top: 0.7rem;
+}
+
+.stanlyric-result-meta span {
+  color: var(--stan-muted);
+  font-size: 0.84rem;
+}
+
+.stanlyric-result-meta strong,
+.stanlyric-result-id strong {
+  color: var(--stan-ink);
+  font-weight: 800;
+}
+
 .stanlyric-rank {
   background: var(--stan-accent);
   border-radius: 999px;
@@ -386,6 +404,18 @@ body[data-theme='dark'] .stanlyric-app {
 
 .stanlyric-results-note {
   margin: 0 0 1rem;
+}
+
+.stanlyric-result-id {
+  color: var(--stan-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  gap: 0.35rem 0.8rem;
+  line-height: 1.45;
+  margin: 0.35rem 0 0;
+  opacity: 0.78;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 900px) {
