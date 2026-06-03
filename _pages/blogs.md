@@ -26,7 +26,7 @@ At Gartner, where research documents are a flagship offering, a major project I 
 
 #### Working at a startup in Bangalore
 
-I was fortunate to start my career in the industry through working in a startup straightaway after graduation, at [HiLabs](https://www.linkedin.com/company/hilabsinc/). I was lucky to learn under supervision of manager who gave me the confidence in my abilities to work on a myriad of problem statements.
+I was fortunate to start my career in the industry through working in a startup straightaway after graduation, at [HiLabs](https://www.linkedin.com/company/hilabsinc/). I was lucky to learn under supervision of manager who gave me the confidence in my abilities to work on a myriad of problem statements. I became an expert of Git version control. The core product I worked upon aimed to automate ingestion of medicaid/medicare roster documents into databases in a standard format which would enable data interoperability. I also had the opportunity to take research tasks to extract information for these rosters and store them in structured formats which I worked through using named entity recognition methods and information extraction methods using hyponyms.
 
 #### Research at IIT Roorkee
 
