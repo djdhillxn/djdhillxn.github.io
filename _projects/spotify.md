@@ -23,7 +23,7 @@ The first version analyzes my Spotify playlists and liked songs using the Spotif
 
 <div class="spotify-dashboard" data-spotify-dashboard data-dashboard-url="{{ '/assets/json/spotify/dashboard_data.json' | relative_url }}" markdown="1">
 
-<!-- Move these slots to reorder the dashboard. Valid sections: overview, artist-landscape, playlist-explorer, diversity-and-overlap, top-items, missing-liked-songs. -->
+<!-- Move these slots to reorder the dashboard. Valid sections: overview, artist-landscape, playlist-explorer, diversity-and-overlap, playlist-health, saved-timeline, curation-gaps, artist-map, affinity-comparison, nostalgia-picks, top-items, missing-liked-songs. -->
 
 <div data-spotify-section="overview">
   <div class="spotify-loading">Loading Spotify library intelligence...</div>
@@ -34,6 +34,18 @@ The first version analyzes my Spotify playlists and liked songs using the Spotif
 <div data-spotify-section="playlist-explorer"></div>
 
 <div data-spotify-section="diversity-and-overlap"></div>
+
+<div data-spotify-section="playlist-health"></div>
+
+<div data-spotify-section="saved-timeline"></div>
+
+<div data-spotify-section="curation-gaps"></div>
+
+<div data-spotify-section="artist-map"></div>
+
+<div data-spotify-section="affinity-comparison"></div>
+
+<div data-spotify-section="nostalgia-picks"></div>
 
 <div data-spotify-section="top-items"></div>
 
@@ -55,6 +67,7 @@ This is placeholder text for the recommendations section. You can replace this w
 <script src="{{ '/assets/js/spotify/dashboard-overview.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/spotify/dashboard-artist-playlists.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/spotify/dashboard-analysis.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/spotify/dashboard-deep-dives.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/spotify/dashboard-recommendations.js' | relative_url }}" defer></script>
 <script src="{{ '/assets/js/spotify/dashboard.js' | relative_url }}" defer></script>
 
