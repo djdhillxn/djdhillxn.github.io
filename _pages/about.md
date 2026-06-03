@@ -49,6 +49,8 @@ Find [here](/projects/stanlyric), the lyric search engine app.
 Machine Learning, Reinforcement Learning, 
 Game Theory, Operating Systems, Linear Optimization, Non-linear optimization
 
+I have written about my passion for these courses in my [blogs](/blogs).
+
 #### Research work
 InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
 Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
