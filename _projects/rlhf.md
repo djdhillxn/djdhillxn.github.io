@@ -40,6 +40,8 @@ The implementation uses PyTorch, Hugging Face Transformers and Datasets, PEFT/Lo
 
 The saved reward-model run reached **66.46% pairwise validation accuracy** with an average chosen-versus-rejected reward margin of **5.02**. The subsequent PPO run completed 250 updates and remained numerically stable enough to evaluate, but the held-out comparison did not show an improvement: across 200 prompts, the base instruction model won 113 reward-model comparisons and PPO won 87, with a mean PPO reward delta of **-0.281**.
 
+<!-- The evaluation also documents where PPO failed to improve, which became one of the useful results. -->
+
 I consider that a result, not a footnote. Qualitative inspection exposed multilingual drift and a debug-like degenerate response, while the aggregate evaluation showed that optimizing the learned reward was not reliably improving held-out responses. In response, I tightened KL anchoring, added early-stop guards for policy drift and empty responses, strengthened checkpoint resolution, and expanded the evaluator beyond a single mean reward.
 
 The main lesson was that an RLHF pipeline is only as credible as its controls. A decreasing loss or a few attractive examples are not sufficient evidence of alignment; the reward model, policy drift, response quality, and evaluation protocol all need independent scrutiny. In this experiment, knowing when PPO had *not* earned a victory lap became the most valuable part of the work.
