@@ -57,3 +57,8 @@ The **cat** symbol goes to projects **github**.
   {%- endif -%}
 {%- endif -%}
 </div>
+
+**This portfolio**
+A long term project in itself.
+
+Working on building this portfolio has brought back memories of childhood and refreshed my knowledge of certain computer languages that I was introduced to in secondary school in my 6th grade. These computer languages were the ones which inspired me to join the world of engineering. These languages are html and css.
