@@ -20,29 +20,50 @@ social: false  # includes social icons at the bottom of the page
 Hi there, from one Machine Learning enthusiast to another!
 
 **TL;DR**
-I am Dheeraj, current pursuing a MS in Computer Science at UW-Madison where I will be graduating in May 2027. I have two years of industry experience as a data scientist at two organizations: Gartner and  HiLabs, a startup based on healthcare data interoperability. I completed my undergrad in ECE at IIT Roorkee. Here is my **[resume](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
+I am Dheeraj, currently pursuing an MS in Computer Science at UW-Madison where I will be graduating in May 2027. I have two years of industry experience as a data scientist at two organizations: Gartner, and  HiLabs, a startup based on healthcare data interoperability. I completed my undergrad in ECE at IIT Roorkee. Here is my **[resume](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
 
-I am looking for opportunities that will challenge me to solve meaningful problems by making use of methodologies in my domain of study which spans Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the applications/use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight.
+I am looking for opportunities that will challenge me to solve meaningful problems by making use of methodologies in my domain of study which spans Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the applications/use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight. Consequently, I am even more excited to be part of and contribute in a startup.
+ 
+I am actively looking for internship opportunities for Summer and Fall 2026 to work as a ML researcher, applied scientist, or data scientist. Ping me on email or linkedin, I would be happy to connect! 
 
-I am actively looking for internship opportunities for Summer and Fall 2026 to work as a ML researcher, or applied scientist, or data scientist. Ping me on email/linkedin, I would be happy to connect! 
 
 <!--fellow enthusiast to another-->
 #### Project work
 See my projects page [here](/projects) which goes into extensive details on each of the projects, and implementations are available at my [GitHub](https://github.com/djdhillxn).
 Brief summaries of select projects are:
 
-- [TRPO/PPO](/projects/trpo) I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, 
-see [github](https://github.com/djdhillxn/trpo), the **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**, and overview [writeup](/blogs).
+<!-- TRPO/PPO I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, see github, the project report, and overview writeup. -->
 
-- [RLHF](/projects/rlhf) Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF
-using PPO with reference SFT model and using trained reward model. See [codes](https://github.com/djdhillxn/trpo).
+- [TRPO/PPO](/projects/trpo). I studied the broad domain of policy optimization in RL where the recurring idea of constrained policy changes gave way to powerful methods starting from mixture updates methods to TRPO and PPO. I implemented TRPO, PPO, and NPG in PyTorch and benchmarked them on several MuJoCo locomotion and Atari environments. See the [code](https://github.com/djdhillxn/trpo) and **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**. I have also expressed my fervor for RL [here](/blogs).
 
-- [Warfarin](/projects/warfarin) Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS. Online learning on 5,528 patients data. Performed data cleaning and imputations using various methods.
+<!-- RLHF Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF using PPO with reference SFT model and using trained reward model. See codes. -->
 
-- [StanLyric](/projects/stanlyric) Information retrieval system implemented to find songs based on lyric fragments using BM25.
-Find [here](/projects/stanlyric), the lyric search engine app.
+- [RLHF using PPO](/projects/rlhf) Motivated with its practical applications, I deployed PPO for
+LLM alignment towards human preference using the Reinforcement Learning with Human Feedback (RLHF) mechanism. Using the HelpSteer3 dataset, I performed supervised fine-tuning (SFT) on Qwen2.5-0.5B Instruct LLM followed by training a reward model. Consequently, I utilized the reward model for optimizing the fine-tuned LLM with PPO at the token level with LoRA.
 
-- [WordPlay](/projects/hangman) N-gram models for word guessing game, Hangman challenge. Implemented bidirectional ngrams models for n=3, 4, 5, and 6 with backoff to lower ngrams. Incorporated add-k and Kneser-Ney smoothing and interpolation. **Generate your own new english words using the trained ngram models.**
+ <!-- explores whether preference feedback can make a small instruction-tuned language model more helpful. I built an end-to-end pipeline around Qwen2.5-0.5B and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and a custom token-level PPO loop with LoRA, GAE, and KL control.  -->
+
+- [StanLyric](/projects/stanlyric) Implemented information retrieval (IR) system to identify songs based on input queries consisting of a few lyrical sentences from a songs lyrics corpus. Developed using the BM25-Okapi method, I deployed online the static inverted indices for 44,480 songs to have a running lyric [search engine](/projects/stanlyric) app which also exhibits the ranked result's interpratability based on quantified contributions of matched keywords which vary for each song based on underlying term frequencies (TFs). 
+<!-- - [StanLyric](/projects/stanlyric) helps identify a song from the fragment of a lyric stuck in your head. It runs a BM25-Okapi retrieval engine over 44,480 songs entirely in the browser, with a compact static index and score explanations that show why each result matched. -->
+
+- [WordPlay](/projects/hangman) This project uses character-level language models to play the Hangman Challenge. I trained forward and reverse n-gram models with backoff, interpolation, add-k smoothing, and Kneser-Ney smoothing. With the trained probabilistic distributions, it can also be used to generate plausible new english words. I also designed interactive [simulator](/projects/hangman) for game playing and word generation.
+
+<!-- then packaged the public models into an interactive browser demo.  -->
+
+<!-- Some generated words are surprisingly convincing; others clearly need a dictionary and a quiet moment. -->
+
+- [Warfarin](/projects/warfarin) Investigated contextual multi-arm bandits for personalized Warfarin dosage selection in online learning setting with sequential feedback. Evaluated LinUCB and its regularized ridge and lasso variants, and the Linear Thompson sampling bandit. Compared performances along with those obtained through clinically recommended Pharmacogenetic formula. 
+
+<!-- Resume bullet points
+Evaluated contextual and linear bandit strategies for personalized Warfarin dosage selection under sequential
+feedback, comparing Epsilon-Greedy, Upper Confidence Bound (UCB), Thompson Sampling, and LinUCB.
+● Benchmarked online decision accuracy at 68% on dose selection, highlighting the trade-off between exploration and
+patient-specific treatment optimization. -->
+
+<!-- Warfarin frames personalized weekly dose selection as an online contextual-bandit problem over 5,528 patient records. I built a clinical preprocessing pipeline, implemented contextual bandits and compared contextual bandits and compared fixed and published dosing baselines with LinUCB, hybrid ridge, sparse LASSO UCB, and Linear Thompson Sampling policies. -->
+
+<!-- Warfarin Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS. Online learning on 5,528 patients data. Performed data cleaning and imputations using various methods. -->
+
 
 #### Coursework
 
@@ -92,7 +113,7 @@ Bachelor of Technology, Electronics and Communication Engineering \
 <!--### <span style="color:red">Contact</span>-->
 
 
-#### Ping me
+#### Emails and Socials
 [dhillondheeraj84@gmail.com](mailto:dhillondheeraj84@gmail.com) \
 [ddhillon@wisc.edu](mailto:ddhillon@wisc.edu) \
 [dheeraj_d@ec.iitr.ac.in](mailto:dheeraj_d@ec.iitr.ac.in) 
@@ -121,4 +142,3 @@ Additional academic details can be added here:
 [Research Statement](https://docs.google.com/document/d/1Jo1nMzHaeKXYoHVlVNM24bFuCHBMswXOrya6eSNfL6c/edit?usp=sharing)
 
 -->
-
