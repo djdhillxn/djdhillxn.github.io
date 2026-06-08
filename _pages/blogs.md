@@ -35,6 +35,9 @@ During my undergraduate studies, I led a research project focused on real-time e
 Supervisor: Prof. Vinod Pankajakshan \\
 Department of Electronics and Communication Engineering, IIT Roorkee
 
+Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**.
+The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch.
+
 #### Favorite book readings <!--Repetitive Book Reads-->
 *The Elements of Statistical Learning* Hastie, Tibshirani, Friedman \\
 *Speech and Language Processing* Dan Jurafsky, James Martin \\
