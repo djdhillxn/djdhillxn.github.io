@@ -9,17 +9,25 @@ category: NLP
 
 <link rel="stylesheet" href="{{ '/assets/css/spotify/dashboard.css' | relative_url }}">
 
-
+The spotify data for my profile is fetched using the Spotify Web API through the scripts in this [spotify repository](https://github.com/djdhillxn/spotify) of mine.
 [Jump to the technical report](#technical-report) for the implementation details behind the dashboard and recommendation logic.
 
 For the past 6 years, Spotify and I have been good friends. Every december when Spotify Wrapped drops, it is such a warm thing. I always put on stories on instagram of it. And by a long shot, the amount of minutes listened to is more than 50,000, always.
 
+**How well do my playlists represent the songs I have saved?**
+One particular useful aspect I noticed out of the flamboyant display of css and javascript is the data analysis that recommends new songs to be added to each one my Spotify playlists from the songs that I have liked but not present in any playlist. Who has the time to curate a new song instantaneously as one comes across a new banger, too busy enjoying the euphoria. These mapping of recommended songs to be added to specific playlists comes from simple jaccard similarity heuristics.
+
 A song brings back so many memories associated with the phase when I first discovered it.
-This project turns that my music learning history with spotify archive to unravel the suppressed nostalgia.
+This project turns that my music learning history with spotify archive to unravel the suppressed nostalgia,
+which brings back so many good and bad memories. 
+Every playlist I made was during a certain phase of my life, these playlists hold a part of those memories of those phases and the places of those phases intact, 
+and thus making it very special sort of horcrux to me. 
 
-I have always treated music as a personal archive: playlists for phases, liked songs for instinct, and old tracks that sometimes disappear from memory until they  
-
-The first version analyzes my Spotify playlists and liked songs using the Spotify Web API. It asks a simple question: **how well do my playlists represent the songs I have saved?**
+I don't know why I am putting it my personal stuff in the public, I guess I am an open book. A less romantic reason would be that it is convenient hah for me to see what's going on over at my spotify.
+Another serious reason is that I want to discover new music, so much more music, I know this music stuff sometimes takes up a lot of my attention, which could otherwise have gone over to studying 
+maths and stuff, but it's what keeps me sane brr. With so many of these dashboards down below, it would definitely become easier to discover new art, and save the bits of those art that I like.
+I don't like every song I come across sheesh, but when I do find a new one that I instantly love, I obviously have the urgency to capture and save that moment. 
+I like a ton of music, but if I don't add it to any my playlists, it is buried down amongst the ton of memory in the head. Old tracks that sometimes disappear from memory until they...
 
 <div class="spotify-dashboard" data-spotify-dashboard data-dashboard-url="{{ '/assets/json/spotify/dashboard_data.json' | relative_url }}" markdown="1">
 
@@ -53,7 +61,7 @@ The first version analyzes my Spotify playlists and liked songs using the Spotif
 
 ## What is it good for?
 
-Absolutely nothing. Good song in Rush hour.
+Absolutely nothing. Good song in Rush hour. Also, My love's in Jeopardy, baby.
 
 This is placeholder text for the recommendations section. You can replace this with your own explanation of why the missing liked songs matter, how the suggested playlists are chosen, and what a reader should notice before opening the recommendation table.
 
