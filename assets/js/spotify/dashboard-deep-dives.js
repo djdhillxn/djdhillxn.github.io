@@ -84,10 +84,10 @@
     }).filter((row) => row.liked_count > 0);
   }
 
-  function tableRows(rows, emptyMessage, renderer) {
+  function tableRows(rows, emptyMessage, renderer, colspan = 6) {
     return rows.length
       ? rows.map(renderer).join("")
-      : `<tr><td colspan="6" class="spotify-muted">${esc(emptyMessage)}</td></tr>`;
+      : `<tr><td colspan="${colspan}" class="spotify-muted">${esc(emptyMessage)}</td></tr>`;
   }
 
   function topSuggestedPlaylistCounts(data) {
@@ -109,6 +109,28 @@
     return Array.from(counts.values())
       .map((row) => ({ ...row, avg_score: row.candidate_count ? row.total_score / row.candidate_count : 0 }))
       .sort((a, b) => b.candidate_count - a.candidate_count || b.avg_score - a.avg_score);
+  }
+
+  function playlistLink(row) {
+    return row.spotify_url
+      ? `<a class="spotify-link" href="${esc(row.spotify_url)}" target="_blank" rel="noopener">${esc(row.name)}</a>`
+      : esc(row.name);
+  }
+
+  function artistLink(artist) {
+    if (!artist?.artist_name) return "—";
+    return artist.spotify_url
+      ? `<a class="spotify-link" href="${esc(artist.spotify_url)}" target="_blank" rel="noopener">${esc(artist.artist_name)}</a>`
+      : esc(artist.artist_name);
+  }
+
+  function artistShare(playlist, artist, fallbackShare = 0) {
+    if (!artist) return fallbackShare;
+    const explicitShare = Number(artist.artist_share_of_playlist || 0);
+    if (explicitShare) return explicitShare;
+    const appearances = Number(artist.playlist_appearances || artist.unique_track_count || 0);
+    const totalTracks = Number(playlist.total_tracks || 0);
+    return totalTracks ? appearances / totalTracks : fallbackShare;
   }
 
   registerSection({
@@ -200,38 +222,35 @@
       const playlists = (data.playlists || []).filter((playlist) => Number(playlist.total_tracks || 0) > 0).map((playlist) => {
         const diversity = diversityByPlaylist.get(playlist.playlist_id) || {};
         const suggestion = suggestionByPlaylist.get(playlist.playlist_id) || {};
+        const topArtist = (playlist.top_artists || [])[0] || {};
         return {
           ...playlist,
           normalized_artist_entropy: Number(diversity.normalized_artist_entropy || 0),
-          top_artist_name: diversity.top_artist_name,
-          top_artist_share: Number(diversity.top_artist_share || 0),
+          top_artist_name: topArtist.artist_name || diversity.top_artist_name,
+          top_artist_share: artistShare(playlist, topArtist, Number(diversity.top_artist_share || 0)),
           candidate_count: Number(suggestion.candidate_count || 0),
           avg_suggestion_score: Number(suggestion.avg_score || 0)
         };
       });
       if (!playlists.length) return "";
 
-      const mostActionable = [...playlists].sort((a, b) => b.candidate_count - a.candidate_count || b.avg_suggestion_score - a.avg_suggestion_score).slice(0, 8);
       const mostConcentrated = [...playlists].sort((a, b) => b.top_artist_share - a.top_artist_share || b.total_tracks - a.total_tracks).slice(0, 8);
 
       return `
         <section class="spotify-panel spotify-panel-health" data-health-panel>
           <h3 class="spotify-panel-title">Playlist health check</h3>
           <div class="spotify-panel-subtitle">A maintenance view: which playlists can be expanded, which are artist-heavy, and which are already broad.</div>
-          <div class="spotify-grid-two">
-            <section class="spotify-mini-panel">
-              <h4>Best candidates to update next</h4>
-              <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>Playlist</th><th>Suggested songs</th><th>Diversity</th></tr></thead><tbody>
-                ${tableRows(mostActionable, "No playlist suggestions found.", (row) => `<tr><td>${row.spotify_url ? `<a class="spotify-link" href="${esc(row.spotify_url)}" target="_blank" rel="noopener">${esc(row.name)}</a>` : esc(row.name)}</td><td>${fmt.format(row.candidate_count)}</td><td>${Number(row.normalized_artist_entropy || 0).toFixed(2)}</td></tr>`)}
-              </tbody></table></div>
-            </section>
-            <section class="spotify-mini-panel">
-              <h4>Most artist-concentrated playlists</h4>
-              <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>Playlist</th><th>Top artist</th><th>Share</th></tr></thead><tbody>
-                ${tableRows(mostConcentrated, "No concentration data found.", (row) => `<tr><td>${esc(row.name)}</td><td>${esc(row.top_artist_name || "—")}</td><td>${pct(row.top_artist_share)}</td></tr>`)}
-              </tbody></table></div>
-            </section>
-          </div>
+          <section class="spotify-mini-panel spotify-mini-panel-wide">
+            <h4>Most artist-concentrated playlists</h4>
+            <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>Playlist</th><th>Top artist</th><th>Share</th><th>Second artist</th><th>Share</th></tr></thead><tbody>
+              ${tableRows(mostConcentrated, "No concentration data found.", (row) => {
+                const topArtists = row.top_artists || [];
+                const topArtist = topArtists[0];
+                const secondArtist = topArtists.find((artist) => artistKey(artist) !== artistKey(topArtist));
+                return `<tr><td>${playlistLink(row)}</td><td>${artistLink(topArtist)}</td><td>${pct(artistShare(row, topArtist, row.top_artist_share))}</td><td>${artistLink(secondArtist)}</td><td>${pct(artistShare(row, secondArtist))}</td></tr>`;
+              }, 5)}
+            </tbody></table></div>
+          </section>
           <div class="spotify-controls spotify-controls-right">
             <input class="spotify-search" data-health-search placeholder="Search playlists...">
             <select class="spotify-select" data-health-sort>
@@ -256,10 +275,11 @@
       const playlists = (data.playlists || []).filter((playlist) => Number(playlist.total_tracks || 0) > 0).map((playlist) => {
         const diversity = diversityByPlaylist.get(playlist.playlist_id) || {};
         const suggestion = suggestionByPlaylist.get(playlist.playlist_id) || {};
+        const topArtist = (playlist.top_artists || [])[0] || {};
         return {
           ...playlist,
           normalized_artist_entropy: Number(diversity.normalized_artist_entropy || 0),
-          top_artist_share: Number(diversity.top_artist_share || 0),
+          top_artist_share: artistShare(playlist, topArtist, Number(diversity.top_artist_share || 0)),
           candidate_count: Number(suggestion.candidate_count || 0)
         };
       });
@@ -273,7 +293,7 @@
           .slice(0, 20);
 
         body.innerHTML = tableRows(rows, "No matching playlists.", (row) => `<tr>
-          <td>${row.spotify_url ? `<a class="spotify-link" href="${esc(row.spotify_url)}" target="_blank" rel="noopener">${esc(row.name)}</a>` : esc(row.name)}</td>
+          <td>${playlistLink(row)}</td>
           <td>${fmt.format(row.total_tracks || 0)}</td>
           <td>${fmt.format(row.unique_artists || 0)}</td>
           <td>${Number(row.normalized_artist_entropy || 0).toFixed(2)}</td>

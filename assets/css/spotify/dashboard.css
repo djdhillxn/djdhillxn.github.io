@@ -377,6 +377,10 @@
   margin-top: 1rem;
 }
 
+.spotify-mini-panel-wide {
+  margin: 1rem 0;
+}
+
 .spotify-pill-row {
   display: flex;
   gap: 0.45rem;
