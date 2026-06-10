@@ -107,13 +107,44 @@ StanLyric is a lyric-first music search project. The first version focuses on on
 
 ## Technical implementation
 
-StanLyric is an information-retrieval system over a lyrics corpus. Each song is treated as one document, and the user-provided lyric fragment is treated as a query. The current version uses BM25-Okapi because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
+StanLyric is an information-retrieval system over a lyrics corpus. Each song is treated as one document, and the user-provided lyric fragment is treated as a query. The current version uses BM25-Okapi, short for **Best Matching 25**, because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
+
+For a query $$Q$$ and song document $$D$$, the implementation adds one contribution for each query term $$q$$:
+
+$$
+\operatorname{BM25}(D,Q)
+=
+\sum_{q \in Q}
+\operatorname{IDF}(q)
+\cdot
+\frac{f(q,D)(k_1+1)}
+{f(q,D)+k_1\left(1-b+b\frac{|D|}{\operatorname{avgdl}}\right)}
+$$
+
+Here, $$f(q,D)$$ is the term frequency: how often the query word appears in that song's lyrics. The inverse document frequency is based on how many of the $$N$$ songs contain the term:
+
+$$
+\operatorname{IDF}(q)
+=
+\log\left(
+\frac{N-n(q)+0.5}
+{n(q)+0.5}
+\right)
+$$
+
+The value $$n(q)$$ is the number of songs containing $$q$$. This gives more weight to unusual words that occur in relatively few songs; a word such as *rabbit* is therefore more discriminative than a common word such as *the*. During offline export, exceptionally common terms whose raw IDF would be negative are assigned a small positive floor based on $$\epsilon=0.25$$ and the corpus-average IDF. Repeating a term helps, but the term-frequency fraction in the BM25 formula saturates its contribution, so ten occurrences are not treated as ten times stronger than one.
+
+The denominator also normalizes for document length. Without it, long lyrics would tend to score highly simply because they contain more words and have more opportunities to match. The ratio $$\lvert D\rvert/\operatorname{avgdl}$$ compares a song's token count with the corpus average. In the current 44,480-song artifact, the average document length is approximately **267 tokens**.
+
+StanLyric uses $$k_1=1.5$$ and $$b=0.75$$. The $$k_1$$ parameter controls how quickly repeated term frequency reaches diminishing returns. The $$b$$ parameter controls the strength of length normalization: $$b=0$$ would ignore document length, while $$b=1$$ would apply the full normalization. A value of 0.75 provides substantial normalization without letting length dominate the score.
 
 The offline pipeline builds a browser-ready artifact from the prepared StanLyric corpus. The artifact stores song metadata, document lengths, inverse document frequency values, and an inverted index of token frequencies. At runtime, the browser tokenizes the query and computes BM25 scores only for matching postings. This keeps the portfolio page static while still allowing interactive retrieval.
 
 The explanation panel is intentionally simple: it shows which query terms appeared in the retrieved song, which query terms were missing, the term frequency inside the top song, each matched term's IDF, and the approximate BM25 contribution. This makes the system more transparent than a black-box recommender.
 
-StanLyric is kept separate from the Spotify dashboard for now. The Spotify project analyzes personal listening and playlist curation, while StanLyric focuses on lyric-level retrieval. Later, the two can be connected by using Spotify playlists as taste profiles and StanLyric as the lyrics-aware discovery layer.
+<!-- 
+StanLyric is kept separate from the Spotify dashboard for now. The Spotify project analyzes personal listening and playlist curation, while StanLyric focuses on lyric-level retrieval. Later, the two can be connected by using Spotify playlists as taste profiles and StanLyric as the lyrics-aware discovery layer. 
+-->
 
 The lyrics corpus comes from the [Lyrics-MIDI-Dataset](https://huggingface.co/datasets/asigalov61/Lyrics-MIDI-Dataset)
 on Hugging Face. 

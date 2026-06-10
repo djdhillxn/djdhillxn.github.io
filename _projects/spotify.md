@@ -93,7 +93,7 @@ The playlist analysis section adds two compact statistical views. Playlist diver
 
 Finally, the Spotify affinity section is kept separate from the playlist-derived statistics. These rankings come from Spotify's calculated long-term top artists and tracks, so they act as a sanity check against the curation-based views. If the playlist rankings, liked-song rankings, and Spotify affinity rankings disagree, that disagreement is itself useful: it can show the difference between songs I repeatedly listen to, songs I save, and songs I actually organize into playlists.
 
-## rough notes
+<!-- ## rough notes -->
 
 <!-- The things that we will add, let's write them down here. i have too many ideas in my head.
 
@@ -101,8 +101,11 @@ Finally, the Spotify affinity section is kept separate from the playlist-derived
 
 - the book on recommendation systems by the prof who graduated from iit kanpur in 1996. i should read it. the content-based collaborative systems method and more. how to make use of it then? what are some useful practical things that i could do with the recommendation system methods? -->
 
+<!-- 
 - how about some unsupervised learning methods. to find insights from my system here. 
 
 - oh yeah, the visualizations. i have so much opportunities to add graphs. Principal component analysis (PCA) is something we ought to do! andy konwinski.. what he said in the seminar.. and you i have also had similar thoughts to leverage machine learning in real life to make informed decisions. doing PCA here will be a starting point for me to get going to do ever better with my life... which i have so much capability to do.
 
-- the very basic statistical tools deployed here such as jaccard similarity and things, we should write about it. this, and other things we are obviously focusing on to do things efficiently. the hype cycle is following its trajectory very nicely as predicted. now my inclination to jump onto fancy things on the get go is slowing down, for the better. it is such a nice thing. it has made me more efficient, more systematic. You know, when i start off with them small things, it gives me the momentum, the confidency, more coherant with the headful of ideas that i have for everything. i am more productive this way, and i am able to incorporate the 
+- the very basic statistical tools deployed here such as jaccard similarity and things, we should write about it. this, and other things we are obviously focusing on to do things efficiently. the hype cycle is following its trajectory very nicely as predicted. now my inclination to jump onto fancy things on the get go is slowing down, for the better. it is such a nice thing. it has made me more efficient, more systematic. You know, when i start off with them small things, it gives me the momentum, the confidency, more coherant with the headful of ideas that i have for everything. i am more productive this way, and i am able to incorporate the  
+
+-->

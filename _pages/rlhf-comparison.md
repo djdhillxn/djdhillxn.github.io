@@ -7,7 +7,7 @@ permalink: /projects/rlhf-comparison/
 
 <link rel="stylesheet" href="{{ '/assets/css/rlhf/response-explorer.css' | relative_url }}">
 
-[&larr; Back to the RLHF project write-up]({{ '/projects/rlhf/' | relative_url }})
+[Back to the RLHF project write-up]({{ '/projects/rlhf/' | relative_url }})
 
 <div
   class="rlhf-explorer"
