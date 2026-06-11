@@ -6,17 +6,20 @@ nav: true
 nav_order: 2
 ---
 
+<link rel="stylesheet" href="{{ '/assets/css/blogs.css' | relative_url }}">
+
 #### Reinforcement Learning
 
 In Spring 2026 at UW-Madison, I took a course on the Mathematical Principles of RL. With a core focus on theoretical derivations, I completed an extensive study of the policy gradient
 algorithms literature reading the papers on CPI, NPG, TRPO, and PPO. I also did a project implementing TRPO, NPG, and PPO algorithms and evaluating locomotion and Atari game tasks.
 See details [here](/projects/trpo)
 
-With these foundations, it became easier to follow the reserach built on top of these methods and motivated me to further pursue this RL field.. 
+With these foundations, it became easier to follow the research built on top of these methods and motivated me to  pursue this RL field further. 
 
-Papers that I read InstructGPT (2022).
-Reinforcement learning with human feedback.
-Direct policy optimization.
+Papers that I found an interesting read: InstructGPT (2022).
+Reinforcement learning with human feedback premise is given in this paper.
+
+There have so many numerous methods ever since including Group Relative Policy Optimization, Direct policy optimization (DPO), DAPO, and many more to come. 
 
 
 more advnaced research in this domain. 
@@ -30,6 +33,10 @@ I was fortunate to start my career in the industry through working in a startup 
 
 #### Research at IIT Roorkee
 
+<figure class="iit-research-figure">
+  <img src="{{ '/assets/img/elephant_detection_results.png' | relative_url }}" alt="Elephant detection results from the IIT Roorkee thermal-imaging research project" loading="lazy">
+</figure>
+
 During my undergraduate studies, I led a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Working under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. The dataset covered varied and challenging environmental conditions, allowing us to test how different modeling choices generalized across settings. Fine-tuning pretrained YOLO models on this noisy dataset initially resulted in overfitting and poor recall in specific test locations. To address this, I systematically evaluated the impact of various preprocessing techniques on the input thermal frames. I found that inversion and bilateral filtering were the most effective techniques, improving contrast and reducing noise, respectively. Combining these techniques yielded even stronger results. Ultimately, I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
 
 Supervisor: Prof. Vinod Pankajakshan \\
@@ -37,6 +44,8 @@ Department of Electronics and Communication Engineering, IIT Roorkee
 
 Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**.
 The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch.
+
+<div class="iit-research-clear" aria-hidden="true"></div>
 
 #### Favorite book readings <!--Repetitive Book Reads-->
 *The Elements of Statistical Learning* Hastie, Tibshirani, Friedman \\
