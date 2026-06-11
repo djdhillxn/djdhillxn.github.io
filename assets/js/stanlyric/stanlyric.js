@@ -431,6 +431,8 @@
     let lastResults = [];
     let lastQueryTokens = [];
 
+    queryEl.value = '';
+
     fetchJsonWithFallback(urls.index, urls.sampleIndex)
       .then(({ payload, isFallback }) => {
         engine = new StanLyricBrowserSearch(payload);
@@ -438,7 +440,6 @@
         setStatus(app, `${note}: ${engine.size.toLocaleString()} songs`, 'is-ready');
         searchButton.disabled = false;
         exampleButton.disabled = false;
-        if (!queryEl.value.trim()) queryEl.value = DEFAULT_EXAMPLE;
       })
       .catch((error) => {
         setStatus(app, `Could not load index: ${error.message}`);
