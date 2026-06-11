@@ -11,11 +11,22 @@ github: "https://github.com/djdhillxn/trpo"
 
 **[Open the interactive Base vs PPO response explorer]({{ '/projects/rlhf-comparison/' | relative_url }})**
 
-This project extends my [policy-optimization work](/projects/trpo) from continuous-control agents to language-model post-training. I built an end-to-end reinforcement learning from human feedback pipeline for [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) using preference data from [NVIDIA HelpSteer3](https://huggingface.co/datasets/nvidia/HelpSteer3). The implementation covers supervised fine-tuning, pairwise reward modeling, KL-controlled token-level PPO, resumable policy evaluation, and qualitative auditing.
+This project extends [policy-optimization work](/projects/trpo) I did on Atari games and locomotion tasks to large language model post-training. I built a reinforcement learning from human feedback pipeline for [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) using preference data from [NVIDIA HelpSteer3](https://huggingface.co/datasets/nvidia/HelpSteer3). The implementation covers supervised fine-tuning, pairwise reward modeling, KL-controlled token-level PPO. 
+
 
 I implemented the central training and evaluation path directly instead of treating a packaged PPO trainer as a black box. This made it possible to inspect response-token objectives, value estimates, the frozen reference-policy constraint, checkpoint resolution, and the failure modes that appear when a policy optimizes an imperfect learned reward.
 
-The rest of this write-up follows the project from method to evidence. I first describe the SFT, reward-model, and PPO training pipeline; I then report the full policy-suite evaluation and use the qualitative audit to examine what the aggregate metrics miss. The final sections interpret the mixed result, outline the next experiments I would prioritize, and summarize what I learned.
+The rest of this write-up follows the project from method to evidence. I first describe the SFT, reward-model, and PPO training pipeline. Resumable policy evaluation and qualitative auditing was also implemented.
+I then report the full policy-suite evaluation and use the qualitative audit to examine what the aggregate metrics miss. The final sections interpret the mixed result, outline the next experiments I would prioritize, and summarize what I learned. 
+
+Conclusions and future work
+
+This was my first introduction to RLHF, and the result has been mixed only. It has given me a practical map of where alignment systems fail. My next iteration would begin with controlled evaluation and blinded human review, then retrain the reward model with hard negatives from the audit, including repetition loops, prompt restatements, fabricated citations, and incorrect technical answers. I also want to test explicit stopping and repetition objectives, length-aware PPO curricula, stronger reward models, and direct preference methods such as DPO against the same SFT checkpoint.
+
+I learned that making PPO training run stably is only one part of LLM alignment; the quality of the preference data, reward model, stopping behavior, and evaluation protocol can matter just as much as the optimizer. This project gave me a working system in which those interactions are visible and measurable, along with a concrete foundation for better-controlled alignment experiments. I am continuing to iterate on the pipeline rather than treating this first result as a finished benchmark.
+
+The implementation, configurations, experiment history, generated responses, and audit tooling are available in the [TRPO/RLHF repository](https://github.com/djdhillxn/trpo).
+
 
 ## Training pipeline
 
@@ -90,12 +101,3 @@ The audit found 36 PPO responses that combined a reward above `2.0` with substan
 
 The final PPO checkpoint is stable and changes behavior measurably, but it does not outperform the original instruction model overall. Base wins most comparisons, while PPO produces a meaningful minority of local improvements alongside more stopping and repetition failures. The result I would defend is therefore the complete, inspectable RLHF system and its diagnostics, not a claim that PPO universally improved Qwen2.5-0.5B-Instruct.
 
-## Future work
-
-This was my first end-to-end introduction to RLHF, and the mixed result gave me a practical map of where alignment systems fail. My next iteration would begin with controlled evaluation and blinded human review, then retrain the reward model with hard negatives from the audit, including repetition loops, prompt restatements, fabricated citations, and incorrect technical answers. I also want to test explicit stopping and repetition objectives, length-aware PPO curricula, stronger reward models, and direct preference methods such as DPO against the same SFT checkpoint.
-
-## Conclusion
-
-I learned that making PPO training run stably is only one part of LLM alignment; the quality of the preference data, reward model, stopping behavior, and evaluation protocol can matter just as much as the optimizer. This project gave me a working system in which those interactions are visible and measurable, along with a concrete foundation for better-controlled alignment experiments. I am continuing to iterate on the pipeline rather than treating this first result as a finished benchmark.
-
-The implementation, configurations, experiment history, generated responses, and audit tooling are available in the [TRPO/RLHF repository](https://github.com/djdhillxn/trpo).
