@@ -5,7 +5,7 @@ permalink: /projects/
 description: #actionable insights and pragmatic programming experiences derived from each
 nav: true
 nav_order: 1
-display_categories: [NLP, RL, ML] #, music, other]
+display_categories: [RL, NLP, ML] #, music, other]
 horizontal: true
 ---
 The **cat** symbol goes to projects **github**. 
