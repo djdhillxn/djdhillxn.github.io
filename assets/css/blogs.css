@@ -1,0 +1,27 @@
+.iit-research-figure {
+  float: right;
+  margin: 0 0 1rem 1.25rem;
+  width: min(32%, 320px);
+}
+
+.iit-research-figure img {
+  border: 1px solid rgba(127, 127, 127, 0.22);
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  display: block;
+  height: auto;
+  width: 100%;
+}
+
+.iit-research-clear {
+  clear: both;
+}
+
+@media (max-width: 576px) {
+  .iit-research-figure {
+    float: none;
+    margin: 0 auto 1rem;
+    max-width: 360px;
+    width: 100%;
+  }
+}
