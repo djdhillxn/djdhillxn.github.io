@@ -1,21 +1,30 @@
-.stanlyric-reference-figure {
-  align-self: stretch;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 0;
-  min-width: 0;
-  position: relative;
-  z-index: 1;
+.stanlyric-intro {
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
 }
 
-.stanlyric-reference-figure img {
+.stanlyric-intro > p {
+  margin-top: 0;
+}
+
+.stanlyric-reference-figure {
+  margin: 0 0 1.5rem;
+  width: 100%;
+}
+
+.stanlyric-reference-crop {
   border: 1px solid rgba(120, 120, 120, 0.22);
-  border-radius: 8px;
+  border-radius: 24px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  height: clamp(100px, 15vw, 150px);
+  overflow: hidden;
+}
+
+.stanlyric-reference-crop img {
   display: block;
-  max-height: 520px;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
   width: 100%;
 }
 
@@ -59,10 +68,6 @@ body[data-theme='dark'] .stanlyric-app {
 }
 
 .stanlyric-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.65fr);
-  gap: 1.25rem;
-  align-items: stretch;
   padding: 1.4rem;
   margin-bottom: 1.25rem;
   overflow: hidden;
@@ -96,7 +101,7 @@ body[data-theme='dark'] .stanlyric-app {
 
 .stanlyric-hero h2 {
   font-size: clamp(2rem, 5vw, 3.4rem);
-  max-width: 760px;
+  max-width: none;
 }
 
 .stanlyric-lede {
@@ -104,7 +109,7 @@ body[data-theme='dark'] .stanlyric-app {
   font-size: 1.02rem;
   line-height: 1.7;
   margin: 0.85rem 0 0;
-  max-width: 760px;
+  max-width: none;
 }
 
 .stanlyric-chip {
@@ -419,7 +424,6 @@ body[data-theme='dark'] .stanlyric-app {
 }
 
 @media (max-width: 900px) {
-  .stanlyric-hero,
   .stanlyric-grid {
     grid-template-columns: 1fr;
   }
@@ -445,13 +449,8 @@ body[data-theme='dark'] .stanlyric-app {
 }
 
 @media (max-width: 540px) {
-  .stanlyric-reference-figure {
-    width: 100%;
-    margin: 0;
-  }
-
-  .stanlyric-reference-figure figcaption {
-    text-align: left;
+  .stanlyric-reference-crop {
+    height: 100px;
   }
 
   .stanlyric-stat-grid {
