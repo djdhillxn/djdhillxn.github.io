@@ -10,7 +10,20 @@ img_size: small
 
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/stanlyric.css' | relative_url }}">
 
-StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: **type a lyric fragment and identify the songs most likely to contain it.** It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API. Find the code for training the retrieval model [here](https://github.com/djdhillxn/stanlyric).
+<figure class="stanlyric-reference-figure">
+  <div class="stanlyric-reference-crop">
+    <img src="{{ '/assets/img/eminems-lyric-sheet-when-he-was-on-the-set-of-8-mile-v0.webp' | relative_url }}" alt="Eminem lyric sheet from the set of 8 Mile" loading="lazy">
+  </div>
+  <figcaption>
+    Reference: <a href="https://www.reddit.com/r/HipHopImages/comments/248t86/eminems_lyric_sheet_when_he_was_on_the_set_of_8/">r/HipHopImages</a>
+  </figcaption>
+</figure>
+
+<div class="stanlyric-intro">
+  <p>
+    StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: <strong>type a lyric fragment and identify the songs most likely to contain it.</strong> It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API. Find the code for training the retrieval model <a href="https://github.com/djdhillxn/stanlyric">here</a>.
+  </p>
+</div>
 
 <div
   class="stanlyric-app"
@@ -19,19 +32,11 @@ StanLyric is a lyric-first music search project. The first version focuses on on
   data-sample-index-url="{{ '/assets/json/stanlyric/stanlyric_web_index.sample.json' | relative_url }}"
 >
   <section class="stanlyric-hero">
-    <div>
-      <p class="stanlyric-kicker">lyric fragment search</p>
-      <h2>Find the song stuck in your head.</h2>
-      <p class="stanlyric-lede">
-        Enter a few remembered lines. StanLyric tokenizes the fragment, scores the lyric corpus using BM25-Okapi, and explains why the top candidate was retrieved.
-      </p>
-    </div>
-    <figure class="stanlyric-reference-figure">
-      <img src="{{ '/assets/img/eminems-lyric-sheet-when-he-was-on-the-set-of-8-mile-v0.webp' | relative_url }}" alt="Eminem lyric sheet from the set of 8 Mile" loading="lazy">
-      <figcaption>
-        Reference: <a href="https://www.reddit.com/r/HipHopImages/comments/248t86/eminems_lyric_sheet_when_he_was_on_the_set_of_8/">r/HipHopImages</a>
-      </figcaption>
-    </figure>
+    <p class="stanlyric-kicker">lyric fragment search</p>
+    <h2>Find the song stuck in your head.</h2>
+    <p class="stanlyric-lede">
+      Enter a few remembered lines. StanLyric tokenizes the fragment, scores the lyric corpus using BM25-Okapi, and explains why the top candidate was retrieved.
+    </p>
   </section>
 
   <section class="stanlyric-panel stanlyric-search-panel">
