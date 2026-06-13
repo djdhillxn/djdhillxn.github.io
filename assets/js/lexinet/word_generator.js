@@ -4,9 +4,11 @@
 (function () {
   "use strict";
 
-  const DEFAULT_MODEL_URL = "/assets/json/lexinet/lexinet_web_model_3_5.json";
+  const DEFAULT_MODEL_URL = "/assets/json/lexinet/lexinet_web_model_3_6.json";
   const DEFAULT_ALPHABET = "abcdefghijklmnopqrstuvwxyz";
-  const MAX_LIVES = 6;
+  const DEFAULT_MAX_LIVES = 6;
+  const MAX_CONFIGURABLE_LIVES = 26;
+  const modelPromises = new Map();
 
   function xmur3(str) {
     let h = 1779033703 ^ str.length;
@@ -252,6 +254,14 @@
     return word;
   }
 
+  function validateMaxLives(value) {
+    const maxLives = Number(value);
+    if (!Number.isInteger(maxLives) || maxLives < 1 || maxLives > MAX_CONFIGURABLE_LIVES) {
+      throw new Error(`Please choose between 1 and ${MAX_CONFIGURABLE_LIVES} lives.`);
+    }
+    return maxLives;
+  }
+
   function fallbackGuessScores(model, alreadyGuessedLetters) {
     const orders = availableOrders(model);
     const lowestOrder = model.orders[String(Math.min(...orders))];
@@ -323,9 +333,10 @@
     return { nextKnownWord: next, hit };
   }
 
-  function playGuessingGame(model, actualWord, maxLives = MAX_LIVES) {
+  function playGuessingGame(model, actualWord, maxLives = DEFAULT_MAX_LIVES) {
     const target = validateSecretWord(actualWord);
-    let lives = maxLives;
+    const configuredLives = validateMaxLives(maxLives);
+    let lives = configuredLives;
     const knownWord = Array(target.length).fill("_");
     const alreadyGuessed = new Set();
     const trace = [];
@@ -355,8 +366,9 @@
       actualWord: target,
       finalPattern: knownWord.join(""),
       won: knownWord.join("") === target,
+      maxLives: configuredLives,
       livesRemaining: lives,
-      wrongGuesses: maxLives - lives,
+      wrongGuesses: configuredLives - lives,
       guessesUsed: trace.length,
       trace,
     };
@@ -445,6 +457,7 @@
       <div class="lexi-word lexi-guess-word">${renderSlots(result.finalPattern)}</div>
       <div class="lexi-generated-text">target: ${escapeHtml(result.actualWord)}</div>
       <div class="lexi-grid">
+        <div class="lexi-stat"><div class="lexi-label">Starting lives</div><div class="lexi-value">${result.maxLives}</div></div>
         <div class="lexi-stat"><div class="lexi-label">Lives left</div><div class="lexi-value">${result.livesRemaining}</div></div>
         <div class="lexi-stat"><div class="lexi-label">Wrong guesses</div><div class="lexi-value">${result.wrongGuesses}</div></div>
         <div class="lexi-stat"><div class="lexi-label">Total guesses</div><div class="lexi-value">${result.guessesUsed}</div></div>
@@ -454,11 +467,16 @@
   }
 
   async function loadModel(modelUrl) {
-    const response = await fetch(modelUrl, { cache: "force-cache" });
-    if (!response.ok) {
-      throw new Error(`Could not load model JSON from ${modelUrl}: HTTP ${response.status}`);
+    if (!modelPromises.has(modelUrl)) {
+      const request = fetch(modelUrl, { cache: "force-cache" }).then((response) => {
+        if (!response.ok) {
+          throw new Error(`Could not load model JSON from ${modelUrl}: HTTP ${response.status}`);
+        }
+        return response.json();
+      });
+      modelPromises.set(modelUrl, request);
     }
-    return response.json();
+    return modelPromises.get(modelUrl);
   }
 
   async function initLexiNetDemo(root) {
@@ -471,46 +489,51 @@
     const buttons = root.querySelectorAll("button[type='submit']");
 
     try {
-      status.textContent = "Loading compact n-gram tables...";
+      if (status) status.textContent = "Loading compact n-gram tables...";
       const model = await loadModel(modelUrl);
       root.lexinetModel = model;
-      status.textContent = "Model loaded. Ready to play.";
+      if (status) status.textContent = "Model loaded. Ready to play.";
       buttons.forEach((button) => { button.disabled = false; });
     } catch (error) {
-      status.textContent = error.message;
-      status.classList.add("lexi-error");
+      if (status) {
+        status.textContent = error.message;
+        status.classList.add("lexi-error");
+      }
       return;
     }
 
-    generateForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const data = new FormData(generateForm);
-      const options = {
-        wordLength: Number(data.get("wordLength")),
-        count: Number(data.get("count")),
-        temperature: Number(data.get("temperature")),
-        seed: String(data.get("seed") || ""),
-      };
-      try {
-        const words = generateModelWords(root.lexinetModel, options);
-        generateOutput.innerHTML = renderGeneratedWords(words);
-      } catch (error) {
-        generateOutput.innerHTML = `<div class="lexi-error">${escapeHtml(error.message)}</div>`;
-      }
-    });
+    if (generateForm && generateOutput) {
+      generateForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const data = new FormData(generateForm);
+        const options = {
+          wordLength: Number(data.get("wordLength")),
+          count: Number(data.get("count")),
+          temperature: Number(data.get("temperature")),
+          seed: String(data.get("seed") || ""),
+        };
+        try {
+          const words = generateModelWords(root.lexinetModel, options);
+          generateOutput.innerHTML = renderGeneratedWords(words);
+        } catch (error) {
+          generateOutput.innerHTML = `<div class="lexi-error">${escapeHtml(error.message)}</div>`;
+        }
+      });
+      generateForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+    }
 
-    guessForm.addEventListener("submit", (event) => {
-      event.preventDefault();
-      const data = new FormData(guessForm);
-      try {
-        const result = playGuessingGame(root.lexinetModel, data.get("secretWord"), MAX_LIVES);
-        guessOutput.innerHTML = renderGuessResult(result);
-      } catch (error) {
-        guessOutput.innerHTML = `<div class="lexi-error">${escapeHtml(error.message)}</div>`;
-      }
-    });
-
-    generateForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+    if (guessForm && guessOutput) {
+      guessForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const data = new FormData(guessForm);
+        try {
+          const result = playGuessingGame(root.lexinetModel, data.get("secretWord"), data.get("maxLives"));
+          guessOutput.innerHTML = renderGuessResult(result);
+        } catch (error) {
+          guessOutput.innerHTML = `<div class="lexi-error">${escapeHtml(error.message)}</div>`;
+        }
+      });
+    }
   }
 
   function initAll() {

@@ -225,7 +225,7 @@
 }
 
 .lexi-controls-guess {
-  grid-template-columns: minmax(220px, 1fr);
+  grid-template-columns: minmax(220px, 2fr) minmax(110px, 1fr);
 }
 
 .lexi-control-wide {
@@ -242,4 +242,10 @@
 
 .lexi-loss {
   color: #a23b3b;
+}
+
+@media (max-width: 560px) {
+  .lexi-controls-guess {
+    grid-template-columns: 1fr;
+  }
 }
