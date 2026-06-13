@@ -17,14 +17,13 @@ to align the [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-In
 I learned that making PPO training run stably is only one part of LLM alignment; the quality of the preference data, reward model, stopping behavior, and evaluation protocol can matter just as much as the optimizer. This project gave me a working system in which those interactions are visible and measurable, along with a concrete foundation for better-controlled alignment experiments. I am continuing to iterate on the pipeline to achieve better results and learn best practices empirically.
 
 After training I used the fine-tuned aligned model to output responses to prompts with context from the validation set and evaluate the performances based on the trained reward model. 
-**[Open the interactive Base vs PPO response explorer]({{ '/projects/rlhf-comparison/' | relative_url }})**
+**[Find here the interactive Base vs PPO response explorer]({{ '/projects/rlhf-comparison/' | relative_url }})**.
+The RLHF pipeline is implemented at my [TRPO/RHLF repository](https://github.com/djdhillxn/trpo) along with more documentation about experiments, evaluation, and analyzing the responses.
+I got motivated to work on this project after learning in detail about policy optimization methods and using them to run [training experiments](/projects/trpo) on Atari games and MuJoCo locomotion tasks.
 
 <!-- The implementation covers supervised fine-tuning, pairwise reward modeling, KL-controlled token-level PPO.  -->
 
 I am learning best practices for reward model training and keeping in mind the scaling laws for reward model overoptimization. The length of response outputs is also imperative to be controlled. I think the SFT is good as it is, the reward model and the PPO step need extra attention and iteration. Before going to more recent or advanced methods such as GRPO, I want to prove that I can get sensible results from PPO alone. Another major factor to decide about is the token limits for the context, the prompt, and the response. 
-
-The RLHF pipeline is implemented at my [TRPO/RHLF repository](https://github.com/djdhillxn/trpo) along with more documentation about experiments, evaluation, and analyzing the responses.
-I got motivated to work on this project after learning in detail about policy optimization methods and using them to run [training experiments](/projects/trpo) on Atari games and MuJoCo locomotion tasks.
 
 <!-- , configurations, experiment history, generated responses, and audit tooling are available in the [TRPO/RLHF repository] -->
 
