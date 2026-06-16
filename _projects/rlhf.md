@@ -10,7 +10,8 @@ github: "https://github.com/djdhillxn/trpo"
 <link rel="stylesheet" href="{{ '/assets/css/rlhf/project.css' | relative_url }}">
 
 The goal is to use the preference data from [NVIDIA HelpSteer3](https://huggingface.co/datasets/nvidia/HelpSteer3)
-to align the [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) LLM towards giving responses that a human would prefer to read compared to justifiablly not prefer to read boring mechanistic bag of words. The 3-step process is covered by first doing supervised fine-tuning (SFT) using the preferred responses in the training dataset (HelpSteer). Then training a reward model which again uses the HelpSteer dataset containing a pair of responses for a prompt, one  response more preferred than the other gives more reward among 2 potential responses to preferred response and less reward to non-preferred response, and then using that reward model to train the LLM policy to align more towards the human preferred responses using reinforcment learning methods such as PPO, which directly optimize the policy without needing value functions. The PPO step is discussed in detail below.
+to align the [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) LLM towards giving responses that a human would prefer to read compared to justifiablly not prefer to read boring mechanistic bag of words. The 3-step process is covered by first doing supervised fine-tuning (SFT) using the preferred responses in the training dataset (HelpSteer). Then training a reward model which again uses the HelpSteer dataset containing a pair of responses for a prompt, one  response more preferred than the other gives more reward among 2 potential responses to preferred response and less reward to non-preferred response, and then using that reward model to train the LLM policy to align more towards the human preferred responses using reinforcment learning methods such as PPO, which directly optimize the policy without needing value functions. 
+<!-- The PPO step is discussed in detail below. -->
 
 I learned that making PPO training run stably is only one part of LLM alignment; the quality of the preference data, reward model, stopping behavior, and evaluation protocol can matter just as much as the optimizer. This project gave me a working system in which those interactions are visible and measurable, along with a concrete foundation for better-controlled alignment experiments. I am continuing to iterate on the pipeline to achieve better results and learn best practices empirically.
 
@@ -20,7 +21,20 @@ The RLHF pipeline is implemented at my [RHLF repository](https://github.com/djdh
 
 <!-- The implementation covers supervised fine-tuning, pairwise reward modeling, KL-controlled token-level PPO.  -->
 
+## Training pipeline
+
+HelpSteer3 provides 38,459 training and 2,017 validation preference records spanning general, STEM, code, and multilingual prompts.
+
+1. **Supervised fine-tuning.** The preferred responses train a LoRA adapter over the attention and MLP projection layers. Expanding the total sequence budget from 1,024 to 4,096 tokens reduced training-response truncation from roughly 38% to less than 1%.
+2. **Reward modeling.** A scalar reward head is trained with a pairwise ranking loss so that chosen responses score above rejected responses. The final two-epoch, 4,096-token reward model reached **71.62% validation pairwise accuracy** across 1,917 usable pairs.
+3. **PPO alignment.** The SFT checkpoint initializes both the trainable policy and frozen reference. PPO optimizes generated response tokens using clipped policy and value objectives, generalized advantage estimates, and a KL penalty that limits drift from the reference.
+
+The final PPO run used prompts up to 3,072 tokens, responses up to 512 tokens, LoRA rank 16, a `3e-7` learning rate, one PPO epoch per rollout batch, and conservative KL control. It completed 397 of 400 requested updates without empty-response collapse.
+
 I have closely followed the N+ implementation paper which tells best practices in how to implement a RLHF pipeline.
+
+
+## Discussion
 
 I am learning best practices for reward model training and keeping in mind the scaling laws for reward model overoptimization. The length of response outputs is also imperative to be controlled. I think the SFT is good as it is, the reward model and the PPO step need extra attention and iteration. Before going to more recent or advanced methods such as GRPO, I want to prove that I can get sensible results from PPO alone. Another major factor to decide about is the token limits for the context, the prompt, and the response. 
 
@@ -35,15 +49,6 @@ The qualitative auditing is also implemented by making use of heuristics such as
 
 A portion of the qualitative audit can be seen using the response explorer whose link can be seen above. The result are not great, there is still a long way to go. The reward model is not perfect and the PPO method also may be too conservative for now. One ambitious goal I have anchoring continuous new experiments is checking the capabilities if a modest LLM can give good human preferrable responses with modest training from a high quality preference dataset. Let me outline shortly the next experiments I would prioritize, and summarize what I learned. 
 
-## Training pipeline
-
-HelpSteer3 provides 38,459 training and 2,017 validation preference records spanning general, STEM, code, and multilingual prompts.
-
-1. **Supervised fine-tuning.** The preferred responses train a LoRA adapter over the attention and MLP projection layers. Expanding the total sequence budget from 1,024 to 4,096 tokens reduced training-response truncation from roughly 38% to less than 1%.
-2. **Reward modeling.** A scalar reward head is trained with a pairwise ranking loss so that chosen responses score above rejected responses. The final two-epoch, 4,096-token reward model reached **71.62% validation pairwise accuracy** across 1,917 usable pairs.
-3. **PPO alignment.** The SFT checkpoint initializes both the trainable policy and frozen reference. PPO optimizes generated response tokens using clipped policy and value objectives, generalized advantage estimates, and a KL penalty that limits drift from the reference.
-
-The final PPO run used prompts up to 3,072 tokens, responses up to 512 tokens, LoRA rank 16, a `3e-7` learning rate, one PPO epoch per rollout batch, and conservative KL control. It completed 397 of 400 requested updates without empty-response collapse.
 
 ## Evaluation 
 
