@@ -14,8 +14,10 @@ I implemented TRPO, PPO, and NPG in PyTorch to reproduce and benchmark a subset 
 Find project report [here](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf). The code implementation is at the [GitHub repo](https://github.com/djdhillxn/trpo). In the repository, we have also implemented parallel rollouts for faster simulation trajectory collection. This work was my main projectwork for the course, Mathematical Principles of RL, I took at UW-Madison in Spring 2026. I have written more about this RL course and my broader experiences with RL in my [blogs](/blogs).
 
 
-
+<div class="trpo-demo-video">
+{% include video.html path="https://www.youtube.com/embed/5aAyjBLfW0o" class="trpo-demo-iframe" width="800" height="480" title="PPO trained Q*bert agent with 2000 epochs and 256 size 2-hidden layer CNN policy simulation" caption="A simulation rollout of the Q*bert agent trained with PPO for 2000 epochs with 2x256 hidden dim policy." %}
+</div>
 
 <div class="trpo-demo-video">
-{% include video.html path="https://www.youtube.com/embed/_vJEdQ3Plu0" class="trpo-demo-iframe" width="800" height="480" title="TRPO trained Q*bert agent simulation" caption="A simulation rollout of the Q*bert agent trained with TRPO." %}
+{% include video.html path="https://www.youtube.com/embed/_vJEdQ3Plu0" class="trpo-demo-iframe" width="800" height="480" title="TRPO trained Q*bert agent with 300 epochs and 20 size 2-hidden layer CNN simulation" caption="A simulation rollout of the Q*bert agent trained with TRPO." %}
 </div>
