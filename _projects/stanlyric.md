@@ -21,7 +21,8 @@ img_size: small
 
 <div class="stanlyric-intro">
   <p>
-    StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: <strong>type a lyric fragment and identify the songs most likely to contain it.</strong> It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API. Find the code for training the retrieval model <a href="https://github.com/djdhillxn/stanlyric">here</a>.
+    Do you sometimes remember lyrics but don't know which song it came from?
+    Find the code for training the retrieval model <a href="https://github.com/djdhillxn/stanlyric">here</a>.
   </p>
 </div>
 
@@ -111,6 +112,8 @@ img_size: small
 <script src="{{ '/assets/js/stanlyric/stanlyric.js' | relative_url }}" defer></script>
 
 ## Technical implementation
+
+StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: <strong>type a lyric fragment and identify the songs most likely to contain it.</strong> It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API. 
 
 StanLyric is an information-retrieval system over a lyrics corpus. Each song is treated as one document, and the user-provided lyric fragment is treated as a query. The current version uses BM25-Okapi, short for **Best Matching 25**, because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
 
