@@ -18,14 +18,15 @@ img_size: small
     Reference: <a href="https://www.reddit.com/r/HipHopImages/comments/248t86/eminems_lyric_sheet_when_he_was_on_the_set_of_8/">r/HipHopImages</a>
   </figcaption>
 </figure>
-
 <div class="stanlyric-intro">
   <p>
     Do you sometimes remember lyrics but don't know which song it came from?
-    Find the code for training the retrieval model <a href="https://github.com/djdhillxn/stanlyric">here</a>.
+      Or maybe you do know, but for the fun of it, would like to try this app here,
+      then we should get going!
+      Don't worry, a few lines is all we need, but more is also merrier, 
+      at least in our case here.     
   </p>
 </div>
-
 <div
   class="stanlyric-app"
   data-stanlyric-app
@@ -33,13 +34,12 @@ img_size: small
   data-sample-index-url="{{ '/assets/json/stanlyric/stanlyric_web_index.sample.json' | relative_url }}"
 >
   <section class="stanlyric-hero">
-    <p class="stanlyric-kicker">lyric fragment search</p>
-    <h2>Find the song stuck in your head.</h2>
-    <p class="stanlyric-lede">
-      Enter a few remembered lines. StanLyric tokenizes the fragment, scores the lyric corpus using BM25-Okapi, and explains why the top candidate was retrieved.
-    </p>
+    <p class="stanlyric-kicker">lyric-to-song</p>
+    <!-- <h2>Find the song stuck in your head.</h2> -->
+    <h2>Fing the forgotten song from its unforgotten lyrics</h2>
+    <!-- <p class="stanlyric-lede">
+    </p> -->
   </section>
-
   <section class="stanlyric-panel stanlyric-search-panel">
     <div class="stanlyric-panel-header">
       <div>
@@ -84,6 +84,12 @@ img_size: small
       <p class="stanlyric-muted">The explanation panel will show the query terms that contributed most by IDF.</p>
     </div>
   </section>
+
+<div class="stanlyric-intro">
+  <p>
+    StanLyric tokenizes the fragment, scores the lyric corpus using BM25-Okapi, and explains why the top candidate was retrieved. Find the code for training the song name retrieval model <a href="https://github.com/djdhillxn/stanlyric">here</a>.   
+  </p>
+</div>
 
   <section class="stanlyric-panel">
     <div class="stanlyric-panel-header">
