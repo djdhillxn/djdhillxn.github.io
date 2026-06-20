@@ -116,6 +116,29 @@
   outline: none;
 }
 
+
+.rlhf-explorer-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
+}
+
+.rlhf-explorer-filter-row button {
+  background: var(--rlhf-soft);
+  border-radius: 999px;
+  color: var(--rlhf-text);
+  font-size: 0.78rem;
+  min-height: 34px;
+  padding: 0.42rem 0.72rem;
+}
+
+.rlhf-explorer-filter-row button.is-active {
+  background: var(--rlhf-accent);
+  border-color: var(--rlhf-accent);
+  color: #ffffff;
+}
+
 .rlhf-explorer-status {
   color: var(--rlhf-muted);
   font-size: 0.84rem;
@@ -177,6 +200,24 @@
 .rlhf-explorer-chip-accent {
   border-color: color-mix(in srgb, var(--rlhf-accent), transparent 55%);
   color: var(--rlhf-accent);
+}
+
+.rlhf-explorer-chip.is-positive {
+  border-color: rgba(38, 166, 91, 0.45);
+  color: #1e7f45;
+}
+
+.rlhf-explorer-chip.is-negative {
+  border-color: rgba(218, 88, 64, 0.45);
+  color: #b33f2f;
+}
+
+.rlhf-explorer.is-positive-example .rlhf-explorer-review {
+  border-left-color: #26a65b;
+}
+
+.rlhf-explorer.is-negative-example .rlhf-explorer-review {
+  border-left-color: #da5840;
 }
 
 .rlhf-explorer-prompt {
