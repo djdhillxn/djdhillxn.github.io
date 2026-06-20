@@ -16,11 +16,26 @@
   function displayWinner(value) {
     const names = {
       base: 'Base',
+      sft_trl: 'SFT',
       sft_4096: 'SFT',
+      ppo: 'PPO',
+      ppo_exact_ckpt100: 'PPO',
       ppo_4096_ep2_u400: 'PPO',
       tie: 'Tie',
     };
     return names[value] || String(value || 'Unknown');
+  }
+
+  function humanizeLabel(value) {
+    return String(value || 'unknown')
+      .replace(/^positive_/, '')
+      .replace(/^negative_/, '')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
+  function isPpoWinner(value) {
+    return /^ppo(?:_|$)/.test(String(value || ''));
   }
 
   function escapeHtml(value) {
@@ -230,9 +245,15 @@
     return blocks.join('');
   }
 
-  function makeChip(label, value, accent) {
+  function makeChip(label, value, accent, extraClass) {
     const chip = document.createElement('span');
-    chip.className = `rlhf-explorer-chip${accent ? ' rlhf-explorer-chip-accent' : ''}`;
+    chip.className = [
+      'rlhf-explorer-chip',
+      accent ? 'rlhf-explorer-chip-accent' : '',
+      extraClass || '',
+    ]
+      .filter(Boolean)
+      .join(' ');
 
     const strong = document.createElement('strong');
     strong.textContent = `${label}:`;
@@ -251,7 +272,9 @@
       makeChip('Reward', formatReward(policy.reward), isWinner),
       makeChip('Tokens', policy.response_tokens),
       makeChip('Cap hit', policy.cap_hit ? 'yes' : 'no'),
+      makeChip('EOS', policy.hit_eos ? 'yes' : 'no'),
       makeChip('Repeated 4-grams', formatPercent(policy.repeated_4gram_fraction)),
+      makeChip('Max 4-gram', policy.max_4gram_count ?? 'n/a'),
     ]);
     responseContainer.innerHTML = renderMarkdown(policy.response || '*(empty response)*');
     responseContainer.scrollTop = 0;
@@ -262,11 +285,15 @@
       this.root = root;
       this.sourceUrl = root.dataset.sourceUrl;
       this.examples = [];
+      this.filteredExamples = [];
+      this.metadata = {};
       this.currentPosition = 0;
+      this.activeDomains = new Set(['all']);
 
       this.select = root.querySelector('[data-rlhf-example-select]');
       this.previousButton = root.querySelector('[data-rlhf-previous]');
       this.nextButton = root.querySelector('[data-rlhf-next]');
+      this.domainButtons = Array.from(root.querySelectorAll('[data-rlhf-domain-filter]'));
       this.status = root.querySelector('[data-rlhf-status]');
       this.category = root.querySelector('[data-rlhf-category]');
       this.note = root.querySelector('[data-rlhf-note]');
@@ -289,36 +316,50 @@
           throw new Error(`HTTP ${response.status}`);
         }
         const payload = await response.json();
+        this.metadata = payload.metadata || {};
         this.examples = Array.isArray(payload.examples) ? payload.examples : [];
         if (!this.examples.length) {
           throw new Error('The comparison artifact contains no examples.');
         }
 
+        this.filteredExamples = this.getFilteredExamples();
         this.populateSelect();
         this.bindEvents();
-        this.caveat.textContent = payload.metadata?.caveat || this.caveat.textContent;
+        this.caveat.textContent = this.metadata.caveat || this.caveat.textContent;
 
         const queryValue = new URL(window.location.href).searchParams.get('example');
-        const requestedIndex = queryValue === null ? 418 : Number(queryValue);
-        const requestedPosition = this.examples.findIndex((example) => example.idx === requestedIndex);
-        const defaultPosition = this.examples.findIndex((example) => example.idx === 418);
+        const requestedIndex = queryValue === null ? null : Number(queryValue);
+        const requestedPosition =
+          requestedIndex === null
+            ? -1
+            : this.filteredExamples.findIndex((example) => example.idx === requestedIndex);
+        const defaultPosition = this.filteredExamples.findIndex(
+          (example) => example.judge_label === 'likely_genuine_ppo_win'
+        );
         this.currentPosition =
           requestedPosition >= 0 ? requestedPosition : Math.max(defaultPosition, 0);
         this.render();
 
         this.select.disabled = false;
-        this.status.textContent = `${this.examples.length} curated examples loaded from the 2,017-prompt evaluation.`;
+        this.updateStatus();
       } catch (error) {
         this.status.classList.add('is-error');
         this.status.textContent = `Could not load the comparison data: ${error.message}`;
       }
     }
 
+    getFilteredExamples() {
+      if (this.activeDomains.has('all') || !this.activeDomains.size) {
+        return this.examples.slice();
+      }
+      return this.examples.filter((example) => this.activeDomains.has(String(example.domain || '').toLowerCase()));
+    }
+
     populateSelect() {
-      const options = this.examples.map((example) => {
+      const options = this.filteredExamples.map((example) => {
         const option = document.createElement('option');
         option.value = String(example.idx);
-        option.textContent = `#${example.idx} | ${example.category} | ${example.domain}`;
+        option.textContent = `#${example.idx} | ${humanizeLabel(example.category)} | ${example.domain}/${example.language}`;
         return option;
       });
       replaceChildren(this.select, options);
@@ -326,7 +367,7 @@
 
     bindEvents() {
       this.select.addEventListener('change', () => {
-        const position = this.examples.findIndex((example) => String(example.idx) === this.select.value);
+        const position = this.filteredExamples.findIndex((example) => String(example.idx) === this.select.value);
         if (position >= 0) {
           this.currentPosition = position;
           this.render();
@@ -341,32 +382,94 @@
       });
 
       this.nextButton.addEventListener('click', () => {
-        if (this.currentPosition < this.examples.length - 1) {
+        if (this.currentPosition < this.filteredExamples.length - 1) {
           this.currentPosition += 1;
           this.render();
         }
       });
+
+      this.domainButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          this.toggleDomainFilter(button.dataset.rlhfDomainFilter);
+        });
+      });
+    }
+
+    toggleDomainFilter(domain) {
+      const normalized = String(domain || 'all').toLowerCase();
+      const currentExample = this.filteredExamples[this.currentPosition];
+      const currentIdx = currentExample ? currentExample.idx : null;
+
+      if (normalized === 'all') {
+        this.activeDomains = new Set(['all']);
+      } else {
+        if (this.activeDomains.has('all')) {
+          this.activeDomains.clear();
+        }
+        if (this.activeDomains.has(normalized)) {
+          this.activeDomains.delete(normalized);
+        } else {
+          this.activeDomains.add(normalized);
+        }
+        if (!this.activeDomains.size) {
+          this.activeDomains.add('all');
+        }
+      }
+
+      this.filteredExamples = this.getFilteredExamples();
+      this.populateSelect();
+      this.currentPosition = Math.max(
+        this.filteredExamples.findIndex((example) => example.idx === currentIdx),
+        0
+      );
+      this.render();
+    }
+
+    updateDomainButtons() {
+      this.domainButtons.forEach((button) => {
+        const domain = String(button.dataset.rlhfDomainFilter || 'all').toLowerCase();
+        const active = this.activeDomains.has(domain);
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+    }
+
+    updateStatus() {
+      const positiveCount = this.filteredExamples.filter((example) => example.polarity === 'positive').length;
+      const negativeCount = this.filteredExamples.filter((example) => example.polarity === 'negative').length;
+      const domainLabel = this.activeDomains.has('all')
+        ? 'all domains'
+        : Array.from(this.activeDomains).map(humanizeLabel).join(', ');
+      this.status.textContent = `Showing ${this.filteredExamples.length} of ${this.examples.length} curated examples from the ${this.metadata.num_evaluation_prompts || '2,017'}-prompt final evaluation (${positiveCount} positive, ${negativeCount} negative; ${domainLabel}).`;
     }
 
     render() {
-      const example = this.examples[this.currentPosition];
+      const example = this.filteredExamples[this.currentPosition];
+      if (!example) return;
       const winner = example.reward_winner;
 
       this.select.value = String(example.idx);
       this.previousButton.disabled = this.currentPosition === 0;
-      this.nextButton.disabled = this.currentPosition === this.examples.length - 1;
-      this.category.textContent = example.category;
-      this.note.textContent = example.note;
+      this.nextButton.disabled = this.currentPosition === this.filteredExamples.length - 1;
+      this.category.textContent = `${humanizeLabel(example.category)} · ${humanizeLabel(example.polarity)}`;
+      this.note.textContent = example.judge_rationale || example.note;
+      this.root.classList.toggle('is-positive-example', example.polarity === 'positive');
+      this.root.classList.toggle('is-negative-example', example.polarity === 'negative');
       this.title.textContent = `Evaluation example #${example.idx}`;
       this.prompt.textContent = example.prompt;
       this.prompt.scrollTop = 0;
 
       replaceChildren(this.meta, [
         makeChip('Index', example.idx, true),
+        makeChip('Polarity', humanizeLabel(example.polarity), false, `is-${example.polarity}`),
+        makeChip('Judge label', humanizeLabel(example.judge_label), true),
         makeChip('Domain', example.domain),
         makeChip('Language', example.language),
         makeChip('Reward winner', displayWinner(winner), true),
+        makeChip('Reward rank', example.reward_rank || 'n/a'),
         makeChip('PPO minus Base', formatReward(example.deltas?.ppo_minus_base)),
+        makeChip('PPO minus SFT', formatReward(example.deltas?.ppo_minus_sft)),
+        makeChip('Reward spread', formatReward(example.reward_spread)),
       ]);
 
       renderPolicy(
@@ -381,8 +484,11 @@
         this.ppoStats,
         this.ppoResponse,
         example.ppo,
-        winner === 'ppo_4096_ep2_u400'
+        isPpoWinner(winner)
       );
+
+      this.updateDomainButtons();
+      this.updateStatus();
 
       const url = new URL(window.location.href);
       url.searchParams.set('example', String(example.idx));
