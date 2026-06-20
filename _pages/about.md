@@ -38,8 +38,7 @@ Brief summaries of select projects are:
 
 <!-- RLHF Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF using PPO with reference SFT model and using trained reward model. See codes. -->
 
-- [RLHF using PPO](/projects/rlhf) Motivated with its practical applications, I deployed PPO for
-LLM alignment towards human preference using the Reinforcement Learning with Human Feedback (RLHF) mechanism. Using the HelpSteer3 dataset, I performed supervised fine-tuning (SFT) on Qwen2.5-0.5B Instruct LLM followed by training a reward model. Consequently, I utilized the reward model for optimizing the fine-tuned LLM with PPO at the token level with LoRA.
+- [RLHF using PPO](/projects/rlhf) Motivated by practical LLM alignment, I built an RLHF pipeline around Qwen2.5-0.5B-Instruct and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and token-level PPO with LoRA, KL control, reward-model scoring, and qualitative response auditing.
 
  <!-- explores whether preference feedback can make a small instruction-tuned language model more helpful. I built an end-to-end pipeline around Qwen2.5-0.5B and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and a custom token-level PPO loop with LoRA, GAE, and KL control.  -->
 
