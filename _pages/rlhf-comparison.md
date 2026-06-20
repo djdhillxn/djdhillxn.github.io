@@ -1,7 +1,7 @@
 ---
 layout: page
 title: RLHF Response Explorer
-description: Side-by-side Base and PPO generations from the final 2,017-prompt evaluation
+description: Side-by-side Base and PPO generations from the final TRL RLHF evaluation on a validation set of 2017 prompts.
 permalink: /projects/rlhf-comparison/
 ---
 
@@ -12,16 +12,22 @@ permalink: /projects/rlhf-comparison/
 <div
   class="rlhf-explorer"
   data-rlhf-explorer
-  data-source-url="{{ '/assets/json/rlhf/curated_policy_comparisons.json' | relative_url }}"
+  data-source-url="{{ '/assets/json/rlhf/portfolio_curated_policy_comparisons_ckpt100.json' | relative_url }}"
 >
   <section class="rlhf-explorer-hero">
     <p class="rlhf-explorer-kicker">Qualitative policy evaluation</p>
     <h2>Compare the instruction model with its PPO-aligned policy.</h2>
     <p>
-      Select one of 16 manually reviewed examples from the final 1,024-token
-      policy suite. Reward scores are shown as diagnostics, while the review
-      label records whether the example is an improvement, failure, or
-      reward-model mismatch.
+      Select one of 50 curated examples from the final TRL PPO evaluation.
+      
+      The set is intentionally balanced between promising PPO improvements and
+      failure cases, so the reward scores are diagnostics rather than final
+      human-quality labels.
+
+      Reward model scores
+      are shown as diagnostics, while the review label records whether the example is an improvement, or 
+      reward-model mismatch based on heuristics.
+
     </p>
   </section>
 
@@ -33,6 +39,13 @@ permalink: /projects/rlhf-comparison/
       </select>
       <button type="button" data-rlhf-previous disabled>Previous</button>
       <button type="button" data-rlhf-next disabled>Next</button>
+    </div>
+    <div class="rlhf-explorer-filter-row" aria-label="Domain filters">
+      <button type="button" class="is-active" data-rlhf-domain-filter="all" aria-pressed="true">All</button>
+      <button type="button" data-rlhf-domain-filter="general" aria-pressed="false">General</button>
+      <button type="button" data-rlhf-domain-filter="code" aria-pressed="false">Code</button>
+      <button type="button" data-rlhf-domain-filter="stem" aria-pressed="false">STEM</button>
+      <button type="button" data-rlhf-domain-filter="multilingual" aria-pressed="false">Multilingual</button>
     </div>
     <p class="rlhf-explorer-status" data-rlhf-status role="status">
       Loading the static evaluation artifact...
