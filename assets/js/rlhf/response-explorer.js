@@ -1,1 +1,507 @@
-!function(){"use strict";function t(t){const e=Number(t);return Number.isFinite(e)?`${e>=0?"+":""}${e.toFixed(4)}`:"n/a"}function e(t){const e=Number(t);return Number.isFinite(e)?`${(100*e).toFixed(1)}%`:"n/a"}function s(t){return{base:"Base",sft_trl:"SFT",sft_4096:"SFT",ppo:"PPO",ppo_exact_ckpt100:"PPO",ppo_4096_ep2_u400:"PPO",tie:"Tie"}[t]||String(t||"Unknown")}function i(t){return String(t||"unknown").replace(/^positive_/,"").replace(/^negative_/,"").replace(/_/g," ").replace(/\b\w/g,t=>t.toUpperCase())}function a(t){return/^ppo(?:_|$)/.test(String(t||""))}function n(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}function r(t){const e=String(t||"").trim();return/^(https?:|mailto:|#|\/|\.{1,2}\/|\?)/i.test(e)?e:"#"}function o(t){const e=[],s=t=>{const s=`\ue000${e.length}\ue001`;return e.push(t),s};let i=String(t||"");return i=i.replace(/`([^`\n]+)`/g,(t,e)=>s(`<code>${n(e)}</code>`)),i=i.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g,(t,e,i)=>{const a=r(i),l=/^https?:/i.test(a)?' rel="noopener noreferrer"':"";return s(`<a href="${n(a)}"${l}>${o(e)}</a>`)}),i=n(i).replace(/\*\*([^*\n]+)\*\*/g,"<strong>$1</strong>").replace(/__([^_\n]+)__/g,"<strong>$1</strong>").replace(/~~([^~\n]+)~~/g,"<del>$1</del>").replace(/(^|[^\w])\*([^*\n]+)\*(?!\w)/g,"$1<em>$2</em>").replace(/(^|[^\w])_([^_\n]+)_(?!\w)/g,"$1<em>$2</em>"),e.forEach((t,e)=>{i=i.split(`\ue000${e}\ue001`).join(t)}),i}function l(t){return t.trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(t=>t.trim())}function c(t){const e=l(t);return e.length>0&&e.every(t=>/^:?-{3,}:?$/.test(t))}function h(t,e){const s=t[e]||"",i=t[e+1]||"";return!s.trim()||/^ {0,3}```/.test(s)||/^ {0,3}#{1,6}\s+/.test(s)||/^ {0,3}(?:[-*_]\s*){3,}$/.test(s)||/^ {0,3}>\s?/.test(s)||/^ {0,3}[-*+]\s+/.test(s)||/^ {0,3}\d+\.\s+/.test(s)||s.includes("|")&&c(i)}function p(t){const e=String(t||"").replace(/\r\n?/g,"\n").split("\n"),s=[];let i=0;for(;i<e.length;){const t=e[i];if(!t.trim()){i+=1;continue}const a=t.match(/^ {0,3}```\s*([\w.+-]*)\s*$/);if(a){const t=[];for(i+=1;i<e.length&&!/^ {0,3}```\s*$/.test(e[i]);)t.push(e[i]),i+=1;i<e.length&&(i+=1);const r=a[1]?` class="language-${n(a[1])}"`:"";s.push(`<pre><code${r}>${n(t.join("\n"))}</code></pre>`);continue}const r=t.match(/^ {0,3}(#{1,6})\s+(.+)$/);if(r){const t=r[1].length;s.push(`<h${t}>${o(r[2])}</h${t}>`),i+=1;continue}if(/^ {0,3}(?:[-*_]\s*){3,}$/.test(t)){s.push("<hr>"),i+=1;continue}if(/^ {0,3}>\s?/.test(t)){const t=[];for(;i<e.length&&/^ {0,3}>\s?/.test(e[i]);)t.push(e[i].replace(/^ {0,3}>\s?/,"")),i+=1;s.push(`<blockquote>${p(t.join("\n"))}</blockquote>`);continue}if(t.match(/^ {0,3}[-*+]\s+(.+)$/)){const t=[];for(;i<e.length;){const s=e[i].match(/^ {0,3}[-*+]\s+(.+)$/);if(!s)break;t.push(`<li>${o(s[1])}</li>`),i+=1}s.push(`<ul>${t.join("")}</ul>`);continue}const d=t.match(/^ {0,3}(\d+)\.\s+(.+)$/);if(d){const t=[],a=Number(d[1]);for(;i<e.length;){const s=e[i].match(/^ {0,3}\d+\.\s+(.+)$/);if(!s)break;t.push(`<li>${o(s[1])}</li>`),i+=1}const n=1===a?"":` start="${a}"`;s.push(`<ol${n}>${t.join("")}</ol>`);continue}if(t.includes("|")&&c(e[i+1]||"")){const a=l(t),n=l(e[i+1]).map(t=>/^:-+:$/.test(t)?"center":/^-+:$/.test(t)?"right":"left");i+=2;const r=[];for(;i<e.length&&e[i].includes("|")&&e[i].trim();)r.push(l(e[i])),i+=1;const c=a.map((t,e)=>`<th style="text-align:${n[e]||"left"}">${o(t)}</th>`).join(""),h=r.map(t=>`<tr>${a.map((e,s)=>`<td style="text-align:${n[s]||"left"}">${o(t[s]||"")}</td>`).join("")}</tr>`).join("");s.push(`<div class="rlhf-explorer-table-wrap"><table><thead><tr>${c}</tr></thead><tbody>${h}</tbody></table></div>`);continue}const u=[t];for(i+=1;i<e.length&&!h(e,i);)u.push(e[i]),i+=1;s.push(`<p>${o(u.join("\n")).replace(/\n/g,"<br>")}</p>`)}return s.join("")}function d(t,e,s,i){const a=document.createElement("span");a.className=["rlhf-explorer-chip",s?"rlhf-explorer-chip-accent":"",i||""].filter(Boolean).join(" ");const n=document.createElement("strong");return n.textContent=`${t}:`,a.appendChild(n),a.appendChild(document.createTextNode(` ${e}`)),a}function u(t,e){t.replaceChildren(...e)}function m(s,i,a,n,r){s.classList.toggle("is-reward-winner",Boolean(r)),u(i,[d("Reward",t(n.reward),r),d("Tokens",n.response_tokens),d("Cap hit",n.cap_hit?"yes":"no"),d("EOS",n.hit_eos?"yes":"no"),d("Repeated 4-grams",e(n.repeated_4gram_fraction)),d("Max 4-gram",n.max_4gram_count??"n/a")]),a.innerHTML=p(n.response||"*(empty response)*"),a.scrollTop=0}class f{constructor(t){this.root=t,this.sourceUrl=t.dataset.sourceUrl,this.examples=[],this.filteredExamples=[],this.metadata={},this.currentPosition=0,this.activeDomains=new Set(["all"]),this.select=t.querySelector("[data-rlhf-example-select]"),this.previousButton=t.querySelector("[data-rlhf-previous]"),this.nextButton=t.querySelector("[data-rlhf-next]"),this.domainButtons=Array.from(t.querySelectorAll("[data-rlhf-domain-filter]")),this.status=t.querySelector("[data-rlhf-status]"),this.category=t.querySelector("[data-rlhf-category]"),this.note=t.querySelector("[data-rlhf-note]"),this.meta=t.querySelector("[data-rlhf-meta]"),this.title=t.querySelector("[data-rlhf-example-title]"),this.prompt=t.querySelector("[data-rlhf-prompt]"),this.baseCard=t.querySelector("[data-rlhf-base-card]"),this.baseStats=t.querySelector("[data-rlhf-base-stats]"),this.baseResponse=t.querySelector("[data-rlhf-base-response]"),this.ppoCard=t.querySelector("[data-rlhf-ppo-card]"),this.ppoStats=t.querySelector("[data-rlhf-ppo-stats]"),this.ppoResponse=t.querySelector("[data-rlhf-ppo-response]"),this.caveat=t.querySelector("[data-rlhf-caveat]")}async init(){try{const t=await fetch(this.sourceUrl,{cache:"no-store"});if(!t.ok)throw new Error(`HTTP ${t.status}`);const e=await t.json();if(this.metadata=e.metadata||{},this.examples=Array.isArray(e.examples)?e.examples:[],!this.examples.length)throw new Error("The comparison artifact contains no examples.");this.filteredExamples=this.getFilteredExamples(),this.populateSelect(),this.bindEvents(),this.caveat.textContent=this.metadata.caveat||this.caveat.textContent;const s=new URL(window.location.href).searchParams.get("example"),i=null===s?null:Number(s),a=null===i?-1:this.filteredExamples.findIndex(t=>t.idx===i),n=this.filteredExamples.findIndex(t=>"likely_genuine_ppo_win"===t.judge_label);this.currentPosition=a>=0?a:Math.max(n,0),this.render(),this.select.disabled=!1,this.updateStatus()}catch(t){this.status.classList.add("is-error"),this.status.textContent=`Could not load the comparison data: ${t.message}`}}getFilteredExamples(){return this.activeDomains.has("all")||!this.activeDomains.size?this.examples.slice():this.examples.filter(t=>this.activeDomains.has(String(t.domain||"").toLowerCase()))}populateSelect(){const t=this.filteredExamples.map(t=>{const e=document.createElement("option");return e.value=String(t.idx),e.textContent=`#${t.idx} | ${i(t.category)} | ${t.domain}/${t.language}`,e});u(this.select,t)}bindEvents(){this.select.addEventListener("change",()=>{const t=this.filteredExamples.findIndex(t=>String(t.idx)===this.select.value);t>=0&&(this.currentPosition=t,this.render())}),this.previousButton.addEventListener("click",()=>{this.currentPosition>0&&(this.currentPosition-=1,this.render())}),this.nextButton.addEventListener("click",()=>{this.currentPosition<this.filteredExamples.length-1&&(this.currentPosition+=1,this.render())}),this.domainButtons.forEach(t=>{t.addEventListener("click",()=>{this.toggleDomainFilter(t.dataset.rlhfDomainFilter)})})}toggleDomainFilter(t){const e=String(t||"all").toLowerCase(),s=this.filteredExamples[this.currentPosition],i=s?s.idx:null;"all"===e?this.activeDomains=new Set(["all"]):(this.activeDomains.has("all")&&this.activeDomains.clear(),this.activeDomains.has(e)?this.activeDomains.delete(e):this.activeDomains.add(e),this.activeDomains.size||this.activeDomains.add("all")),this.filteredExamples=this.getFilteredExamples(),this.populateSelect(),this.currentPosition=Math.max(this.filteredExamples.findIndex(t=>t.idx===i),0),this.render()}updateDomainButtons(){this.domainButtons.forEach(t=>{const e=String(t.dataset.rlhfDomainFilter||"all").toLowerCase(),s=this.activeDomains.has(e);t.classList.toggle("is-active",s),t.setAttribute("aria-pressed",String(s))})}updateStatus(){const t=this.filteredExamples.filter(t=>"positive"===t.polarity).length,e=this.filteredExamples.filter(t=>"negative"===t.polarity).length,s=this.activeDomains.has("all")?"all domains":Array.from(this.activeDomains).map(i).join(", ");this.status.textContent=`Showing ${this.filteredExamples.length} of ${this.examples.length} curated examples from the ${this.metadata.num_evaluation_prompts||"2,017"}-prompt final evaluation (${t} positive, ${e} negative; ${s}).`}render(){const e=this.filteredExamples[this.currentPosition];if(!e)return;const n=e.reward_winner;this.select.value=String(e.idx),this.previousButton.disabled=0===this.currentPosition,this.nextButton.disabled=this.currentPosition===this.filteredExamples.length-1,this.category.textContent=`${i(e.category)} \xb7 ${i(e.polarity)}`,this.note.textContent=e.judge_rationale||e.note,this.root.classList.toggle("is-positive-example","positive"===e.polarity),this.root.classList.toggle("is-negative-example","negative"===e.polarity),this.title.textContent=`Evaluation example #${e.idx}`,this.prompt.textContent=e.prompt,this.prompt.scrollTop=0,u(this.meta,[d("Index",e.idx,!0),d("Polarity",i(e.polarity),!1,`is-${e.polarity}`),d("Judge label",i(e.judge_label),!0),d("Domain",e.domain),d("Language",e.language),d("Reward winner",s(n),!0),d("Reward rank",e.reward_rank||"n/a"),d("PPO minus Base",t(e.deltas?.ppo_minus_base)),d("PPO minus SFT",t(e.deltas?.ppo_minus_sft)),d("Reward spread",t(e.reward_spread))]),m(this.baseCard,this.baseStats,this.baseResponse,e.base,"base"===n),m(this.ppoCard,this.ppoStats,this.ppoResponse,e.ppo,a(n)),this.updateDomainButtons(),this.updateStatus();const r=new URL(window.location.href);r.searchParams.set("example",String(e.idx)),window.history.replaceState({},"",r)}}document.addEventListener("DOMContentLoaded",()=>{document.querySelectorAll("[data-rlhf-explorer]").forEach(t=>{new f(t).init()})})}();
+(function () {
+  'use strict';
+
+  function formatReward(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return 'n/a';
+    return `${number >= 0 ? '+' : ''}${number.toFixed(4)}`;
+  }
+
+  function formatPercent(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return 'n/a';
+    return `${(number * 100).toFixed(1)}%`;
+  }
+
+  function displayWinner(value) {
+    const names = {
+      base: 'Base',
+      sft_trl: 'SFT',
+      sft_4096: 'SFT',
+      ppo: 'PPO',
+      ppo_exact_ckpt100: 'PPO',
+      ppo_4096_ep2_u400: 'PPO',
+      tie: 'Tie',
+    };
+    return names[value] || String(value || 'Unknown');
+  }
+
+  function humanizeLabel(value) {
+    return String(value || 'unknown')
+      .replace(/^positive_/, '')
+      .replace(/^negative_/, '')
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  }
+
+  function isPpoWinner(value) {
+    return /^ppo(?:_|$)/.test(String(value || ''));
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function safeLinkTarget(value) {
+    const target = String(value || '').trim();
+    if (/^(https?:|mailto:|#|\/|\.{1,2}\/|\?)/i.test(target)) {
+      return target;
+    }
+    return '#';
+  }
+
+  function renderInlineMarkdown(value) {
+    const tokens = [];
+    const protect = (html) => {
+      const token = `\uE000${tokens.length}\uE001`;
+      tokens.push(html);
+      return token;
+    };
+
+    let text = String(value || '');
+    text = text.replace(/`([^`\n]+)`/g, (_, code) => {
+      return protect(`<code>${escapeHtml(code)}</code>`);
+    });
+    text = text.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, (_, label, target) => {
+      const href = safeLinkTarget(target);
+      const external = /^https?:/i.test(href);
+      const attributes = external ? ' rel="noopener noreferrer"' : '';
+      return protect(
+        `<a href="${escapeHtml(href)}"${attributes}>${renderInlineMarkdown(label)}</a>`
+      );
+    });
+
+    text = escapeHtml(text)
+      .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/__([^_\n]+)__/g, '<strong>$1</strong>')
+      .replace(/~~([^~\n]+)~~/g, '<del>$1</del>')
+      .replace(/(^|[^\w])\*([^*\n]+)\*(?!\w)/g, '$1<em>$2</em>')
+      .replace(/(^|[^\w])_([^_\n]+)_(?!\w)/g, '$1<em>$2</em>');
+
+    tokens.forEach((html, index) => {
+      text = text.split(`\uE000${index}\uE001`).join(html);
+    });
+    return text;
+  }
+
+  function splitTableRow(line) {
+    return line
+      .trim()
+      .replace(/^\|/, '')
+      .replace(/\|$/, '')
+      .split('|')
+      .map((cell) => cell.trim());
+  }
+
+  function isTableDivider(line) {
+    const cells = splitTableRow(line);
+    return cells.length > 0 && cells.every((cell) => /^:?-{3,}:?$/.test(cell));
+  }
+
+  function startsMarkdownBlock(lines, index) {
+    const line = lines[index] || '';
+    const nextLine = lines[index + 1] || '';
+    return (
+      !line.trim() ||
+      /^ {0,3}```/.test(line) ||
+      /^ {0,3}#{1,6}\s+/.test(line) ||
+      /^ {0,3}(?:[-*_]\s*){3,}$/.test(line) ||
+      /^ {0,3}>\s?/.test(line) ||
+      /^ {0,3}[-*+]\s+/.test(line) ||
+      /^ {0,3}\d+\.\s+/.test(line) ||
+      (line.includes('|') && isTableDivider(nextLine))
+    );
+  }
+
+  function renderMarkdown(value) {
+    const lines = String(value || '').replace(/\r\n?/g, '\n').split('\n');
+    const blocks = [];
+    let index = 0;
+
+    while (index < lines.length) {
+      const line = lines[index];
+
+      if (!line.trim()) {
+        index += 1;
+        continue;
+      }
+
+      const fence = line.match(/^ {0,3}```\s*([\w.+-]*)\s*$/);
+      if (fence) {
+        const code = [];
+        index += 1;
+        while (index < lines.length && !/^ {0,3}```\s*$/.test(lines[index])) {
+          code.push(lines[index]);
+          index += 1;
+        }
+        if (index < lines.length) index += 1;
+        const language = fence[1] ? ` class="language-${escapeHtml(fence[1])}"` : '';
+        blocks.push(`<pre><code${language}>${escapeHtml(code.join('\n'))}</code></pre>`);
+        continue;
+      }
+
+      const heading = line.match(/^ {0,3}(#{1,6})\s+(.+)$/);
+      if (heading) {
+        const level = heading[1].length;
+        blocks.push(`<h${level}>${renderInlineMarkdown(heading[2])}</h${level}>`);
+        index += 1;
+        continue;
+      }
+
+      if (/^ {0,3}(?:[-*_]\s*){3,}$/.test(line)) {
+        blocks.push('<hr>');
+        index += 1;
+        continue;
+      }
+
+      if (/^ {0,3}>\s?/.test(line)) {
+        const quote = [];
+        while (index < lines.length && /^ {0,3}>\s?/.test(lines[index])) {
+          quote.push(lines[index].replace(/^ {0,3}>\s?/, ''));
+          index += 1;
+        }
+        blocks.push(`<blockquote>${renderMarkdown(quote.join('\n'))}</blockquote>`);
+        continue;
+      }
+
+      const unordered = line.match(/^ {0,3}[-*+]\s+(.+)$/);
+      if (unordered) {
+        const items = [];
+        while (index < lines.length) {
+          const item = lines[index].match(/^ {0,3}[-*+]\s+(.+)$/);
+          if (!item) break;
+          items.push(`<li>${renderInlineMarkdown(item[1])}</li>`);
+          index += 1;
+        }
+        blocks.push(`<ul>${items.join('')}</ul>`);
+        continue;
+      }
+
+      const ordered = line.match(/^ {0,3}(\d+)\.\s+(.+)$/);
+      if (ordered) {
+        const items = [];
+        const start = Number(ordered[1]);
+        while (index < lines.length) {
+          const item = lines[index].match(/^ {0,3}\d+\.\s+(.+)$/);
+          if (!item) break;
+          items.push(`<li>${renderInlineMarkdown(item[1])}</li>`);
+          index += 1;
+        }
+        const startAttribute = start === 1 ? '' : ` start="${start}"`;
+        blocks.push(`<ol${startAttribute}>${items.join('')}</ol>`);
+        continue;
+      }
+
+      if (line.includes('|') && isTableDivider(lines[index + 1] || '')) {
+        const headers = splitTableRow(line);
+        const alignments = splitTableRow(lines[index + 1]).map((cell) => {
+          if (/^:-+:$/.test(cell)) return 'center';
+          if (/^-+:$/.test(cell)) return 'right';
+          return 'left';
+        });
+        index += 2;
+
+        const rows = [];
+        while (index < lines.length && lines[index].includes('|') && lines[index].trim()) {
+          rows.push(splitTableRow(lines[index]));
+          index += 1;
+        }
+
+        const headerHtml = headers
+          .map((cell, cellIndex) => {
+            return `<th style="text-align:${alignments[cellIndex] || 'left'}">${renderInlineMarkdown(cell)}</th>`;
+          })
+          .join('');
+        const bodyHtml = rows
+          .map((row) => {
+            const cells = headers
+              .map((_, cellIndex) => {
+                return `<td style="text-align:${alignments[cellIndex] || 'left'}">${renderInlineMarkdown(row[cellIndex] || '')}</td>`;
+              })
+              .join('');
+            return `<tr>${cells}</tr>`;
+          })
+          .join('');
+        blocks.push(
+          `<div class="rlhf-explorer-table-wrap"><table><thead><tr>${headerHtml}</tr></thead><tbody>${bodyHtml}</tbody></table></div>`
+        );
+        continue;
+      }
+
+      const paragraph = [line];
+      index += 1;
+      while (index < lines.length && !startsMarkdownBlock(lines, index)) {
+        paragraph.push(lines[index]);
+        index += 1;
+      }
+      blocks.push(`<p>${renderInlineMarkdown(paragraph.join('\n')).replace(/\n/g, '<br>')}</p>`);
+    }
+
+    return blocks.join('');
+  }
+
+  function makeChip(label, value, accent, extraClass) {
+    const chip = document.createElement('span');
+    chip.className = [
+      'rlhf-explorer-chip',
+      accent ? 'rlhf-explorer-chip-accent' : '',
+      extraClass || '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    const strong = document.createElement('strong');
+    strong.textContent = `${label}:`;
+    chip.appendChild(strong);
+    chip.appendChild(document.createTextNode(` ${value}`));
+    return chip;
+  }
+
+  function replaceChildren(container, children) {
+    container.replaceChildren(...children);
+  }
+
+  function renderPolicy(card, statsContainer, responseContainer, policy, isWinner) {
+    card.classList.toggle('is-reward-winner', Boolean(isWinner));
+    replaceChildren(statsContainer, [
+      makeChip('Reward', formatReward(policy.reward), isWinner),
+      makeChip('Tokens', policy.response_tokens),
+      makeChip('Cap hit', policy.cap_hit ? 'yes' : 'no'),
+      makeChip('EOS', policy.hit_eos ? 'yes' : 'no'),
+      makeChip('Repeated 4-grams', formatPercent(policy.repeated_4gram_fraction)),
+      makeChip('Max 4-gram', policy.max_4gram_count ?? 'n/a'),
+    ]);
+    responseContainer.innerHTML = renderMarkdown(policy.response || '*(empty response)*');
+    responseContainer.scrollTop = 0;
+  }
+
+  class ResponseExplorer {
+    constructor(root) {
+      this.root = root;
+      this.sourceUrl = root.dataset.sourceUrl;
+      this.examples = [];
+      this.filteredExamples = [];
+      this.metadata = {};
+      this.currentPosition = 0;
+      this.activeDomains = new Set(['all']);
+
+      this.select = root.querySelector('[data-rlhf-example-select]');
+      this.previousButton = root.querySelector('[data-rlhf-previous]');
+      this.nextButton = root.querySelector('[data-rlhf-next]');
+      this.domainButtons = Array.from(root.querySelectorAll('[data-rlhf-domain-filter]'));
+      this.status = root.querySelector('[data-rlhf-status]');
+      this.category = root.querySelector('[data-rlhf-category]');
+      this.note = root.querySelector('[data-rlhf-note]');
+      this.meta = root.querySelector('[data-rlhf-meta]');
+      this.title = root.querySelector('[data-rlhf-example-title]');
+      this.prompt = root.querySelector('[data-rlhf-prompt]');
+      this.baseCard = root.querySelector('[data-rlhf-base-card]');
+      this.baseStats = root.querySelector('[data-rlhf-base-stats]');
+      this.baseResponse = root.querySelector('[data-rlhf-base-response]');
+      this.ppoCard = root.querySelector('[data-rlhf-ppo-card]');
+      this.ppoStats = root.querySelector('[data-rlhf-ppo-stats]');
+      this.ppoResponse = root.querySelector('[data-rlhf-ppo-response]');
+      this.caveat = root.querySelector('[data-rlhf-caveat]');
+    }
+
+    async init() {
+      try {
+        const response = await fetch(this.sourceUrl, { cache: 'no-store' });
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+        const payload = await response.json();
+        this.metadata = payload.metadata || {};
+        this.examples = Array.isArray(payload.examples) ? payload.examples : [];
+        if (!this.examples.length) {
+          throw new Error('The comparison artifact contains no examples.');
+        }
+
+        this.filteredExamples = this.getFilteredExamples();
+        this.populateSelect();
+        this.bindEvents();
+        this.caveat.textContent = this.metadata.caveat || this.caveat.textContent;
+
+        const queryValue = new URL(window.location.href).searchParams.get('example');
+        const requestedIndex = queryValue === null ? null : Number(queryValue);
+        const requestedPosition =
+          requestedIndex === null
+            ? -1
+            : this.filteredExamples.findIndex((example) => example.idx === requestedIndex);
+        const defaultPosition = this.filteredExamples.findIndex(
+          (example) => (example.heuristic_label || example.judge_label) === 'likely_genuine_ppo_win'
+        );
+        this.currentPosition =
+          requestedPosition >= 0 ? requestedPosition : Math.max(defaultPosition, 0);
+        this.render();
+
+        this.select.disabled = false;
+        this.updateStatus();
+      } catch (error) {
+        this.status.classList.add('is-error');
+        this.status.textContent = `Could not load the comparison data: ${error.message}`;
+      }
+    }
+
+    getFilteredExamples() {
+      if (this.activeDomains.has('all') || !this.activeDomains.size) {
+        return this.examples.slice();
+      }
+      return this.examples.filter((example) => this.activeDomains.has(String(example.domain || '').toLowerCase()));
+    }
+
+    populateSelect() {
+      const options = this.filteredExamples.map((example) => {
+        const option = document.createElement('option');
+        option.value = String(example.idx);
+        option.textContent = `#${example.idx} | ${humanizeLabel(example.category)} | ${example.domain}/${example.language}`;
+        return option;
+      });
+      replaceChildren(this.select, options);
+    }
+
+    bindEvents() {
+      this.select.addEventListener('change', () => {
+        const position = this.filteredExamples.findIndex((example) => String(example.idx) === this.select.value);
+        if (position >= 0) {
+          this.currentPosition = position;
+          this.render();
+        }
+      });
+
+      this.previousButton.addEventListener('click', () => {
+        if (this.currentPosition > 0) {
+          this.currentPosition -= 1;
+          this.render();
+        }
+      });
+
+      this.nextButton.addEventListener('click', () => {
+        if (this.currentPosition < this.filteredExamples.length - 1) {
+          this.currentPosition += 1;
+          this.render();
+        }
+      });
+
+      this.domainButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          this.toggleDomainFilter(button.dataset.rlhfDomainFilter);
+        });
+      });
+    }
+
+    toggleDomainFilter(domain) {
+      const normalized = String(domain || 'all').toLowerCase();
+      const currentExample = this.filteredExamples[this.currentPosition];
+      const currentIdx = currentExample ? currentExample.idx : null;
+
+      if (normalized === 'all') {
+        this.activeDomains = new Set(['all']);
+      } else {
+        if (this.activeDomains.has('all')) {
+          this.activeDomains.clear();
+        }
+        if (this.activeDomains.has(normalized)) {
+          this.activeDomains.delete(normalized);
+        } else {
+          this.activeDomains.add(normalized);
+        }
+        if (!this.activeDomains.size) {
+          this.activeDomains.add('all');
+        }
+      }
+
+      this.filteredExamples = this.getFilteredExamples();
+      this.populateSelect();
+      this.currentPosition = Math.max(
+        this.filteredExamples.findIndex((example) => example.idx === currentIdx),
+        0
+      );
+      this.render();
+    }
+
+    updateDomainButtons() {
+      this.domainButtons.forEach((button) => {
+        const domain = String(button.dataset.rlhfDomainFilter || 'all').toLowerCase();
+        const active = this.activeDomains.has(domain);
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+    }
+
+    updateStatus() {
+      const positiveCount = this.filteredExamples.filter((example) => example.polarity === 'positive').length;
+      const negativeCount = this.filteredExamples.filter((example) => example.polarity === 'negative').length;
+      const reviewCount = this.filteredExamples.filter((example) => example.polarity === 'review' || example.polarity === 'neutral').length;
+      const domainLabel = this.activeDomains.has('all')
+        ? 'all domains'
+        : Array.from(this.activeDomains).map(humanizeLabel).join(', ');
+      this.status.textContent = `Showing ${this.filteredExamples.length} of ${this.examples.length} full validation examples from the ${this.metadata.num_evaluation_prompts || '2,017'}-prompt final evaluation (${positiveCount} positive, ${negativeCount} negative, ${reviewCount} needs review; ${domainLabel}).`;
+    }
+
+    render() {
+      const example = this.filteredExamples[this.currentPosition];
+      if (!example) return;
+      const winner = example.reward_winner;
+
+      this.select.value = String(example.idx);
+      this.previousButton.disabled = this.currentPosition === 0;
+      this.nextButton.disabled = this.currentPosition === this.filteredExamples.length - 1;
+      const heuristicLabel = example.heuristic_label || example.judge_label || example.category;
+      this.category.textContent = `${humanizeLabel(heuristicLabel)} · ${humanizeLabel(example.polarity)}`;
+      this.note.textContent = example.heuristic_rationale || example.judge_rationale || example.note;
+      this.root.classList.toggle('is-positive-example', example.polarity === 'positive');
+      this.root.classList.toggle('is-negative-example', example.polarity === 'negative');
+      this.root.classList.toggle('is-review-example', example.polarity === 'review' || example.polarity === 'neutral');
+      this.title.textContent = `Evaluation example #${example.idx}`;
+      this.prompt.textContent = example.prompt;
+      this.prompt.scrollTop = 0;
+
+      replaceChildren(this.meta, [
+        makeChip('Index', example.idx, true),
+        makeChip('Polarity', humanizeLabel(example.polarity), false, `is-${example.polarity}`),
+        makeChip('Heuristic label', humanizeLabel(heuristicLabel), true),
+        makeChip('Domain', example.domain),
+        makeChip('Language', example.language),
+        makeChip('Reward winner', displayWinner(winner), true),
+        makeChip('Reward rank', example.reward_rank || 'n/a'),
+        makeChip('PPO minus Base', formatReward(example.deltas?.ppo_minus_base)),
+        makeChip('PPO minus SFT', formatReward(example.deltas?.ppo_minus_sft)),
+        makeChip('Reward spread', formatReward(example.reward_spread)),
+      ]);
+
+      renderPolicy(
+        this.baseCard,
+        this.baseStats,
+        this.baseResponse,
+        example.base,
+        winner === 'base'
+      );
+      renderPolicy(
+        this.ppoCard,
+        this.ppoStats,
+        this.ppoResponse,
+        example.ppo,
+        isPpoWinner(winner)
+      );
+
+      this.updateDomainButtons();
+      this.updateStatus();
+
+      const url = new URL(window.location.href);
+      url.searchParams.set('example', String(example.idx));
+      window.history.replaceState({}, '', url);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-rlhf-explorer]').forEach((root) => {
+      new ResponseExplorer(root).init();
+    });
+  });
+})();

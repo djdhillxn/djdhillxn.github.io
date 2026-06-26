@@ -1,1 +1,32 @@
-!function(){"use strict";const{esc:t,fmt:s,pct:i,registerSection:a,statCard:e}=window.SpotifyDashboard;a({name:"overview",render(a){const n=a.summary||{},o=a.generated_at?new Date(a.generated_at).toLocaleString():"unknown";return`\n        <section class="spotify-hero">\n          <div class="spotify-kicker">Spotify Insights</div>\n          <div class="spotify-title">What I curate, what I save, and what I forgot to organize.</div>\n          <div class="spotify-subtitle">\n          This dashboard analyzes playlists and liked songs from the Spotify Web API. \n          It measures artist dominance, playlist diversity, overlap, and saved songs that are missing from named playlists.\n          It is sort of a spotify library intelligence.\n          </div>\n          <div class="spotify-updated">Generated: ${t(o)}</div>\n        </section>\n        <div class="spotify-stat-grid">\n          ${e("Playlists",s.format(n.playlist_count||0))}\n          ${e("Liked songs",s.format(n.liked_track_count||0))}\n          ${e("Playlist coverage",i(n.coverage_rate||0))}\n          ${e("Missing liked songs",s.format(n.liked_tracks_missing_from_playlists||0))}\n          ${e("Playlist artists",s.format(n.unique_artists_playlists||0))}\n          ${e("Liked artists",s.format(n.unique_artists_liked||0))}\n        </div>`}})}();
+(function () {
+  "use strict";
+
+  const { esc, fmt, pct, registerSection, statCard } = window.SpotifyDashboard;
+
+  registerSection({
+    name: "overview",
+    render(data) {
+      const summary = data.summary || {};
+      const generated = data.generated_at ? new Date(data.generated_at).toLocaleString() : "unknown";
+      return `
+        <section class="spotify-hero">
+          <div class="spotify-kicker">Spotify Insights</div>
+          <div class="spotify-title">What I curate, what I save, and what I forgot to organize.</div>
+          <div class="spotify-subtitle">
+          This dashboard analyzes playlists and liked songs from the Spotify Web API. 
+          It measures artist dominance, playlist diversity, overlap, and saved songs that are missing from named playlists.
+          It is sort of a spotify library intelligence.
+          </div>
+          <div class="spotify-updated">Generated: ${esc(generated)}</div>
+        </section>
+        <div class="spotify-stat-grid">
+          ${statCard("Playlists", fmt.format(summary.playlist_count || 0))}
+          ${statCard("Liked songs", fmt.format(summary.liked_track_count || 0))}
+          ${statCard("Playlist coverage", pct(summary.coverage_rate || 0))}
+          ${statCard("Missing liked songs", fmt.format(summary.liked_tracks_missing_from_playlists || 0))}
+          ${statCard("Playlist artists", fmt.format(summary.unique_artists_playlists || 0))}
+          ${statCard("Liked artists", fmt.format(summary.unique_artists_liked || 0))}
+        </div>`;
+    }
+  });
+})();

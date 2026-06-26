@@ -1,1 +1,56 @@
-!function(){"use strict";const{barList:t,esc:s,fmt:a,pct:i,registerSection:e}=window.SpotifyDashboard;e({name:"diversity-and-overlap",render(e){const n=(e.playlist_diversity||[]).slice(0,8),l=(e.playlist_overlap||[]).slice(0,8);return`\n        <div class="spotify-grid-two">\n          <section class="spotify-panel">\n            <h3 class="spotify-panel-title">Most artist-diverse playlists</h3>\n            <div class="spotify-panel-subtitle">Higher entropy means tracks are distributed across more artists.</div>\n            ${t(n,"normalized_artist_entropy","name",t=>Number(t).toFixed(2),8)}\n          </section>\n          <section class="spotify-panel">\n            <h3 class="spotify-panel-title">Closest playlist pairs</h3>\n            <div class="spotify-panel-subtitle">Based on shared songs and shared artists.</div>\n            <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>Playlists</th><th>Shared tracks</th><th>Artist overlap</th></tr></thead><tbody>\n              ${l.map(t=>`<tr><td>${s(t.playlist_a_name)} \u2194 ${s(t.playlist_b_name)}</td><td>${a.format(t.shared_tracks||0)}</td><td>${i(t.artist_jaccard)}</td></tr>`).join("")||'<tr><td colspan="3" class="spotify-muted">No overlap data yet.</td></tr>'}\n            </tbody></table></div>\n          </section>\n        </div>`}}),e({name:"top-items",render(t){const a=t.spotify_top_items||{},i=(a.artists||{}).long_term||[],e=(a.tracks||{}).long_term||[];return i.length||e.length?`\n        <div class="spotify-grid-two">\n          <section class="spotify-panel spotify-panel-accent spotify-panel-affinity">\n            <h3 class="spotify-panel-title">Spotify affinity: long-term artists</h3>\n            <div class="spotify-panel-subtitle">Spotify's calculated top artists, separate from playlist counts.</div>\n            <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>#</th><th>Artist</th></tr></thead><tbody>\n              ${i.slice(0,10).map((t,a)=>`<tr><td>${s(t.rank||a+1)}</td><td>${t.spotify_url?`<a class="spotify-link" href="${s(t.spotify_url)}" target="_blank" rel="noopener">${s(t.artist_name)}</a>`:s(t.artist_name)}</td></tr>`).join("")}\n            </tbody></table></div>\n          </section>\n          <section class="spotify-panel spotify-panel-accent spotify-panel-affinity">\n            <h3 class="spotify-panel-title">Spotify affinity: long-term tracks</h3>\n            <div class="spotify-panel-subtitle">Spotify's calculated top tracks, shown as a sanity check against curated data.</div>\n            <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>#</th><th>Track</th><th>Artist</th></tr></thead><tbody>\n              ${e.slice(0,10).map(t=>`<tr><td>${t.rank}</td><td>${t.spotify_url?`<a class="spotify-link" href="${s(t.spotify_url)}" target="_blank" rel="noopener">${s(t.track_name)}</a>`:s(t.track_name)}</td><td>${s(t.primary_artist_name)}</td></tr>`).join("")}\n            </tbody></table></div>\n          </section>\n        </div>`:""}})}();
+(function () {
+  "use strict";
+
+  const { barList, esc, fmt, pct, registerSection } = window.SpotifyDashboard;
+
+  registerSection({
+    name: "diversity-and-overlap",
+    render(data) {
+      const diversity = (data.playlist_diversity || []).slice(0, 8);
+      const overlap = (data.playlist_overlap || []).slice(0, 8);
+      return `
+        <div class="spotify-grid-two">
+          <section class="spotify-panel">
+            <h3 class="spotify-panel-title">Most artist-diverse playlists</h3>
+            <div class="spotify-panel-subtitle">Higher entropy means tracks are distributed across more artists.</div>
+            ${barList(diversity, "normalized_artist_entropy", "name", (v) => Number(v).toFixed(2), 8)}
+          </section>
+          <section class="spotify-panel">
+            <h3 class="spotify-panel-title">Closest playlist pairs</h3>
+            <div class="spotify-panel-subtitle">Based on shared songs and shared artists.</div>
+            <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>Playlists</th><th>Shared tracks</th><th>Artist overlap</th></tr></thead><tbody>
+              ${overlap.map((row) => `<tr><td>${esc(row.playlist_a_name)} ↔ ${esc(row.playlist_b_name)}</td><td>${fmt.format(row.shared_tracks || 0)}</td><td>${pct(row.artist_jaccard)}</td></tr>`).join("") || `<tr><td colspan="3" class="spotify-muted">No overlap data yet.</td></tr>`}
+            </tbody></table></div>
+          </section>
+        </div>`;
+    }
+  });
+
+  registerSection({
+    name: "top-items",
+    render(data) {
+      const top = data.spotify_top_items || {};
+      const artists = top.artists || {};
+      const longTerm = artists.long_term || [];
+      const tracks = (top.tracks || {}).long_term || [];
+      if (!longTerm.length && !tracks.length) return "";
+      return `
+        <div class="spotify-grid-two">
+          <section class="spotify-panel spotify-panel-accent spotify-panel-affinity">
+            <h3 class="spotify-panel-title">Spotify affinity: long-term artists</h3>
+            <div class="spotify-panel-subtitle">Spotify's calculated top artists, separate from playlist counts.</div>
+            <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>#</th><th>Artist</th></tr></thead><tbody>
+              ${longTerm.slice(0, 10).map((row, i) => `<tr><td>${esc(row.rank || i + 1)}</td><td>${row.spotify_url ? `<a class="spotify-link" href="${esc(row.spotify_url)}" target="_blank" rel="noopener">${esc(row.artist_name)}</a>` : esc(row.artist_name)}</td></tr>`).join("")}
+            </tbody></table></div>
+          </section>
+          <section class="spotify-panel spotify-panel-accent spotify-panel-affinity">
+            <h3 class="spotify-panel-title">Spotify affinity: long-term tracks</h3>
+            <div class="spotify-panel-subtitle">Spotify's calculated top tracks, shown as a sanity check against curated data.</div>
+            <div class="spotify-table-wrap"><table class="spotify-table"><thead><tr><th>#</th><th>Track</th><th>Artist</th></tr></thead><tbody>
+              ${tracks.slice(0, 10).map((row) => `<tr><td>${row.rank}</td><td>${row.spotify_url ? `<a class="spotify-link" href="${esc(row.spotify_url)}" target="_blank" rel="noopener">${esc(row.track_name)}</a>` : esc(row.track_name)}</td><td>${esc(row.primary_artist_name)}</td></tr>`).join("")}
+            </tbody></table></div>
+          </section>
+        </div>`;
+    }
+  });
+})();

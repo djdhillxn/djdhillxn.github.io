@@ -1,1 +1,63 @@
-!function(){"use strict";function t(t){return(t.playlists||[]).filter(t=>Number(t.total_tracks||0)>0)}const{barList:s,esc:a,fmt:e,registerSection:i,statCard:n}=window.SpotifyDashboard;i({name:"artist-landscape",render:t=>`\n        <div class="spotify-grid-two">\n          <section class="spotify-panel">\n            <h3 class="spotify-panel-title">Top artists across playlists</h3>\n            <div class="spotify-panel-subtitle">Ranked by unique tracks represented in your named playlists.</div>\n            ${s(t.overall_playlist_top_artists,"unique_track_count","artist_name",t=>`${e.format(t)} songs`)}\n          </section>\n          <section class="spotify-panel">\n            <h3 class="spotify-panel-title">Top artists in liked songs</h3>\n            <div class="spotify-panel-subtitle">Ranked by songs saved in your Spotify library.</div>\n            ${s(t.liked_top_artists,"unique_track_count","artist_name",t=>`${e.format(t)} liked`)}\n          </section>\n        </div>`}),i({name:"playlist-explorer",render(s){const i=t(s);if(!i.length)return"";return`\n        <section class="spotify-panel" data-playlist-panel>\n          <h3 class="spotify-panel-title">Playlist explorer</h3>\n          <div class="spotify-panel-subtitle">Select a playlist to see which artists dominate it.</div>\n          <div class="spotify-controls"><select class="spotify-select" data-playlist-select>${i.map((t,s)=>`<option value="${s}">${a(t.name)} (${e.format(t.total_tracks||0)} tracks)</option>`).join("")}</select></div>\n          <div data-playlist-output></div>\n        </section>`},update(a,i){const l=a.querySelector("[data-playlist-select]"),r=a.querySelector("[data-playlist-output]");if(!l||!r)return;const o=t(i),c=()=>{const t=o[Number(l.value||0)];t&&(r.innerHTML=`\n          <div class="spotify-stat-grid">\n            ${n("Tracks",e.format(t.total_tracks||0))}\n            ${n("Unique artists",e.format(t.unique_artists||0))}\n            ${n("Unique tracks",e.format(t.unique_tracks||0))}\n          </div>\n          ${s(t.top_artists||[],"playlist_appearances","artist_name",t=>`${e.format(t)} appearances`,10)}`)};l.addEventListener("change",c),c()}})}();
+(function () {
+  "use strict";
+
+  const { barList, esc, fmt, registerSection, statCard } = window.SpotifyDashboard;
+
+  function visiblePlaylists(data) {
+    return (data.playlists || []).filter((playlist) => Number(playlist.total_tracks || 0) > 0);
+  }
+
+  registerSection({
+    name: "artist-landscape",
+    render(data) {
+      return `
+        <div class="spotify-grid-two">
+          <section class="spotify-panel">
+            <h3 class="spotify-panel-title">Top artists across playlists</h3>
+            <div class="spotify-panel-subtitle">Ranked by unique tracks represented in your named playlists.</div>
+            ${barList(data.overall_playlist_top_artists, "unique_track_count", "artist_name", (v) => `${fmt.format(v)} songs`)}
+          </section>
+          <section class="spotify-panel">
+            <h3 class="spotify-panel-title">Top artists in liked songs</h3>
+            <div class="spotify-panel-subtitle">Ranked by songs saved in your Spotify library.</div>
+            ${barList(data.liked_top_artists, "unique_track_count", "artist_name", (v) => `${fmt.format(v)} liked`)}
+          </section>
+        </div>`;
+    }
+  });
+
+  registerSection({
+    name: "playlist-explorer",
+    render(data) {
+      const playlists = visiblePlaylists(data);
+      if (!playlists.length) return "";
+      const options = playlists.map((p, i) => `<option value="${i}">${esc(p.name)} (${fmt.format(p.total_tracks || 0)} tracks)</option>`).join("");
+      return `
+        <section class="spotify-panel" data-playlist-panel>
+          <h3 class="spotify-panel-title">Playlist explorer</h3>
+          <div class="spotify-panel-subtitle">Select a playlist to see which artists dominate it.</div>
+          <div class="spotify-controls"><select class="spotify-select" data-playlist-select>${options}</select></div>
+          <div data-playlist-output></div>
+        </section>`;
+    },
+    update(root, data) {
+      const select = root.querySelector("[data-playlist-select]");
+      const output = root.querySelector("[data-playlist-output]");
+      if (!select || !output) return;
+      const playlists = visiblePlaylists(data);
+      const render = () => {
+        const playlist = playlists[Number(select.value || 0)];
+        if (!playlist) return;
+        output.innerHTML = `
+          <div class="spotify-stat-grid">
+            ${statCard("Tracks", fmt.format(playlist.total_tracks || 0))}
+            ${statCard("Unique artists", fmt.format(playlist.unique_artists || 0))}
+            ${statCard("Unique tracks", fmt.format(playlist.unique_tracks || 0))}
+          </div>
+          ${barList(playlist.top_artists || [], "playlist_appearances", "artist_name", (v) => `${fmt.format(v)} appearances`, 10)}`;
+      };
+      select.addEventListener("change", render);
+      render();
+    }
+  });
+})();

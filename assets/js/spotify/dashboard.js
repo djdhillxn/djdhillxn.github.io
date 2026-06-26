@@ -1,1 +1,7 @@
-!function(){"use strict";document.addEventListener("DOMContentLoaded",()=>{window.SpotifyDashboard.init()})}();
+(function () {
+  "use strict";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    window.SpotifyDashboard.init();
+  });
+})();
