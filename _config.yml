@@ -240,7 +240,13 @@ sass:
 # -----------------------------------------------------------------------------
 
 jekyll-minifier:
-  exclude: ['robots.txt']
+  # Static data artifacts are already generated compactly. Let Jekyll copy them
+  # instead of feeding tens of megabytes of JSON through json-minify on CI.
+  exclude:
+    - robots.txt
+    - assets/json/**/*.json
+  compress_json: false
+  compress_javascript: false
   uglifier_args:
     harmony: true
 
