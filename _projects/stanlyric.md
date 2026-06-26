@@ -154,7 +154,7 @@ StanLyric uses $$k_1=1.5$$ and $$b=0.75$$. The $$k_1$$ parameter controls how qu
 
 The offline pipeline builds a browser-ready artifact from the prepared StanLyric corpus. The artifact stores song metadata, document lengths, inverse document frequency values, and an inverted index of token frequencies. At runtime, the browser tokenizes the query and computes BM25 scores only for matching postings. This keeps the portfolio page static while still allowing interactive retrieval.
 
-The explanation panel is intentionally simple: it shows which query terms appeared in the retrieved song, which query terms were missing, the term frequency inside the top song, each matched term's IDF, and the approximate BM25 contribution. This makes the system more transparent than a black-box recommender.
+The explanation panel is intentionally simple: it shows which query terms appeared in the retrieved song, which were missing, the term frequency in the top song, each matched term's IDF, and the approximate BM25 contribution. All these efforts are aimed at making the retrieval system more transparent!
 
 <!-- 
 StanLyric is kept separate from the Spotify dashboard for now. The Spotify project analyzes personal listening and playlist curation, while StanLyric focuses on lyric-level retrieval. Later, the two can be connected by using Spotify playlists as taste profiles and StanLyric as the lyrics-aware discovery layer. 
