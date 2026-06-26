@@ -334,7 +334,7 @@
             ? -1
             : this.filteredExamples.findIndex((example) => example.idx === requestedIndex);
         const defaultPosition = this.filteredExamples.findIndex(
-          (example) => example.judge_label === 'likely_genuine_ppo_win'
+          (example) => (example.heuristic_label || example.judge_label) === 'likely_genuine_ppo_win'
         );
         this.currentPosition =
           requestedPosition >= 0 ? requestedPosition : Math.max(defaultPosition, 0);
@@ -437,10 +437,11 @@
     updateStatus() {
       const positiveCount = this.filteredExamples.filter((example) => example.polarity === 'positive').length;
       const negativeCount = this.filteredExamples.filter((example) => example.polarity === 'negative').length;
+      const reviewCount = this.filteredExamples.filter((example) => example.polarity === 'review' || example.polarity === 'neutral').length;
       const domainLabel = this.activeDomains.has('all')
         ? 'all domains'
         : Array.from(this.activeDomains).map(humanizeLabel).join(', ');
-      this.status.textContent = `Showing ${this.filteredExamples.length} of ${this.examples.length} curated examples from the ${this.metadata.num_evaluation_prompts || '2,017'}-prompt final evaluation (${positiveCount} positive, ${negativeCount} negative; ${domainLabel}).`;
+      this.status.textContent = `Showing ${this.filteredExamples.length} of ${this.examples.length} full validation examples from the ${this.metadata.num_evaluation_prompts || '2,017'}-prompt final evaluation (${positiveCount} positive, ${negativeCount} negative, ${reviewCount} needs review; ${domainLabel}).`;
     }
 
     render() {
@@ -451,10 +452,12 @@
       this.select.value = String(example.idx);
       this.previousButton.disabled = this.currentPosition === 0;
       this.nextButton.disabled = this.currentPosition === this.filteredExamples.length - 1;
-      this.category.textContent = `${humanizeLabel(example.category)} · ${humanizeLabel(example.polarity)}`;
-      this.note.textContent = example.judge_rationale || example.note;
+      const heuristicLabel = example.heuristic_label || example.judge_label || example.category;
+      this.category.textContent = `${humanizeLabel(heuristicLabel)} · ${humanizeLabel(example.polarity)}`;
+      this.note.textContent = example.heuristic_rationale || example.judge_rationale || example.note;
       this.root.classList.toggle('is-positive-example', example.polarity === 'positive');
       this.root.classList.toggle('is-negative-example', example.polarity === 'negative');
+      this.root.classList.toggle('is-review-example', example.polarity === 'review' || example.polarity === 'neutral');
       this.title.textContent = `Evaluation example #${example.idx}`;
       this.prompt.textContent = example.prompt;
       this.prompt.scrollTop = 0;
@@ -462,7 +465,7 @@
       replaceChildren(this.meta, [
         makeChip('Index', example.idx, true),
         makeChip('Polarity', humanizeLabel(example.polarity), false, `is-${example.polarity}`),
-        makeChip('Judge label', humanizeLabel(example.judge_label), true),
+        makeChip('Heuristic label', humanizeLabel(heuristicLabel), true),
         makeChip('Domain', example.domain),
         makeChip('Language', example.language),
         makeChip('Reward winner', displayWinner(winner), true),

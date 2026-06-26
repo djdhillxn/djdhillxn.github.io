@@ -16,7 +16,7 @@ to align the [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-In
 I learned that making PPO training run stably is only one part of LLM alignment; the quality of the preference data, reward model, stopping behavior, and evaluation protocol can matter just as much as the optimizer. This project gave me a working system in which those interactions are visible and measurable, along with a concrete foundation for better-controlled alignment experiments. I am continuing to iterate on the pipeline to achieve better results and learn best practices empirically.
 
 After training I used the fine-tuned aligned model to produce responses to validation prompts and evaluate its performance with the trained reward model. 
-**[Open the interactive Base vs PPO response explorer]({{ '/projects/rlhf-comparison/' | relative_url }})**.
+**[Open the full interactive Base vs PPO response explorer]({{ '/projects/rlhf-comparison/' | relative_url }})**.
 The RLHF pipeline is implemented at my [RLHF repository](https://github.com/djdhillxn/rlhf) along with more documentation about experiments, evaluation, and analyzing the responses.
 
 <!-- The implementation covers supervised fine-tuning, pairwise reward modeling, KL-controlled token-level PPO.  -->
@@ -48,7 +48,7 @@ Having my own evaluation code, I have the liberty to perform a range of evaluati
 
 The qualitative auditing is also implemented by making use of heuristics such as repeated 4-grams and is surprisingly useful. Further, the evaluation code has resumable policy evaluation because I have limited compute and things break down in the middle of runs and the most obvious way to go about doing this is if I have checkpointing and resuming capabilities. I don't have infinite compute alright! Also the reason I chose the half-a-billion parameter model.
 
-A portion of the qualitative audit can be seen using the response explorer whose link can be seen above. The results are not perfect, and there is still a long way to go, but this final TRL run is the most sensible iteration I have obtained. The reward model is not perfect and the PPO method still needs better stopping and reward-quality safeguards. One ambitious goal anchoring future experiments is checking whether a modest LLM can give human-preferred responses with careful training from a high-quality preference dataset.
+The response explorer linked above now exposes the full 2,017-prompt validation set, not only a curated subset. It keeps the Base and PPO outputs side by side and adds rule-based triage labels so I can move quickly from aggregate metrics to concrete examples. The results are not perfect, and there is still a long way to go, but this final TRL run is the most sensible iteration I have obtained. The reward model is not perfect and the PPO method still needs better stopping and reward-quality safeguards. One ambitious goal anchoring future experiments is checking whether a modest LLM can give human-preferred responses with careful training from a high-quality preference dataset.
 
 ## Evaluation
 
@@ -159,7 +159,7 @@ The primary suite allows up to 1,024 generated tokens during evaluation while ke
 
 I audited all 2,017 rows using reward margins, response length, cap hits, EOS behavior, repeated word-level 4-grams, and manual inspection of selected extremes. PPO produced useful local improvements, including more supportive responses and better coverage of some multi-part instructions. It also had the highest measured repetition rate: **31.88%** of PPO responses crossed a 25% repeated 4-gram threshold, compared with **10.11%** for Base.
 
-The audit found 8 low-repetition PPO candidates that beat both Base and SFT, 108 strong PPO losses, and 313 high-reward repetition or reward-model mismatch risks. Some of the largest apparent PPO victories were visibly broken loops, prompt restatements, or irrelevant continuations. Other failures included fabricated citations and incorrect scientific procedures. These examples exposed reward-model blind spots in both directions: the judge sometimes rewarded broken responses and sometimes rejected comparatively useful ones.
+The full rule-based triage assigns 8 likely clean PPO wins, 354 modest clean PPO wins, 64 strong PPO regressions, 288 severe repetition failures, 228 repetition-risk cases, 151 reward-model false-positive risks, and 924 examples that need manual review. Some of the largest apparent PPO victories were visibly broken loops, prompt restatements, or irrelevant continuations. Other failures included fabricated citations and incorrect scientific procedures. These examples exposed reward-model blind spots in both directions: the learned reward model sometimes rewarded broken responses and sometimes rejected comparatively useful ones.
 
 The final PPO policy is stable and changes behavior measurably. It narrowly edges the original instruction model under the learned reward model, but it is not a universal improvement. PPO produces a meaningful set of local wins alongside more stopping and repetition failures. The result I would defend is therefore the complete, inspectable RLHF system and its diagnostics, not a claim that PPO universally improved Qwen2.5-0.5B-Instruct.
 
@@ -167,7 +167,7 @@ The final PPO policy is stable and changes behavior measurably. It narrowly edge
 
 The short version of what I would do next:
 
-- **Human preference review.** Use blinded human comparison on a stratified sample from the 50 curated examples to calibrate where the learned reward model agrees with visible quality and where it fails.
+- **Human preference review.** Use blinded human comparison on a stratified sample from the full validation explorer to calibrate where the learned reward model agrees with visible quality and where it fails.
 - **Hard-negative reward modeling.** Retrain the reward model with examples from the audit: repetition loops, prompt restatements, fabricated citations, irrelevant continuations, malformed code, and incorrect STEM answers.
 - **Controlled token-budget studies.** Compare 512, 768, and 1,024 generated-token evaluations with the same checkpoint, decoding settings, prompt order, batch size, and software environment.
 - **Better PPO stopping rules.** Select checkpoints using reward win rate, KL, EOS rate, cap-hit rate, repetition, and human review rather than reward score alone.

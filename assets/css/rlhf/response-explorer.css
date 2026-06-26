@@ -212,12 +212,22 @@
   color: #b33f2f;
 }
 
+.rlhf-explorer-chip.is-review,
+.rlhf-explorer-chip.is-neutral {
+  border-color: rgba(107, 114, 128, 0.45);
+  color: #5f6775;
+}
+
 .rlhf-explorer.is-positive-example .rlhf-explorer-review {
   border-left-color: #26a65b;
 }
 
 .rlhf-explorer.is-negative-example .rlhf-explorer-review {
   border-left-color: #da5840;
+}
+
+.rlhf-explorer.is-review-example .rlhf-explorer-review {
+  border-left-color: #6b7280;
 }
 
 .rlhf-explorer-prompt {

@@ -12,21 +12,20 @@ permalink: /projects/rlhf-comparison/
 <div
   class="rlhf-explorer"
   data-rlhf-explorer
-  data-source-url="{{ '/assets/json/rlhf/portfolio_curated_policy_comparisons_ckpt100.json' | relative_url }}"
+  data-source-url="{{ '/assets/json/rlhf/portfolio_full_policy_comparisons_final_trl.json' | relative_url }}"
 >
   <section class="rlhf-explorer-hero">
     <p class="rlhf-explorer-kicker">Qualitative policy evaluation</p>
     <h2>Compare the instruction model with its PPO-aligned policy.</h2>
     <p>
-      Select one of 50 curated examples from the final TRL PPO evaluation.
-      
-      The set is intentionally balanced between promising PPO improvements and
-      failure cases, so the reward scores are diagnostics rather than final
-      human-quality labels.
+      Browse all 2,017 validation prompts from the final TRL PPO evaluation.
+      Use the domain filters to narrow the list to general, code, STEM, or
+      multilingual prompts, then inspect the full prompt context and the Base
+      and PPO generations side by side.
 
-      Reward model scores
-      are shown as diagnostics, while the review label records whether the example is an improvement, or 
-      reward-model mismatch based on heuristics.
+      Reward model scores are shown as diagnostics. The triage label is a
+      deterministic heuristic based on reward margins, EOS/cap behavior, and
+      repeated 4-grams; it is not a human or LLM-as-judge quality verdict.
 
     </p>
   </section>
@@ -35,7 +34,7 @@ permalink: /projects/rlhf-comparison/
     <label for="rlhf-example-select">Evaluation example</label>
     <div class="rlhf-explorer-control-row">
       <select id="rlhf-example-select" data-rlhf-example-select disabled>
-        <option>Loading curated examples...</option>
+        <option>Loading full validation examples...</option>
       </select>
       <button type="button" data-rlhf-previous disabled>Previous</button>
       <button type="button" data-rlhf-next disabled>Next</button>
@@ -54,7 +53,7 @@ permalink: /projects/rlhf-comparison/
 
   <section class="rlhf-explorer-review">
     <div>
-      <p class="rlhf-explorer-kicker">Manual review</p>
+      <p class="rlhf-explorer-kicker">Heuristic triage</p>
       <h3 data-rlhf-category>Waiting for data</h3>
     </div>
     <p data-rlhf-note></p>
