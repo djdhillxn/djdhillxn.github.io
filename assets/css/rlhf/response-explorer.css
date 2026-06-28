@@ -139,6 +139,20 @@
   color: #ffffff;
 }
 
+.rlhf-explorer-filter-divider {
+  align-self: stretch;
+  border-left: 1px solid var(--rlhf-border);
+  margin: 0 0.15rem;
+}
+
+.rlhf-explorer-filter-row button.rlhf-explorer-curated-filter {
+  border-style: dashed;
+}
+
+.rlhf-explorer-filter-row button.rlhf-explorer-curated-filter.is-active {
+  border-style: solid;
+}
+
 .rlhf-explorer-status {
   color: var(--rlhf-muted);
   font-size: 0.84rem;
@@ -448,6 +462,14 @@
 }
 
 @media (max-width: 760px) {
+  .rlhf-explorer-filter-divider {
+    border-left: 0;
+    border-top: 1px solid var(--rlhf-border);
+    flex-basis: 100%;
+    height: 0;
+    margin: 0.15rem 0;
+  }
+
   .rlhf-explorer-control-row {
     grid-template-columns: 1fr 1fr;
   }

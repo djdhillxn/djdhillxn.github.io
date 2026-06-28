@@ -289,11 +289,13 @@
       this.metadata = {};
       this.currentPosition = 0;
       this.activeDomains = new Set(['all']);
+      this.curatedOnly = false;
 
       this.select = root.querySelector('[data-rlhf-example-select]');
       this.previousButton = root.querySelector('[data-rlhf-previous]');
       this.nextButton = root.querySelector('[data-rlhf-next]');
       this.domainButtons = Array.from(root.querySelectorAll('[data-rlhf-domain-filter]'));
+      this.curatedButton = root.querySelector('[data-rlhf-curated-filter]');
       this.status = root.querySelector('[data-rlhf-status]');
       this.category = root.querySelector('[data-rlhf-category]');
       this.note = root.querySelector('[data-rlhf-note]');
@@ -322,12 +324,20 @@
           throw new Error('The comparison artifact contains no examples.');
         }
 
+        const pageUrl = new URL(window.location.href);
+        this.curatedOnly = pageUrl.searchParams.get('curated') === '1';
+        const curatedCount = this.examples.filter((example) => example.curated).length;
+        if (this.curatedButton) {
+          this.curatedButton.textContent = `Curated (${curatedCount})`;
+          this.curatedButton.disabled = curatedCount === 0;
+        }
+
         this.filteredExamples = this.getFilteredExamples();
         this.populateSelect();
         this.bindEvents();
         this.caveat.textContent = this.metadata.caveat || this.caveat.textContent;
 
-        const queryValue = new URL(window.location.href).searchParams.get('example');
+        const queryValue = pageUrl.searchParams.get('example');
         const requestedIndex = queryValue === null ? null : Number(queryValue);
         const requestedPosition =
           requestedIndex === null
@@ -349,17 +359,24 @@
     }
 
     getFilteredExamples() {
-      if (this.activeDomains.has('all') || !this.activeDomains.size) {
-        return this.examples.slice();
+      let filtered = this.examples;
+      if (!this.activeDomains.has('all') && this.activeDomains.size) {
+        filtered = filtered.filter((example) =>
+          this.activeDomains.has(String(example.domain || '').toLowerCase())
+        );
       }
-      return this.examples.filter((example) => this.activeDomains.has(String(example.domain || '').toLowerCase()));
+      if (this.curatedOnly) {
+        filtered = filtered.filter((example) => Boolean(example.curated));
+      }
+      return filtered.slice();
     }
 
     populateSelect() {
       const options = this.filteredExamples.map((example) => {
         const option = document.createElement('option');
         option.value = String(example.idx);
-        option.textContent = `#${example.idx} | ${humanizeLabel(example.category)} | ${example.domain}/${example.language}`;
+        const curatedMarker = example.curated ? 'Curated | ' : '';
+        option.textContent = `#${example.idx} | ${curatedMarker}${humanizeLabel(example.category)} | ${example.domain}/${example.language}`;
         return option;
       });
       replaceChildren(this.select, options);
@@ -393,6 +410,12 @@
           this.toggleDomainFilter(button.dataset.rlhfDomainFilter);
         });
       });
+
+      if (this.curatedButton) {
+        this.curatedButton.addEventListener('click', () => {
+          this.toggleCuratedFilter();
+        });
+      }
     }
 
     toggleDomainFilter(domain) {
@@ -425,6 +448,19 @@
       this.render();
     }
 
+    toggleCuratedFilter() {
+      const currentExample = this.filteredExamples[this.currentPosition];
+      const currentIdx = currentExample ? currentExample.idx : null;
+      this.curatedOnly = !this.curatedOnly;
+      this.filteredExamples = this.getFilteredExamples();
+      this.populateSelect();
+      this.currentPosition = Math.max(
+        this.filteredExamples.findIndex((example) => example.idx === currentIdx),
+        0
+      );
+      this.render();
+    }
+
     updateDomainButtons() {
       this.domainButtons.forEach((button) => {
         const domain = String(button.dataset.rlhfDomainFilter || 'all').toLowerCase();
@@ -432,16 +468,34 @@
         button.classList.toggle('is-active', active);
         button.setAttribute('aria-pressed', String(active));
       });
+      if (this.curatedButton) {
+        this.curatedButton.classList.toggle('is-active', this.curatedOnly);
+        this.curatedButton.setAttribute('aria-pressed', String(this.curatedOnly));
+      }
     }
 
     updateStatus() {
-      const positiveCount = this.filteredExamples.filter((example) => example.polarity === 'positive').length;
-      const negativeCount = this.filteredExamples.filter((example) => example.polarity === 'negative').length;
-      const reviewCount = this.filteredExamples.filter((example) => example.polarity === 'review' || example.polarity === 'neutral').length;
+      const effectivePolarity = (example) =>
+        this.curatedOnly && example.curated_polarity
+          ? example.curated_polarity
+          : example.polarity;
+      const positiveCount = this.filteredExamples.filter(
+        (example) => effectivePolarity(example) === 'positive'
+      ).length;
+      const negativeCount = this.filteredExamples.filter(
+        (example) => effectivePolarity(example) === 'negative'
+      ).length;
+      const reviewCount = this.filteredExamples.filter(
+        (example) => ['review', 'neutral'].includes(effectivePolarity(example))
+      ).length;
       const domainLabel = this.activeDomains.has('all')
         ? 'all domains'
         : Array.from(this.activeDomains).map(humanizeLabel).join(', ');
-      this.status.textContent = `Showing ${this.filteredExamples.length} of ${this.examples.length} full validation examples from the ${this.metadata.num_evaluation_prompts || '2,017'}-prompt final evaluation (${positiveCount} positive, ${negativeCount} negative, ${reviewCount} needs review; ${domainLabel}).`;
+      const selectionLabel = this.curatedOnly
+        ? 'the balanced curated subset'
+        : 'the full validation set';
+      const reviewText = reviewCount ? `, ${reviewCount} needs review` : '';
+      this.status.textContent = `Showing ${this.filteredExamples.length} of ${this.examples.length} examples from ${selectionLabel} (${positiveCount} positive, ${negativeCount} negative${reviewText}; ${domainLabel}).`;
     }
 
     render() {
@@ -462,7 +516,7 @@
       this.prompt.textContent = example.prompt;
       this.prompt.scrollTop = 0;
 
-      replaceChildren(this.meta, [
+      const metaChips = [
         makeChip('Index', example.idx, true),
         makeChip('Polarity', humanizeLabel(example.polarity), false, `is-${example.polarity}`),
         makeChip('Heuristic label', humanizeLabel(heuristicLabel), true),
@@ -473,7 +527,19 @@
         makeChip('PPO minus Base', formatReward(example.deltas?.ppo_minus_base)),
         makeChip('PPO minus SFT', formatReward(example.deltas?.ppo_minus_sft)),
         makeChip('Reward spread', formatReward(example.reward_spread)),
-      ]);
+      ];
+      if (example.curated) {
+        metaChips.splice(
+          1,
+          0,
+          makeChip(
+            'Curated',
+            humanizeLabel(example.curated_polarity || example.polarity),
+            true
+          )
+        );
+      }
+      replaceChildren(this.meta, metaChips);
 
       renderPolicy(
         this.baseCard,
@@ -495,6 +561,11 @@
 
       const url = new URL(window.location.href);
       url.searchParams.set('example', String(example.idx));
+      if (this.curatedOnly) {
+        url.searchParams.set('curated', '1');
+      } else {
+        url.searchParams.delete('curated');
+      }
       window.history.replaceState({}, '', url);
     }
   }

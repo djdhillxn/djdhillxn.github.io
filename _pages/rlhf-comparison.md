@@ -20,8 +20,10 @@ permalink: /projects/rlhf-comparison/
     <p>
       Browse all 2,017 validation prompts from the final TRL PPO evaluation.
       Use the domain filters to narrow the list to general, code, STEM, or
-      multilingual prompts, then inspect the full prompt context and the Base
-      and PPO generations side by side.
+      multilingual prompts. The Curated filter provides a balanced first pass
+      through 50 positive and 50 negative cases and can be combined with any
+      domain selection. Then inspect the full prompt context and the Base and
+      PPO generations side by side.
 
       Reward model scores are shown as diagnostics. The triage label is a
       deterministic heuristic based on reward margins, EOS/cap behavior, and
@@ -45,6 +47,14 @@ permalink: /projects/rlhf-comparison/
       <button type="button" data-rlhf-domain-filter="code" aria-pressed="false">Code</button>
       <button type="button" data-rlhf-domain-filter="stem" aria-pressed="false">STEM</button>
       <button type="button" data-rlhf-domain-filter="multilingual" aria-pressed="false">Multilingual</button>
+      <span class="rlhf-explorer-filter-divider" aria-hidden="true"></span>
+      <button
+        type="button"
+        class="rlhf-explorer-curated-filter"
+        data-rlhf-curated-filter
+        aria-pressed="false"
+        title="Show the balanced 50-positive and 50-negative first-pass selection"
+      >Curated (100)</button>
     </div>
     <p class="rlhf-explorer-status" data-rlhf-status role="status">
       Loading the static evaluation artifact...
