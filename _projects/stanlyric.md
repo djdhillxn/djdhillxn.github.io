@@ -9,6 +9,7 @@ img_size: small
 ---
 
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/stanlyric.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/stanlyric/embedding-atlas.css' | relative_url }}">
 
 <figure class="stanlyric-reference-figure">
   <div class="stanlyric-reference-crop">
@@ -36,7 +37,7 @@ img_size: small
   <section class="stanlyric-hero">
     <p class="stanlyric-kicker">lyric-to-song</p>
     <!-- <h2>Find the song stuck in your head.</h2> -->
-    <h2>Fing the forgotten song from its unforgotten lyrics</h2>
+    <h2>Find the forgotten song from its unforgotten lyrics</h2>
     <!-- <p class="stanlyric-lede">
     </p> -->
   </section>
@@ -113,13 +114,139 @@ img_size: small
     <div data-stanlyric-results></div>
   </section>
 
+  <section
+    id="stanlyric-embedding-atlas"
+    class="stanlyric-atlas"
+    data-stanlyric-atlas
+    data-atlas-url="{{ '/assets/json/stanlyric/stanlyric_embedding_atlas.json' | relative_url }}"
+  >
+    <header class="stanlyric-atlas-header">
+      <div class="stanlyric-atlas-heading">
+        <p class="stanlyric-kicker">semantic map</p>
+        <h3>Song Embedding Atlas</h3>
+        <p>Cohere Embed v4 song representations, projected with 3D UMAP and partitioned with weighted Leiden communities.</p>
+      </div>
+      <div class="stanlyric-atlas-metrics" aria-label="atlas statistics">
+        <div class="stanlyric-atlas-metric">
+          <span>Songs</span>
+          <strong data-atlas-song-count>--</strong>
+        </div>
+        <div class="stanlyric-atlas-metric">
+          <span>Communities</span>
+          <strong data-atlas-community-count>--</strong>
+        </div>
+        <div class="stanlyric-atlas-metric">
+          <span>UMAP trust</span>
+          <strong data-atlas-trustworthiness>--</strong>
+        </div>
+        <div class="stanlyric-atlas-metric">
+          <span>PCA 3D variance</span>
+          <strong data-atlas-pca-variance>--</strong>
+        </div>
+      </div>
+    </header>
+
+    <div class="stanlyric-atlas-stage">
+      <div class="stanlyric-atlas-canvas" data-atlas-canvas></div>
+
+      <div class="stanlyric-atlas-toolbar">
+        <div class="stanlyric-atlas-search">
+          <i class="fas fa-search" aria-hidden="true"></i>
+          <label class="sr-only" for="stanlyric-atlas-search">Search title or artist</label>
+          <input
+            id="stanlyric-atlas-search"
+            type="search"
+            data-atlas-search
+            placeholder="Search title or artist"
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <div class="stanlyric-atlas-suggestions" data-atlas-suggestions hidden></div>
+        </div>
+
+        <label class="sr-only" for="stanlyric-atlas-community">Filter by community</label>
+        <select id="stanlyric-atlas-community" data-atlas-community>
+          <option value="all">All communities</option>
+        </select>
+
+        <div class="stanlyric-atlas-icon-group">
+          <button
+            type="button"
+            class="stanlyric-atlas-icon-button"
+            data-atlas-reset
+            title="Reset view"
+            aria-label="Reset view"
+          ><i class="fas fa-crosshairs" aria-hidden="true"></i></button>
+          <button
+            type="button"
+            class="stanlyric-atlas-icon-button"
+            data-atlas-rotate
+            title="Pause rotation"
+            aria-label="Pause rotation"
+            aria-pressed="true"
+          ><i class="fas fa-pause" aria-hidden="true"></i></button>
+          <button
+            type="button"
+            class="stanlyric-atlas-icon-button"
+            data-atlas-fullscreen
+            title="Enter fullscreen"
+            aria-label="Enter fullscreen"
+          ><i class="fas fa-expand" aria-hidden="true"></i></button>
+        </div>
+      </div>
+
+      <div class="stanlyric-atlas-status" data-atlas-status>
+        <i class="fas fa-circle-notch" aria-hidden="true"></i>
+        <span>Loading song space...</span>
+      </div>
+
+      <div class="stanlyric-atlas-tooltip" data-atlas-tooltip hidden>
+        <strong data-tooltip-title></strong>
+        <span data-tooltip-artist></span>
+        <span data-tooltip-community></span>
+      </div>
+
+      <aside class="stanlyric-atlas-details" data-atlas-details hidden>
+        <button
+          type="button"
+          class="stanlyric-atlas-icon-button stanlyric-atlas-details-close"
+          data-atlas-close-details
+          title="Close song details"
+          aria-label="Close song details"
+        ><i class="fas fa-times" aria-hidden="true"></i></button>
+        <p class="stanlyric-atlas-detail-community">
+          <span class="stanlyric-atlas-swatch" data-detail-swatch></span>
+          <span data-detail-community></span>
+          <span aria-hidden="true">/</span>
+          <span data-detail-community-size></span>
+        </p>
+        <h4 data-detail-title></h4>
+        <p class="stanlyric-atlas-detail-artist" data-detail-artist></p>
+        <p class="stanlyric-atlas-detail-id" data-detail-doc-id></p>
+        <p class="stanlyric-atlas-neighbor-heading">Strongest semantic neighbors</p>
+        <div class="stanlyric-atlas-neighbor-list" data-detail-neighbors></div>
+      </aside>
+    </div>
+  </section>
+
 </div>
 
 <script src="{{ '/assets/js/stanlyric/stanlyric.js' | relative_url }}" defer></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.184.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.184.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="{{ '/assets/js/stanlyric/embedding-atlas.js' | relative_url }}"></script>
 
 ## Technical implementation
 
 StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: <strong>type a lyric fragment and identify the songs most likely to contain it.</strong> It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API. 
+
+The embedding atlas adds a second retrieval view over the cleaned 36,545-song corpus. Cohere Embed v4 maps each song to 1,024 dimensions; 3D UMAP provides the browser coordinates, while Leiden partitions UMAP's weighted high-dimensional neighborhood graph. The page ships only quantized coordinates, song metadata, community assignments, and six strong graph neighbors per song. Projection quality is reported with trustworthiness and neighbor overlap; PCA's first three components are retained as a linear explained-variance baseline.
 
 StanLyric is an information-retrieval system over a lyrics corpus. Each song is treated as one document, and the user-provided lyric fragment is treated as a query. The current version uses BM25-Okapi, short for **Best Matching 25**, because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
 
