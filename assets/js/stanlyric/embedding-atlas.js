@@ -1,32 +1,10 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-
-const COMMUNITY_COLORS = [
-  '#ff6b6b',
-  '#4ecdc4',
-  '#ffe66d',
-  '#5b8def',
-  '#f78fb3',
-  '#7bed9f',
-  '#ff9f43',
-  '#a29bfe',
-  '#45aaf2',
-  '#eccc68',
-  '#26de81',
-  '#fd79a8',
-  '#2bcbba',
-  '#fc5c65',
-  '#778ca3',
-  '#fed330',
-  '#20bf6b',
-  '#eb3b5a',
-  '#8854d0',
-  '#0fb9b1',
-  '#fa8231',
-  '#4b7bec',
-  '#d1d8e0',
-  '#a5b1c2',
-];
+import {
+  HIERARCHY_LEVELS,
+  levelLabel,
+  nodeColorHex,
+} from './hierarchy-colors.js';
 
 const formatInteger = new Intl.NumberFormat('en-US');
 const formatPercent = new Intl.NumberFormat('en-US', {
@@ -34,11 +12,6 @@ const formatPercent = new Intl.NumberFormat('en-US', {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
 });
-
-function communityColor(communityId, communityRankById) {
-  const rank = communityRankById.get(communityId) || communityId + 1;
-  return new THREE.Color(COMMUNITY_COLORS[(rank - 1) % COMMUNITY_COLORS.length]);
-}
 
 function setText(root, selector, value) {
   const element = root.querySelector(selector);
@@ -66,7 +39,8 @@ class StanLyricEmbeddingAtlas {
     this.details = root.querySelector('[data-atlas-details]');
     this.searchInput = root.querySelector('[data-atlas-search]');
     this.suggestions = root.querySelector('[data-atlas-suggestions]');
-    this.communitySelect = root.querySelector('[data-atlas-community]');
+    this.levelButtons = [...root.querySelectorAll('[data-atlas-level]')];
+    this.hierarchySelect = root.querySelector('[data-atlas-hierarchy-node]');
     this.resetButton = root.querySelector('[data-atlas-reset]');
     this.rotateButton = root.querySelector('[data-atlas-rotate]');
     this.fullscreenButton = root.querySelector('[data-atlas-fullscreen]');
@@ -78,23 +52,35 @@ class StanLyricEmbeddingAtlas {
     this.points = null;
     this.hoveredIndex = -1;
     this.selectedIndex = -1;
-    this.communityFilter = 'all';
+    this.hierarchyLevel = 'region';
+    this.hierarchyFilter = 'all';
     this.pointer = new THREE.Vector2(2, 2);
     this.raycaster = new THREE.Raycaster();
     this.raycaster.params.Points.threshold = 1.45;
     this.renderRequested = true;
     this.searchRows = [];
-    this.communityRankById = new Map();
-    this.communityById = new Map();
+    this.songIndexByDocId = new Map();
+    this.nodeById = new Map();
+    this.nodeByLevelId = new Map();
+    this.nodesByLevel = new Map();
   }
 
   async init() {
     try {
-      const response = await fetch(this.root.dataset.atlasUrl, { cache: 'force-cache' });
-      if (!response.ok) {
-        throw new Error(`Atlas data request failed with HTTP ${response.status}.`);
+      const [atlasResponse, hierarchyResponse] = await Promise.all([
+        fetch(this.root.dataset.atlasUrl, { cache: 'force-cache' }),
+        fetch(this.root.dataset.hierarchyUrl, { cache: 'force-cache' }),
+      ]);
+      if (!atlasResponse.ok) {
+        throw new Error(`Atlas data request failed with HTTP ${atlasResponse.status}.`);
       }
-      this.payload = await response.json();
+      if (!hierarchyResponse.ok) {
+        throw new Error(
+          `Hierarchy data request failed with HTTP ${hierarchyResponse.status}.`,
+        );
+      }
+      this.payload = await atlasResponse.json();
+      this.hierarchy = await hierarchyResponse.json();
       this.validatePayload();
       this.prepareData();
       this.buildScene();
@@ -111,18 +97,27 @@ class StanLyricEmbeddingAtlas {
   validatePayload() {
     const songs = this.payload?.songs;
     const songCount = this.payload?.corpus?.songs;
+    const hierarchySongs = this.hierarchy?.songs;
     if (
       this.payload?.schema_version !== 1
       || !songs
       || songs.titles?.length !== songCount
       || songs.coordinates?.length !== songCount * 3
+      || this.hierarchy?.schema_version !== 1
+      || !Array.isArray(this.hierarchy?.nodes)
+      || hierarchySongs?.doc_ids?.length !== songCount
     ) {
       throw new Error('Unrecognized or incomplete StanLyric atlas payload.');
+    }
+    for (let index = 0; index < songCount; index += 1) {
+      if (songs.doc_ids[index] !== hierarchySongs.doc_ids[index]) {
+        throw new Error('Atlas and hierarchy song rows are not aligned.');
+      }
     }
   }
 
   prepareData() {
-    const { songs, artists, projection, communities } = this.payload;
+    const { songs, artists, projection } = this.payload;
     const songCount = this.payload.corpus.songs;
     const quantization = projection.coordinate_encoding.quantization;
     const extent = projection.coordinate_encoding.display_extent;
@@ -132,22 +127,24 @@ class StanLyricEmbeddingAtlas {
       this.positions[i] = (songs.coordinates[i] / quantization) * extent;
     }
 
-    communities.forEach((community) => {
-      this.communityRankById.set(community.id, community.rank);
-      this.communityById.set(community.id, community);
+    HIERARCHY_LEVELS.forEach((level) => {
+      this.nodesByLevel.set(level, []);
+    });
+    this.hierarchy.nodes.forEach((node) => {
+      this.nodeById.set(node.id, node);
+      this.nodeByLevelId.set(`${node.level}:${node.level_id}`, node);
+      this.nodesByLevel.get(node.level).push(node);
+    });
+    this.nodesByLevel.forEach((nodes) => {
+      nodes.sort((left, right) => left.rank - right.rank);
     });
 
     this.baseColors = new Float32Array(songCount * 3);
-    for (let index = 0; index < songCount; index += 1) {
-      const color = communityColor(
-        songs.community_ids[index],
-        this.communityRankById,
-      );
-      color.toArray(this.baseColors, index * 3);
-    }
+    this.updateBaseColors();
 
     this.searchRows = songs.titles.map((title, index) => {
       const artist = artists[songs.artist_indices[index]] || '';
+      this.songIndexByDocId.set(songs.doc_ids[index], index);
       return {
         index,
         title,
@@ -157,6 +154,32 @@ class StanLyricEmbeddingAtlas {
         searchText: normalizedText(`${title} ${artist}`),
       };
     });
+  }
+
+  songLevelId(level, index) {
+    const key = `${level}_ids`;
+    return this.hierarchy.songs[key][index];
+  }
+
+  nodeAtLevel(level, index) {
+    return this.nodeByLevelId.get(`${level}:${this.songLevelId(level, index)}`);
+  }
+
+  songHierarchy(index) {
+    return {
+      region: this.nodeAtLevel('region', index),
+      community: this.nodeAtLevel('community', index),
+      neighborhood: this.nodeAtLevel('neighborhood', index),
+    };
+  }
+
+  updateBaseColors() {
+    const songCount = this.payload.corpus.songs;
+    for (let index = 0; index < songCount; index += 1) {
+      const node = this.nodeAtLevel(this.hierarchyLevel, index);
+      const color = new THREE.Color(nodeColorHex(node));
+      color.toArray(this.baseColors, index * 3);
+    }
   }
 
   buildScene() {
@@ -274,55 +297,112 @@ class StanLyricEmbeddingAtlas {
       if (!event.target.closest('.stanlyric-atlas-search')) this.hideSuggestions();
     });
 
-    this.communitySelect.addEventListener('change', () => {
-      this.communityFilter = this.communitySelect.value;
-      this.applyCommunityFilter();
+    this.levelButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        this.setHierarchyLevel(button.dataset.atlasLevel);
+      });
+    });
+    this.hierarchySelect.addEventListener('change', () => {
+      this.hierarchyFilter = this.hierarchySelect.value;
+      this.applyHierarchyFilter();
     });
     this.resetButton.addEventListener('click', () => this.resetView());
     this.rotateButton.addEventListener('click', () => this.toggleRotation());
     this.fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
     this.closeDetailsButton.addEventListener('click', () => this.clearSelection());
     document.addEventListener('fullscreenchange', () => this.updateFullscreenButton());
+
+    window.addEventListener('stanlyric:atlas-filter-node', (event) => {
+      const node = this.nodeById.get(event.detail?.nodeId);
+      if (!node) return;
+      this.setHierarchyLevel(node.level, node.id);
+      if (event.detail?.scroll) {
+        this.root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+    window.addEventListener('stanlyric:atlas-select-song', (event) => {
+      const index = this.songIndexByDocId.get(event.detail?.docId);
+      if (index === undefined) return;
+      this.selectSong(index, true);
+      if (event.detail?.scroll) {
+        this.root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
   }
 
   populateInterface() {
-    const { corpus, projection, communities } = this.payload;
+    const { corpus, projection } = this.payload;
+    const { summary } = this.hierarchy;
     setText(this.root, '[data-atlas-song-count]', formatInteger.format(corpus.songs));
     setText(
       this.root,
+      '[data-atlas-region-count]',
+      formatInteger.format(summary.regions),
+    );
+    setText(
+      this.root,
       '[data-atlas-community-count]',
-      formatInteger.format(corpus.communities),
+      formatInteger.format(summary.communities),
     );
     setText(
       this.root,
-      '[data-atlas-trustworthiness]',
-      projection.diagnostics.trustworthiness.toFixed(3),
+      '[data-atlas-neighborhood-count]',
+      formatInteger.format(summary.neighborhoods),
     );
     setText(
       this.root,
-      '[data-atlas-pca-variance]',
-      formatPercent.format(
+      '[data-atlas-projection-note]',
+      `UMAP trust ${projection.diagnostics.trustworthiness.toFixed(3)} · `
+      + `top-15 neighbor overlap ${projection.diagnostics.mean_neighbor_overlap.toFixed(3)} · `
+      + `PCA 3D variance ${formatPercent.format(
         projection.diagnostics.pca_cumulative_explained_variance_ratio,
-      ),
+      )}`,
     );
 
-    communities
-      .slice()
-      .sort((left, right) => left.rank - right.rank)
-      .forEach((community) => {
-        const option = document.createElement('option');
-        option.value = String(community.id);
-        option.textContent = `Community ${community.rank} (${formatInteger.format(
-          community.size,
-        )})`;
-        this.communitySelect.appendChild(option);
-      });
-
+    this.populateHierarchySelect();
+    this.updateLevelButtons();
     this.rotateButton.setAttribute(
       'aria-pressed',
       String(this.controls.autoRotate),
     );
     this.updateRotationButton();
+  }
+
+  populateHierarchySelect(selectedId = 'all') {
+    const nodes = this.nodesByLevel.get(this.hierarchyLevel) || [];
+    this.hierarchySelect.replaceChildren();
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent = `All ${levelLabel(this.hierarchyLevel, true).toLowerCase()}`;
+    this.hierarchySelect.appendChild(allOption);
+    nodes.forEach((node) => {
+      const option = document.createElement('option');
+      option.value = node.id;
+      option.textContent = `${node.id} · ${node.label} · ${formatInteger.format(node.size)}`;
+      this.hierarchySelect.appendChild(option);
+    });
+    this.hierarchySelect.value = selectedId;
+  }
+
+  updateLevelButtons() {
+    this.levelButtons.forEach((button) => {
+      const active = button.dataset.atlasLevel === this.hierarchyLevel;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  }
+
+  setHierarchyLevel(level, selectedId = 'all') {
+    if (!HIERARCHY_LEVELS.includes(level)) return;
+    this.hierarchyLevel = level;
+    this.hierarchyFilter = selectedId;
+    this.updateBaseColors();
+    this.populateHierarchySelect(selectedId);
+    this.updateLevelButtons();
+    this.applyHierarchyFilter();
+    if (this.selectedIndex >= 0) {
+      this.updateDetails(this.songAt(this.selectedIndex));
+    }
   }
 
   setReady() {
@@ -368,7 +448,8 @@ class StanLyricEmbeddingAtlas {
     setText(
       this.tooltip,
       '[data-tooltip-community]',
-      `Community ${song.community.rank}`,
+      `${song.hierarchy[this.hierarchyLevel].id} · `
+      + song.hierarchy[this.hierarchyLevel].label,
     );
     const stageBounds = this.root.querySelector('.stanlyric-atlas-stage').getBoundingClientRect();
     const tooltipWidth = this.tooltip.offsetWidth || 220;
@@ -393,21 +474,19 @@ class StanLyricEmbeddingAtlas {
 
   isPointActive(index) {
     return (
-      this.communityFilter === 'all'
-      || String(this.payload.songs.community_ids[index]) === this.communityFilter
+      this.hierarchyFilter === 'all'
+      || this.nodeAtLevel(this.hierarchyLevel, index)?.id === this.hierarchyFilter
     );
   }
 
   songAt(index) {
     const songs = this.payload.songs;
-    const communityId = songs.community_ids[index];
     return {
       index,
       docId: songs.doc_ids[index],
       title: songs.titles[index],
       artist: this.payload.artists[songs.artist_indices[index]] || 'Unknown artist',
-      communityId,
-      community: this.communityById.get(communityId),
+      hierarchy: this.songHierarchy(index),
     };
   }
 
@@ -422,6 +501,16 @@ class StanLyricEmbeddingAtlas {
     this.details.hidden = false;
     this.hideSuggestions();
     this.searchInput.value = `${song.title} - ${song.artist}`;
+    window.dispatchEvent(new CustomEvent('stanlyric:atlas-song-selected', {
+      detail: {
+        docId: song.docId,
+        hierarchy: {
+          region: song.hierarchy.region.id,
+          community: song.hierarchy.community.id,
+          neighborhood: song.hierarchy.neighborhood.id,
+        },
+      },
+    }));
 
     if (focusCamera) {
       const direction = this.camera.position.clone().sub(this.controls.target).normalize();
@@ -468,22 +557,7 @@ class StanLyricEmbeddingAtlas {
     setText(this.details, '[data-detail-title]', song.title);
     setText(this.details, '[data-detail-artist]', song.artist);
     setText(this.details, '[data-detail-doc-id]', song.docId);
-    setText(
-      this.details,
-      '[data-detail-community]',
-      `Community ${song.community.rank}`,
-    );
-    setText(
-      this.details,
-      '[data-detail-community-size]',
-      `${formatInteger.format(song.community.size)} songs`,
-    );
-
-    const swatch = this.details.querySelector('[data-detail-swatch]');
-    swatch.style.backgroundColor = `#${communityColor(
-      song.communityId,
-      this.communityRankById,
-    ).getHexString()}`;
+    this.renderDetailHierarchy(song);
 
     const neighborList = this.details.querySelector('[data-detail-neighbors]');
     neighborList.replaceChildren();
@@ -513,6 +587,41 @@ class StanLyricEmbeddingAtlas {
       button.append(identity, score);
       neighborList.appendChild(button);
     }
+  }
+
+  renderDetailHierarchy(song) {
+    const host = this.details.querySelector('[data-detail-hierarchy]');
+    host.replaceChildren();
+    HIERARCHY_LEVELS.forEach((level) => {
+      const node = song.hierarchy[level];
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'stanlyric-atlas-hierarchy-node';
+      if (level === this.hierarchyLevel) button.classList.add('is-current');
+      button.title = `Explore ${node.id}: ${node.label}`;
+
+      const swatch = document.createElement('span');
+      swatch.className = 'stanlyric-atlas-swatch';
+      swatch.style.backgroundColor = nodeColorHex(node);
+      const identity = document.createElement('span');
+      identity.className = 'stanlyric-atlas-hierarchy-identity';
+      const levelName = document.createElement('small');
+      levelName.textContent = `${levelLabel(level)} ${node.id}`;
+      const label = document.createElement('strong');
+      label.textContent = node.label;
+      identity.append(levelName, label);
+      const size = document.createElement('span');
+      size.className = 'stanlyric-atlas-hierarchy-size';
+      size.textContent = formatInteger.format(node.size);
+      button.append(swatch, identity, size);
+      button.addEventListener('click', () => {
+        this.setHierarchyLevel(level, node.id);
+        window.dispatchEvent(new CustomEvent('stanlyric:hierarchy-focus-node', {
+          detail: { nodeId: node.id, scroll: true },
+        }));
+      });
+      host.appendChild(button);
+    });
   }
 
   clearSelection() {
@@ -580,7 +689,7 @@ class StanLyricEmbeddingAtlas {
     this.suggestions.hidden = true;
   }
 
-  applyCommunityFilter() {
+  applyHierarchyFilter() {
     const colors = this.points.geometry.getAttribute('color');
     const muted = new THREE.Color('#171c26');
     for (let index = 0; index < this.payload.corpus.songs; index += 1) {
@@ -601,10 +710,13 @@ class StanLyricEmbeddingAtlas {
   }
 
   resetView() {
-    this.communityFilter = 'all';
-    this.communitySelect.value = 'all';
+    this.hierarchyLevel = 'region';
+    this.hierarchyFilter = 'all';
     this.searchInput.value = '';
-    this.applyCommunityFilter();
+    this.updateBaseColors();
+    this.populateHierarchySelect();
+    this.updateLevelButtons();
+    this.applyHierarchyFilter();
     this.clearSelection();
     this.controls.reset();
     this.renderRequested = true;

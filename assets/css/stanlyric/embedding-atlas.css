@@ -5,6 +5,7 @@
   --atlas-text: #f7f8fa;
   --atlas-muted: #aeb7c5;
   margin: 4rem 50% 2.5rem;
+  scroll-margin-top: 76px;
   transform: translateX(-50%);
   width: min(calc(100vw - 24px), 1500px);
 }
@@ -26,18 +27,23 @@
   margin: 0;
 }
 
-.stanlyric-atlas-heading p:last-child {
+.stanlyric-atlas-heading > p:not(.stanlyric-kicker) {
   color: var(--global-text-color-light, #666);
   line-height: 1.55;
   margin: 0.55rem 0 0;
   max-width: 720px;
 }
 
+.stanlyric-atlas-heading .stanlyric-atlas-projection-note {
+  font-size: 0.75rem;
+  margin-top: 0.35rem;
+}
+
 .stanlyric-atlas-metrics {
   display: grid;
   flex: 0 0 auto;
   gap: 0.5rem 1.25rem;
-  grid-template-columns: repeat(2, minmax(95px, 1fr));
+  grid-template-columns: repeat(4, minmax(80px, 1fr));
 }
 
 .stanlyric-atlas-metric span,
@@ -94,7 +100,7 @@
 
 .stanlyric-atlas-search {
   flex: 1 1 320px;
-  max-width: 440px;
+  max-width: 410px;
   position: relative;
   z-index: 2;
 }
@@ -111,6 +117,7 @@
 
 .stanlyric-atlas input,
 .stanlyric-atlas select,
+.stanlyric-atlas-level-button,
 .stanlyric-atlas-icon-button {
   backdrop-filter: blur(14px);
   background: var(--atlas-panel);
@@ -132,6 +139,7 @@
 
 .stanlyric-atlas input:focus,
 .stanlyric-atlas select:focus,
+.stanlyric-atlas-level-button:focus-visible,
 .stanlyric-atlas-icon-button:focus-visible,
 .stanlyric-atlas-neighbor:focus-visible,
 .stanlyric-atlas-suggestions button:focus-visible {
@@ -142,8 +150,41 @@
 
 .stanlyric-atlas select {
   cursor: pointer;
-  flex: 0 1 240px;
+  flex: 0 1 280px;
+  min-width: 180px;
   padding: 0.55rem 2.15rem 0.55rem 0.75rem;
+  text-overflow: ellipsis;
+}
+
+.stanlyric-atlas-levels {
+  display: flex;
+  flex: 0 0 auto;
+}
+
+.stanlyric-atlas-level-button {
+  border-radius: 0;
+  color: var(--atlas-muted);
+  cursor: pointer;
+  min-height: 42px;
+  padding: 0 0.7rem;
+}
+
+.stanlyric-atlas-level-button:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.stanlyric-atlas-level-button:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.stanlyric-atlas-level-button + .stanlyric-atlas-level-button {
+  border-left: 0;
+}
+
+.stanlyric-atlas-level-button.is-active {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #07090d;
 }
 
 .stanlyric-atlas-icon-group {
@@ -311,13 +352,15 @@
   width: 9px;
 }
 
-.stanlyric-atlas-details h4 {
-  color: var(--atlas-text);
+.stanlyric-atlas .stanlyric-atlas-details [data-detail-title] {
+  color: #ffffff !important;
   font-size: 1.25rem;
+  font-weight: 750;
   letter-spacing: 0;
   line-height: 1.2;
   margin: 0;
   overflow-wrap: anywhere;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .stanlyric-atlas-detail-artist {
@@ -332,6 +375,74 @@
   letter-spacing: 0;
   margin: 0.45rem 0 0;
   overflow-wrap: anywhere;
+}
+
+.stanlyric-atlas-detail-hierarchy {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: grid;
+  margin: 0.8rem 0 0.9rem;
+  padding-bottom: 0.75rem;
+}
+
+.stanlyric-atlas-hierarchy-node {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--atlas-text);
+  cursor: pointer;
+  display: grid;
+  gap: 0.55rem;
+  grid-template-columns: 9px minmax(0, 1fr) auto;
+  padding: 0.48rem 0;
+  text-align: left;
+  width: 100%;
+}
+
+.stanlyric-atlas-hierarchy-node:last-child {
+  border-bottom: 0;
+}
+
+.stanlyric-atlas-hierarchy-node.is-current,
+.stanlyric-atlas-hierarchy-node:hover {
+  color: #ffffff;
+}
+
+.stanlyric-atlas-hierarchy-node.is-current .stanlyric-atlas-hierarchy-identity small,
+.stanlyric-atlas-hierarchy-node:hover .stanlyric-atlas-hierarchy-identity small {
+  color: #ffffff;
+}
+
+.stanlyric-atlas-hierarchy-identity {
+  display: grid;
+  min-width: 0;
+}
+
+.stanlyric-atlas-hierarchy-identity small,
+.stanlyric-atlas-hierarchy-identity strong,
+.stanlyric-atlas-hierarchy-size {
+  letter-spacing: 0;
+}
+
+.stanlyric-atlas-hierarchy-identity small {
+  color: var(--atlas-muted);
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.stanlyric-atlas-hierarchy-identity strong {
+  color: var(--atlas-text);
+  font-size: 0.76rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stanlyric-atlas-hierarchy-size {
+  color: var(--atlas-muted);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .stanlyric-atlas-neighbor-heading {
@@ -432,6 +543,7 @@
   }
 
   .stanlyric-atlas-metrics {
+    grid-template-columns: repeat(2, minmax(95px, 1fr));
     width: 100%;
   }
 
@@ -445,12 +557,17 @@
   }
 
   .stanlyric-atlas-search {
-    flex-basis: calc(100% - 146px);
+    flex-basis: calc(100% - 150px);
     max-width: none;
   }
 
+  .stanlyric-atlas-levels {
+    order: 2;
+  }
+
   .stanlyric-atlas select {
-    flex: 1 1 210px;
+    flex: 1 1 260px;
+    order: 3;
   }
 
   .stanlyric-atlas-details {
@@ -498,9 +615,21 @@
     order: 1;
   }
 
-  .stanlyric-atlas select {
-    flex: 1 1 calc(100% - 138px);
+  .stanlyric-atlas-levels {
+    flex: 1 1 auto;
     order: 2;
+  }
+
+  .stanlyric-atlas-level-button {
+    flex: 1 1 auto;
+    padding-left: 0.45rem;
+    padding-right: 0.45rem;
+  }
+
+  .stanlyric-atlas select {
+    flex: 1 1 100%;
+    max-width: none;
+    order: 3;
   }
 
   .stanlyric-atlas-icon-group {

@@ -1,0 +1,917 @@
+.stanlyric-hierarchy {
+  --hierarchy-accent: #f05d5e;
+  background: #f4f6f8;
+  color: #171a1f;
+  margin: 0 50% 4rem;
+  padding: 2.5rem clamp(18px, 4vw, 90px);
+  scroll-margin-top: 76px;
+  transform: translateX(-50%);
+  width: min(calc(100vw - 12px), 1500px);
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy,
+body[data-theme='dark'] .stanlyric-hierarchy {
+  background: #11151b;
+  color: #f4f5f7;
+}
+
+.stanlyric-hierarchy-header {
+  align-items: end;
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.stanlyric-hierarchy-heading {
+  max-width: 760px;
+}
+
+.stanlyric-hierarchy-heading h3 {
+  font-size: clamp(1.55rem, 2.5vw, 2.35rem);
+  letter-spacing: 0;
+  line-height: 1.12;
+  margin: 0;
+}
+
+.stanlyric-hierarchy-heading > p:last-child {
+  color: #626a75;
+  line-height: 1.55;
+  margin: 0.55rem 0 0;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-heading > p:last-child,
+body[data-theme='dark'] .stanlyric-hierarchy-heading > p:last-child {
+  color: #aeb6c2;
+}
+
+.stanlyric-hierarchy-summary {
+  display: grid;
+  flex: 0 0 auto;
+  gap: 0.6rem 1.25rem;
+  grid-template-columns: repeat(2, minmax(100px, 1fr));
+}
+
+.stanlyric-hierarchy-summary span,
+.stanlyric-hierarchy-summary strong {
+  display: block;
+  letter-spacing: 0;
+}
+
+.stanlyric-hierarchy-summary span {
+  color: #626a75;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.stanlyric-hierarchy-summary strong {
+  font-size: 1.18rem;
+  margin-top: 0.15rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-summary span,
+body[data-theme='dark'] .stanlyric-hierarchy-summary span {
+  color: #aeb6c2;
+}
+
+.stanlyric-hierarchy-status {
+  border-left: 3px solid var(--hierarchy-accent);
+  color: #626a75;
+  margin: 1.5rem 0 0;
+  padding: 0.35rem 0.7rem;
+}
+
+.stanlyric-hierarchy-status.is-error {
+  color: #b42318;
+}
+
+.stanlyric-hierarchy-navigator {
+  align-items: end;
+  border-bottom: 1px solid #d4d8de;
+  border-top: 1px solid #d4d8de;
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 46px;
+  margin-top: 2rem;
+  padding: 1rem 0;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-navigator,
+body[data-theme='dark'] .stanlyric-hierarchy-navigator {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-field {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.stanlyric-hierarchy-field label {
+  color: #626a75;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-field label,
+body[data-theme='dark'] .stanlyric-hierarchy-field label {
+  color: #aeb6c2;
+}
+
+.stanlyric-hierarchy-field select,
+.stanlyric-hierarchy-locate {
+  background: #ffffff;
+  border: 1px solid #c5cad1;
+  border-radius: 6px;
+  color: #171a1f;
+  min-height: 44px;
+}
+
+.stanlyric-hierarchy-field select {
+  cursor: pointer;
+  min-width: 0;
+  padding: 0.55rem 2rem 0.55rem 0.7rem;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.stanlyric-hierarchy-field select:disabled {
+  color: #858d98;
+  cursor: default;
+}
+
+.stanlyric-hierarchy-locate {
+  align-items: center;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  padding: 0;
+  width: 44px;
+}
+
+.stanlyric-hierarchy-locate:hover {
+  background: var(--hierarchy-accent);
+  border-color: var(--hierarchy-accent);
+  color: #ffffff;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-field select,
+html[data-theme='dark'] .stanlyric-hierarchy-locate,
+body[data-theme='dark'] .stanlyric-hierarchy-field select,
+body[data-theme='dark'] .stanlyric-hierarchy-locate {
+  background: #1a2029;
+  border-color: #3b4552;
+  color: #f4f5f7;
+}
+
+.stanlyric-hierarchy-field select:focus-visible,
+.stanlyric-hierarchy-locate:focus-visible,
+.stanlyric-hierarchy-crumb:focus-visible,
+.stanlyric-hierarchy-child:focus-visible,
+.stanlyric-hierarchy-song-button:focus-visible,
+.stanlyric-hierarchy-catalog-song:focus-visible,
+.stanlyric-hierarchy-catalog-pagination button:focus-visible {
+  border-color: var(--hierarchy-accent);
+  outline: 3px solid color-mix(in srgb, var(--hierarchy-accent), transparent 68%);
+  outline-offset: 1px;
+}
+
+.stanlyric-hierarchy-breadcrumb {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 1.25rem;
+}
+
+.stanlyric-hierarchy-breadcrumb > i {
+  color: #8a929e;
+  font-size: 0.62rem;
+}
+
+.stanlyric-hierarchy-crumb {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.35rem;
+  max-width: min(360px, 100%);
+  padding: 0.25rem 0;
+}
+
+.stanlyric-hierarchy-crumb > span:not(.stanlyric-hierarchy-dot) {
+  color: #626a75;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.stanlyric-hierarchy-crumb strong {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-crumb > span:not(.stanlyric-hierarchy-dot),
+body[data-theme='dark'] .stanlyric-hierarchy-crumb > span:not(.stanlyric-hierarchy-dot) {
+  color: #aeb6c2;
+}
+
+.stanlyric-hierarchy-dot {
+  border-radius: 50%;
+  flex: 0 0 9px;
+  height: 9px;
+  width: 9px;
+}
+
+.stanlyric-hierarchy-identity {
+  align-items: baseline;
+  border-bottom: 1px solid #d4d8de;
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  padding-bottom: 0.9rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-identity,
+body[data-theme='dark'] .stanlyric-hierarchy-identity {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-node-type {
+  color: var(--hierarchy-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.stanlyric-hierarchy-node-id {
+  color: #626a75;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-node-id,
+body[data-theme='dark'] .stanlyric-hierarchy-node-id {
+  color: #aeb6c2;
+}
+
+.stanlyric-hierarchy-node-label {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.stanlyric-hierarchy-metrics {
+  border-bottom: 1px solid #d4d8de;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-metrics,
+body[data-theme='dark'] .stanlyric-hierarchy-metrics {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-metric {
+  border-right: 1px solid #d4d8de;
+  padding: 1.15rem 0.85rem;
+}
+
+.stanlyric-hierarchy-metric:first-child {
+  padding-left: 0;
+}
+
+.stanlyric-hierarchy-metric:last-child {
+  border-right: 0;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-metric,
+body[data-theme='dark'] .stanlyric-hierarchy-metric {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-metric span,
+.stanlyric-hierarchy-metric strong {
+  display: block;
+  letter-spacing: 0;
+}
+
+.stanlyric-hierarchy-metric span {
+  color: #626a75;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.stanlyric-hierarchy-metric strong {
+  font-size: 1.28rem;
+  margin-top: 0.2rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-metric span,
+body[data-theme='dark'] .stanlyric-hierarchy-metric span {
+  color: #aeb6c2;
+}
+
+.stanlyric-hierarchy-diagnostics {
+  color: #626a75;
+  font-size: 0.77rem;
+  line-height: 1.5;
+  margin: 0.65rem 0 0;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-diagnostics,
+body[data-theme='dark'] .stanlyric-hierarchy-diagnostics {
+  color: #9fa8b5;
+}
+
+.stanlyric-hierarchy-branches {
+  border-bottom: 1px solid #d4d8de;
+  margin-top: 2rem;
+  padding-bottom: 1.5rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-branches,
+body[data-theme='dark'] .stanlyric-hierarchy-branches {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-section-heading {
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  margin: 0 0 0.75rem;
+  text-transform: uppercase;
+}
+
+.stanlyric-hierarchy-section-heading::before {
+  background: var(--hierarchy-accent);
+  content: '';
+  display: inline-block;
+  height: 8px;
+  margin-right: 0.45rem;
+  width: 8px;
+}
+
+.stanlyric-hierarchy-child-list {
+  display: grid;
+  gap: 0 1.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-height: 340px;
+  overflow-y: auto;
+}
+
+.stanlyric-hierarchy-child {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #d4d8de;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: 10px minmax(0, 1fr) 12px;
+  padding: 0.55rem 0;
+  text-align: left;
+  width: 100%;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-child,
+body[data-theme='dark'] .stanlyric-hierarchy-child {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-child:hover strong {
+  color: var(--hierarchy-accent);
+}
+
+.stanlyric-hierarchy-child > i {
+  color: #8a929e;
+  font-size: 0.65rem;
+}
+
+.stanlyric-hierarchy-child-identity {
+  display: grid;
+  min-width: 0;
+}
+
+.stanlyric-hierarchy-child strong,
+.stanlyric-hierarchy-child small {
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stanlyric-hierarchy-child small {
+  color: #626a75;
+  font-size: 0.71rem;
+  margin-top: 0.12rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-child small,
+body[data-theme='dark'] .stanlyric-hierarchy-child small {
+  color: #9fa8b5;
+}
+
+.stanlyric-hierarchy-terminal {
+  color: #626a75;
+  line-height: 1.55;
+  margin: 0;
+  max-width: 760px;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-terminal,
+body[data-theme='dark'] .stanlyric-hierarchy-terminal {
+  color: #aeb6c2;
+}
+
+.stanlyric-hierarchy-evidence {
+  display: grid;
+  gap: 2.2rem 3.5rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 2.25rem;
+}
+
+.stanlyric-hierarchy-evidence-section {
+  min-width: 0;
+}
+
+.stanlyric-hierarchy-terms {
+  display: grid;
+  gap: 0 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stanlyric-hierarchy-term {
+  border-bottom: 1px solid #d4d8de;
+  display: grid;
+  min-width: 0;
+  padding: 0.45rem 0;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-term,
+body[data-theme='dark'] .stanlyric-hierarchy-term {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-term strong,
+.stanlyric-hierarchy-term span {
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stanlyric-hierarchy-term strong {
+  color: var(--hierarchy-accent);
+}
+
+.stanlyric-hierarchy-term span {
+  color: #626a75;
+  font-size: 0.71rem;
+  margin-top: 0.12rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-term span,
+body[data-theme='dark'] .stanlyric-hierarchy-term span {
+  color: #9fa8b5;
+}
+
+.stanlyric-hierarchy-artists {
+  display: grid;
+  gap: 0 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stanlyric-hierarchy-artist {
+  border-bottom: 1px solid #d4d8de;
+  display: grid;
+  gap: 0 0.45rem;
+  grid-template-columns: 20px minmax(0, 1fr);
+  min-width: 0;
+  padding: 0.45rem 0;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-artist,
+body[data-theme='dark'] .stanlyric-hierarchy-artist {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-artist-rank {
+  color: var(--hierarchy-accent);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  grid-row: 1 / span 2;
+}
+
+.stanlyric-hierarchy-artist strong,
+.stanlyric-hierarchy-artist-evidence {
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stanlyric-hierarchy-artist-evidence {
+  color: #626a75;
+  font-size: 0.71rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-artist-evidence,
+body[data-theme='dark'] .stanlyric-hierarchy-artist-evidence {
+  color: #9fa8b5;
+}
+
+.stanlyric-hierarchy-song-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.stanlyric-hierarchy-song {
+  border-bottom: 1px solid #d4d8de;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-song,
+body[data-theme='dark'] .stanlyric-hierarchy-song {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-song-button {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: minmax(0, 1fr) auto 14px;
+  padding: 0.55rem 0;
+  text-align: left;
+  width: 100%;
+}
+
+.stanlyric-hierarchy-song-button > i {
+  color: #8a929e;
+  font-size: 0.72rem;
+}
+
+.stanlyric-hierarchy-song-button:hover strong,
+.stanlyric-hierarchy-song-button:hover > i {
+  color: var(--hierarchy-accent);
+}
+
+.stanlyric-hierarchy-song-identity {
+  display: grid;
+  min-width: 0;
+}
+
+.stanlyric-hierarchy-song strong,
+.stanlyric-hierarchy-song span,
+.stanlyric-hierarchy-song small {
+  letter-spacing: 0;
+}
+
+.stanlyric-hierarchy-song strong,
+.stanlyric-hierarchy-song-identity span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stanlyric-hierarchy-song-identity span,
+.stanlyric-hierarchy-song small {
+  color: #626a75;
+  font-size: 0.71rem;
+}
+
+.stanlyric-hierarchy-song small {
+  text-align: right;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-song-identity span,
+html[data-theme='dark'] .stanlyric-hierarchy-song small,
+body[data-theme='dark'] .stanlyric-hierarchy-song-identity span,
+body[data-theme='dark'] .stanlyric-hierarchy-song small {
+  color: #9fa8b5;
+}
+
+.stanlyric-hierarchy-catalog {
+  border-top: 1px solid #d4d8de;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-catalog,
+body[data-theme='dark'] .stanlyric-hierarchy-catalog {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-catalog-header {
+  align-items: end;
+  display: flex;
+  gap: 1.5rem;
+  justify-content: space-between;
+}
+
+.stanlyric-hierarchy-catalog-header p {
+  color: #626a75;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  margin: -0.35rem 0 0;
+  max-width: 760px;
+}
+
+.stanlyric-hierarchy-catalog-header > span {
+  color: #626a75;
+  flex: 0 0 auto;
+  font-size: 0.73rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-catalog-header p,
+html[data-theme='dark'] .stanlyric-hierarchy-catalog-header > span,
+body[data-theme='dark'] .stanlyric-hierarchy-catalog-header p,
+body[data-theme='dark'] .stanlyric-hierarchy-catalog-header > span {
+  color: #aeb6c2;
+}
+
+.stanlyric-hierarchy-song-catalog {
+  border-left: 1px solid #d4d8de;
+  border-top: 1px solid #d4d8de;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 1rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-song-catalog,
+body[data-theme='dark'] .stanlyric-hierarchy-song-catalog {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-catalog-song {
+  align-content: start;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #d4d8de;
+  border-right: 1px solid #d4d8de;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  gap: 0.2rem 0.6rem;
+  grid-template-columns: 24px minmax(0, 1fr) 12px;
+  min-height: 94px;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-catalog-song,
+body[data-theme='dark'] .stanlyric-hierarchy-catalog-song {
+  border-color: #343c47;
+}
+
+.stanlyric-hierarchy-catalog-song:hover {
+  background: color-mix(in srgb, var(--hierarchy-accent), transparent 94%);
+}
+
+.stanlyric-hierarchy-catalog-song:hover strong,
+.stanlyric-hierarchy-catalog-song:hover > i {
+  color: var(--hierarchy-accent);
+}
+
+.stanlyric-hierarchy-catalog-rank {
+  color: var(--hierarchy-accent);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  grid-row: 1 / span 2;
+}
+
+.stanlyric-hierarchy-catalog-identity {
+  display: grid;
+  min-width: 0;
+}
+
+.stanlyric-hierarchy-catalog-identity strong,
+.stanlyric-hierarchy-catalog-identity span {
+  letter-spacing: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stanlyric-hierarchy-catalog-identity span,
+.stanlyric-hierarchy-catalog-song small {
+  color: #626a75;
+  font-size: 0.7rem;
+  letter-spacing: 0;
+}
+
+.stanlyric-hierarchy-catalog-song small {
+  grid-column: 2 / -1;
+  line-height: 1.3;
+}
+
+.stanlyric-hierarchy-catalog-song > i {
+  color: #8a929e;
+  font-size: 0.68rem;
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-catalog-identity span,
+html[data-theme='dark'] .stanlyric-hierarchy-catalog-song small,
+body[data-theme='dark'] .stanlyric-hierarchy-catalog-identity span,
+body[data-theme='dark'] .stanlyric-hierarchy-catalog-song small {
+  color: #9fa8b5;
+}
+
+.stanlyric-hierarchy-catalog-pagination {
+  display: flex;
+  gap: 0.65rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.stanlyric-hierarchy-catalog-pagination button {
+  align-items: center;
+  background: transparent;
+  border: 1px solid #c5cad1;
+  border-radius: 6px;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.76rem;
+  font-weight: 700;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0 0.8rem;
+}
+
+.stanlyric-hierarchy-catalog-pagination button:hover:not(:disabled) {
+  background: var(--hierarchy-accent);
+  border-color: var(--hierarchy-accent);
+  color: #ffffff;
+}
+
+.stanlyric-hierarchy-catalog-pagination button:disabled {
+  cursor: default;
+  opacity: 0.42;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-catalog-pagination button,
+body[data-theme='dark'] .stanlyric-hierarchy-catalog-pagination button {
+  border-color: #3b4552;
+}
+
+.stanlyric-hierarchy-language-note {
+  align-items: flex-start;
+  border-top: 1px solid #d4d8de;
+  color: #626a75;
+  display: flex;
+  font-size: 0.73rem;
+  gap: 0.5rem;
+  line-height: 1.5;
+  margin: 2rem 0 0;
+  padding-top: 1rem;
+}
+
+.stanlyric-hierarchy-language-note > i {
+  color: var(--hierarchy-accent);
+  margin-top: 0.18rem;
+}
+
+html[data-theme='dark'] .stanlyric-hierarchy-language-note,
+body[data-theme='dark'] .stanlyric-hierarchy-language-note {
+  border-color: #343c47;
+  color: #aeb6c2;
+}
+
+@media (max-width: 980px) {
+  .stanlyric-hierarchy-header {
+    align-items: start;
+    display: grid;
+  }
+
+  .stanlyric-hierarchy-summary {
+    width: 100%;
+  }
+
+  .stanlyric-hierarchy-navigator {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stanlyric-hierarchy-locate {
+    width: 100%;
+  }
+
+  .stanlyric-hierarchy-song-catalog {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .stanlyric-hierarchy {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .stanlyric-hierarchy-navigator {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stanlyric-hierarchy-identity {
+    align-items: start;
+    display: grid;
+    gap: 0.25rem;
+  }
+
+  .stanlyric-hierarchy-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stanlyric-hierarchy-metric {
+    border-bottom: 1px solid #d4d8de;
+  }
+
+  .stanlyric-hierarchy-metric:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .stanlyric-hierarchy-metric:last-child {
+    border-bottom: 0;
+    grid-column: 1 / -1;
+  }
+
+  .stanlyric-hierarchy-child-list,
+  .stanlyric-hierarchy-evidence {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stanlyric-hierarchy-catalog-header {
+    align-items: start;
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .stanlyric-hierarchy-song-button {
+    align-items: start;
+    gap: 0.2rem 0.6rem;
+    grid-template-columns: minmax(0, 1fr) 14px;
+  }
+
+  .stanlyric-hierarchy-song-button small {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    text-align: left;
+  }
+
+  .stanlyric-hierarchy-song-button > i {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 440px) {
+  .stanlyric-hierarchy-summary,
+  .stanlyric-hierarchy-terms,
+  .stanlyric-hierarchy-artists,
+  .stanlyric-hierarchy-song-catalog {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .stanlyric-hierarchy-breadcrumb {
+    align-items: start;
+    display: grid;
+  }
+
+  .stanlyric-hierarchy-breadcrumb > i {
+    display: none;
+  }
+
+  .stanlyric-hierarchy-crumb {
+    max-width: 100%;
+  }
+
+  .stanlyric-hierarchy-catalog-pagination {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .stanlyric-hierarchy-catalog-pagination button {
+    justify-content: center;
+    min-width: 0;
+    padding: 0 0.5rem;
+  }
+}

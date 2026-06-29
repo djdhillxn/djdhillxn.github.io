@@ -10,6 +10,7 @@ img_size: small
 
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/stanlyric.css' | relative_url }}">
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/embedding-atlas.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/stanlyric/hierarchy-explorer.css' | relative_url }}">
 
 <figure class="stanlyric-reference-figure">
   <div class="stanlyric-reference-crop">
@@ -119,12 +120,14 @@ img_size: small
     class="stanlyric-atlas"
     data-stanlyric-atlas
     data-atlas-url="{{ '/assets/json/stanlyric/stanlyric_embedding_atlas.json' | relative_url }}"
+    data-hierarchy-url="{{ '/assets/json/stanlyric/stanlyric_hierarchy.json' | relative_url }}"
   >
     <header class="stanlyric-atlas-header">
       <div class="stanlyric-atlas-heading">
         <p class="stanlyric-kicker">semantic map</p>
         <h3>Song Embedding Atlas</h3>
-        <p>Cohere Embed v4 song representations, projected with 3D UMAP and partitioned with weighted Leiden communities.</p>
+        <p>Cohere Embed v4 song representations projected with 3D UMAP. Switch between broad Regions, stable Communities, and fine-grained Neighborhoods.</p>
+        <p class="stanlyric-atlas-projection-note" data-atlas-projection-note></p>
       </div>
       <div class="stanlyric-atlas-metrics" aria-label="atlas statistics">
         <div class="stanlyric-atlas-metric">
@@ -132,16 +135,16 @@ img_size: small
           <strong data-atlas-song-count>--</strong>
         </div>
         <div class="stanlyric-atlas-metric">
+          <span>Regions</span>
+          <strong data-atlas-region-count>--</strong>
+        </div>
+        <div class="stanlyric-atlas-metric">
           <span>Communities</span>
           <strong data-atlas-community-count>--</strong>
         </div>
         <div class="stanlyric-atlas-metric">
-          <span>UMAP trust</span>
-          <strong data-atlas-trustworthiness>--</strong>
-        </div>
-        <div class="stanlyric-atlas-metric">
-          <span>PCA 3D variance</span>
-          <strong data-atlas-pca-variance>--</strong>
+          <span>Neighborhoods</span>
+          <strong data-atlas-neighborhood-count>--</strong>
         </div>
       </div>
     </header>
@@ -164,9 +167,15 @@ img_size: small
           <div class="stanlyric-atlas-suggestions" data-atlas-suggestions hidden></div>
         </div>
 
-        <label class="sr-only" for="stanlyric-atlas-community">Filter by community</label>
-        <select id="stanlyric-atlas-community" data-atlas-community>
-          <option value="all">All communities</option>
+        <div class="stanlyric-atlas-levels" aria-label="Color songs by hierarchy level">
+          <button type="button" class="stanlyric-atlas-level-button is-active" data-atlas-level="region" aria-pressed="true">Regions</button>
+          <button type="button" class="stanlyric-atlas-level-button" data-atlas-level="community" aria-pressed="false">Communities</button>
+          <button type="button" class="stanlyric-atlas-level-button" data-atlas-level="neighborhood" aria-pressed="false">Neighborhoods</button>
+        </div>
+
+        <label class="sr-only" for="stanlyric-atlas-hierarchy-node">Filter the active hierarchy level</label>
+        <select id="stanlyric-atlas-hierarchy-node" data-atlas-hierarchy-node>
+          <option value="all">All regions</option>
         </select>
 
         <div class="stanlyric-atlas-icon-group">
@@ -214,19 +223,158 @@ img_size: small
           title="Close song details"
           aria-label="Close song details"
         ><i class="fas fa-times" aria-hidden="true"></i></button>
-        <p class="stanlyric-atlas-detail-community">
-          <span class="stanlyric-atlas-swatch" data-detail-swatch></span>
-          <span data-detail-community></span>
-          <span aria-hidden="true">/</span>
-          <span data-detail-community-size></span>
-        </p>
         <h4 data-detail-title></h4>
         <p class="stanlyric-atlas-detail-artist" data-detail-artist></p>
         <p class="stanlyric-atlas-detail-id" data-detail-doc-id></p>
+        <div class="stanlyric-atlas-detail-hierarchy" data-detail-hierarchy></div>
         <p class="stanlyric-atlas-neighbor-heading">Strongest semantic neighbors</p>
         <div class="stanlyric-atlas-neighbor-list" data-detail-neighbors></div>
       </aside>
     </div>
+  </section>
+
+  <section
+    class="stanlyric-hierarchy"
+    data-stanlyric-hierarchy
+    data-hierarchy-url="{{ '/assets/json/stanlyric/stanlyric_hierarchy.json' | relative_url }}"
+    data-atlas-url="{{ '/assets/json/stanlyric/stanlyric_embedding_atlas.json' | relative_url }}"
+  >
+    <header class="stanlyric-hierarchy-header">
+      <div class="stanlyric-hierarchy-heading">
+        <p class="stanlyric-kicker">hierarchy explorer</p>
+        <h3>From lyric regions to song neighborhoods</h3>
+        <p>Follow the strict Region → Community → Neighborhood structure, then inspect the language, artists, representative songs, and graph evidence that explain each node.</p>
+      </div>
+      <div class="stanlyric-hierarchy-summary" aria-label="hierarchy statistics">
+        <div>
+          <span>Regions</span>
+          <strong data-hierarchy-region-count>--</strong>
+        </div>
+        <div>
+          <span>Communities</span>
+          <strong data-hierarchy-community-count>--</strong>
+        </div>
+        <div>
+          <span>Neighborhoods</span>
+          <strong data-hierarchy-neighborhood-count>--</strong>
+        </div>
+        <div>
+          <span>Adaptive splits</span>
+          <strong data-hierarchy-split-count>--</strong>
+        </div>
+      </div>
+    </header>
+
+    <p class="stanlyric-hierarchy-status" data-hierarchy-status>
+      Loading hierarchy evidence...
+    </p>
+
+    <div class="stanlyric-hierarchy-navigator">
+      <div class="stanlyric-hierarchy-field">
+        <label for="stanlyric-hierarchy-region">Region</label>
+        <select id="stanlyric-hierarchy-region" data-hierarchy-region></select>
+      </div>
+      <div class="stanlyric-hierarchy-field">
+        <label for="stanlyric-hierarchy-community">Community</label>
+        <select id="stanlyric-hierarchy-community" data-hierarchy-community disabled></select>
+      </div>
+      <div class="stanlyric-hierarchy-field">
+        <label for="stanlyric-hierarchy-neighborhood">Neighborhood</label>
+        <select id="stanlyric-hierarchy-neighborhood" data-hierarchy-neighborhood disabled></select>
+      </div>
+      <button
+        type="button"
+        class="stanlyric-hierarchy-locate"
+        data-hierarchy-locate
+        title="Show this node in the 3D atlas"
+        aria-label="Show this node in the 3D atlas"
+      ><i class="fas fa-crosshairs" aria-hidden="true"></i></button>
+    </div>
+
+    <nav class="stanlyric-hierarchy-breadcrumb" data-hierarchy-breadcrumb aria-label="Selected hierarchy path"></nav>
+
+    <div class="stanlyric-hierarchy-identity">
+      <span class="stanlyric-hierarchy-node-type" data-hierarchy-node-level>--</span>
+      <span class="stanlyric-hierarchy-node-id" data-hierarchy-node-id>--</span>
+      <span class="stanlyric-hierarchy-node-label" data-hierarchy-node-label>--</span>
+    </div>
+
+    <div class="stanlyric-hierarchy-metrics" aria-label="selected hierarchy node statistics">
+      <div class="stanlyric-hierarchy-metric">
+        <span>Songs</span>
+        <strong data-hierarchy-size>--</strong>
+      </div>
+      <div class="stanlyric-hierarchy-metric">
+        <span>Assignment stability</span>
+        <strong data-hierarchy-stability>--</strong>
+      </div>
+      <div class="stanlyric-hierarchy-metric">
+        <span>Embedding cohesion</span>
+        <strong data-hierarchy-cohesion>--</strong>
+      </div>
+      <div class="stanlyric-hierarchy-metric">
+        <span>Graph retention</span>
+        <strong data-hierarchy-retention>--</strong>
+      </div>
+      <div class="stanlyric-hierarchy-metric">
+        <span>Distinct artists</span>
+        <strong data-hierarchy-artists>--</strong>
+      </div>
+    </div>
+    <p class="stanlyric-hierarchy-diagnostics" data-hierarchy-diagnostics></p>
+
+    <section class="stanlyric-hierarchy-branches">
+      <h4 class="stanlyric-hierarchy-section-heading" data-hierarchy-children-heading>Child nodes</h4>
+      <div class="stanlyric-hierarchy-child-list" data-hierarchy-children></div>
+    </section>
+
+    <div class="stanlyric-hierarchy-evidence">
+      <section class="stanlyric-hierarchy-evidence-section">
+        <h4 class="stanlyric-hierarchy-section-heading">Distinctive lyric language</h4>
+        <div class="stanlyric-hierarchy-terms" data-hierarchy-terms></div>
+      </section>
+
+      <section class="stanlyric-hierarchy-evidence-section">
+        <h4 class="stanlyric-hierarchy-section-heading">Most represented artists</h4>
+        <div class="stanlyric-hierarchy-artists" data-hierarchy-artists-list></div>
+      </section>
+
+      <section class="stanlyric-hierarchy-evidence-section">
+        <h4 class="stanlyric-hierarchy-section-heading">Centroid representatives</h4>
+        <ol class="stanlyric-hierarchy-song-list" data-hierarchy-representatives></ol>
+      </section>
+
+      <section class="stanlyric-hierarchy-evidence-section">
+        <h4 class="stanlyric-hierarchy-section-heading">Boundary songs</h4>
+        <ol class="stanlyric-hierarchy-song-list" data-hierarchy-boundaries></ol>
+      </section>
+    </div>
+
+    <section class="stanlyric-hierarchy-catalog">
+      <div class="stanlyric-hierarchy-catalog-header">
+        <div>
+          <h4 class="stanlyric-hierarchy-section-heading" data-hierarchy-song-catalog-heading>Songs</h4>
+          <p>Ranked by local membership agreement, then semantic-edge strength and hierarchy stability.</p>
+        </div>
+        <span data-hierarchy-song-range>--</span>
+      </div>
+      <div class="stanlyric-hierarchy-song-catalog" data-hierarchy-song-catalog></div>
+      <div class="stanlyric-hierarchy-catalog-pagination">
+        <button type="button" data-hierarchy-songs-previous disabled>
+          <i class="fas fa-arrow-left" aria-hidden="true"></i>
+          Previous 20
+        </button>
+        <button type="button" data-hierarchy-songs-next disabled>
+          Next 20
+          <i class="fas fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </section>
+
+    <p class="stanlyric-hierarchy-language-note">
+      <i class="fas fa-info-circle" aria-hidden="true"></i>
+      Community language is extracted directly from the lyrics corpus and may include explicit terms; it is presented as data, not endorsement.
+    </p>
   </section>
 
 </div>
@@ -241,12 +389,17 @@ img_size: small
 }
 </script>
 <script type="module" src="{{ '/assets/js/stanlyric/embedding-atlas.js' | relative_url }}"></script>
+<script type="module" src="{{ '/assets/js/stanlyric/hierarchy-explorer.js' | relative_url }}"></script>
 
 ## Technical implementation
 
 StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: <strong>type a lyric fragment and identify the songs most likely to contain it.</strong> It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API. 
 
-The embedding atlas adds a second retrieval view over the cleaned 36,545-song corpus. Cohere Embed v4 maps each song to 1,024 dimensions; 3D UMAP provides the browser coordinates, while Leiden partitions UMAP's weighted high-dimensional neighborhood graph. The page ships only quantized coordinates, song metadata, community assignments, and six strong graph neighbors per song. Projection quality is reported with trustworthiness and neighbor overlap; PCA's first three components are retained as a linear explained-variance baseline.
+The embedding atlas adds a second retrieval view over the cleaned 36,545-song corpus. Cohere Embed v4 maps each song to 1,024 dimensions, and 3D UMAP provides the browser coordinates. Projection quality is reported with trustworthiness and original-space neighbor overlap; PCA's first three components remain a transparent linear explained-variance baseline. The page ships quantized coordinates, song metadata, six strong graph neighbors per song, and compact hierarchy assignments rather than dense vectors.
+
+The semantic structure is a strict three-level Leiden hierarchy built with the Constant Potts Model. A multiseed resolution sweep selects 139 middle Communities using adjusted Rand agreement, normalized variation of information, adjacent-resolution stability, and balance constraints. Those Communities are aggregated into 20 broad Regions. Large Communities are then split only when the proposed Neighborhoods pass minimum-size, seed-stability, internal-edge-retention, embedding-cohesion-gain, and topic-separation gates. This produces 175 Neighborhoods, with every Neighborhood contained by exactly one Community and every Community contained by exactly one Region.
+
+Each hierarchy level receives the same interpretation contract. Binary song-incidence c-TF-IDF finds distinctive unigrams and bigrams without allowing repeated choruses to multiply their weight. Corpus prevalence lift and smoothed log-odds distinguish characteristic language from merely frequent lyric vocabulary. Representative songs are nearest to each node's centroid in the original 1,024-dimensional cosine space, while boundary songs devote substantial graph strength outside the node. Cohesion, weighted conductance, internal edge strength, artist diversity, sampled cosine silhouette, per-song assignment stability, and weighted local-neighbor agreement remain visible as diagnostics.
 
 StanLyric is an information-retrieval system over a lyrics corpus. Each song is treated as one document, and the user-provided lyric fragment is treated as a query. The current version uses BM25-Okapi, short for **Best Matching 25**, because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
 
@@ -275,7 +428,7 @@ $$
 
 The value $$n(q)$$ is the number of songs containing $$q$$. This gives more weight to unusual words that occur in relatively few songs; a word such as *rabbit* is therefore more discriminative than a common word such as *the*. During offline export, exceptionally common terms whose raw IDF would be negative are assigned a small positive floor based on $$\epsilon=0.25$$ and the corpus-average IDF. Repeating a term helps, but the term-frequency fraction in the BM25 formula saturates its contribution, so ten occurrences are not treated as ten times stronger than one.
 
-The denominator also normalizes for document length. Without it, long lyrics would tend to score highly simply because they contain more words and have more opportunities to match. The ratio $$\lvert D\rvert/\operatorname{avgdl}$$ compares a song's token count with the corpus average. In the current 44,480-song artifact, the average document length is approximately **267 tokens**.
+The denominator also normalizes for document length. Without it, long lyrics would tend to score highly simply because they contain more words and have more opportunities to match. The ratio $$\lvert D\rvert/\operatorname{avgdl}$$ compares a song's token count with the corpus average. In the current deduplicated 36,545-song artifact, the average document length is approximately **266 tokens**.
 
 StanLyric uses $$k_1=1.5$$ and $$b=0.75$$. The $$k_1$$ parameter controls how quickly repeated term frequency reaches diminishing returns. The $$b$$ parameter controls the strength of length normalization: $$b=0$$ would ignore document length, while $$b=1$$ would apply the full normalization. A value of 0.75 provides substantial normalization without letting length dominate the score.
 
