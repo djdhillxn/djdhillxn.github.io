@@ -70,6 +70,7 @@ The wordplay model is fueling that increasing surge, only for your curiosity. Ho
     <div class="lexi-demo-title">Generate your new English word!</div>
     <div class="lexi-demo-subtitle">
       Choose a length and let the trained n-gram tables sample plausible character sequences.
+      You may also fix letters at any positions and let the model complete the remaining blanks.
     </div>
   </div>
 
@@ -80,10 +81,6 @@ The wordplay model is fueling that increasing surge, only for your curiosity. Ho
         <input id="lexi-word-length" name="wordLength" type="number" min="2" max="45" value="13" required>
       </div>
       <div class="lexi-control">
-        <label for="lexi-count">Samples</label>
-        <input id="lexi-count" name="count" type="number" min="1" max="24" value="1" required>
-      </div>
-      <div class="lexi-control">
         <label for="lexi-temperature">Temperature</label>
         <input id="lexi-temperature" name="temperature" type="number" min="0" max="2" step="0.05" value="0.85" required>
       </div>
@@ -92,8 +89,15 @@ The wordplay model is fueling that increasing surge, only for your curiosity. Ho
         <input id="lexi-seed" name="seed" type="text" placeholder="e.g. eminem">
       </div>
     </div>
+    <div class="lexi-pattern-editor">
+      <div class="lexi-pattern-heading">
+        <span class="lexi-pattern-label">Fixed letter positions <span>optional</span></span>
+        <button class="lexi-pattern-clear" type="button" data-lexinet-clear-pattern>Clear letters</button>
+      </div>
+      <div class="lexi-pattern-slots" data-lexinet-pattern role="group" aria-label="Optional fixed letters by word position"></div>
+    </div>
     <div class="lexi-actions">
-      <button class="lexi-button" type="submit" disabled>Generate words</button>
+      <button class="lexi-button" type="submit" disabled>Generate word</button>
       <span class="lexi-status-line" data-lexinet-status>Preparing model...</span>
     </div>
   </form>
@@ -118,6 +122,8 @@ LexiNet is a character-level modeling project built around bidirectional n-gram 
 The guessing game is deterministic and greedy. Given the visible pattern, it scores every unguessed letter across all blank positions using forward and reverse context probabilities, guesses the highest-scoring letter, reveals its matches, and loses one configured life only when the letter is absent.
 
 The generator begins with a blank word of the requested length. At every step, it scores candidates letters at every remaining blank position using the trained forward and and reverse n-gram contexts, samples one `(position, letter)` pair, fills that slot, and repeats until the word is complete. Lower temeperatures make the generation more conservative; higher temperatures make it more exploratory.
+
+When fixed letters are supplied, those positions become the initial context instead of blanks. The model leaves them unchanged, fills only the open positions, and preserves the same pattern when you request another candidate.
 
 This is not dictionary lookup; it is probabilistic generation. Both demos operate from learned character-context counts, and the generator is explicitly searching for strings that can emerge between those observed patterns. 
 

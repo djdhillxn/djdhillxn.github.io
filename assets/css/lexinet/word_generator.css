@@ -65,6 +65,80 @@
   margin: 0.7rem 0 0.3rem;
 }
 
+.lexi-pattern-editor {
+  margin: 0.4rem 0 1rem;
+}
+
+.lexi-pattern-heading {
+  align-items: center;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: space-between;
+  margin-bottom: 0.55rem;
+}
+
+.lexi-pattern-label {
+  color: var(--global-text-color-light, #64748b);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.lexi-pattern-label span {
+  font-weight: 500;
+  text-transform: none;
+}
+
+.lexi-pattern-clear {
+  background: transparent;
+  border: 0;
+  color: var(--global-theme-color, #267cb9);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.25rem;
+}
+
+.lexi-pattern-clear:hover,
+.lexi-pattern-clear:focus-visible {
+  text-decoration: underline;
+}
+
+.lexi-pattern-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.lexi-pattern-input {
+  background: var(--global-bg-color, #fff);
+  border: 1px solid var(--global-divider-color, #cfd8e5);
+  border-bottom: 3px solid #8ea0b8;
+  border-radius: 7px;
+  color: var(--global-text-color, #182235);
+  font-size: 1.05rem;
+  font-weight: 800;
+  height: 40px;
+  line-height: 1;
+  padding: 0;
+  text-align: center;
+  text-transform: uppercase;
+  width: 32px;
+}
+
+.lexi-pattern-input.is-fixed {
+  background: rgba(38, 124, 185, 0.09);
+  border-color: var(--global-theme-color, #267cb9);
+  border-bottom-color: var(--global-theme-color, #267cb9);
+}
+
+.lexi-pattern-input:focus {
+  border-color: var(--global-theme-color, #267cb9);
+  box-shadow: 0 0 0 3px rgba(38, 124, 185, 0.14);
+  outline: none;
+}
+
 .lexi-button {
   border: 0;
   border-radius: 999px;
@@ -170,6 +244,12 @@
   background: #effaf5;
 }
 
+.lexi-slot.fixed {
+  background: rgba(38, 124, 185, 0.09);
+  border-color: var(--global-theme-color, #267cb9);
+  border-bottom-color: var(--global-theme-color, #267cb9);
+}
+
 .lexi-generated-text {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   color: var(--global-text-color-light, #64748b);
@@ -247,5 +327,10 @@
 @media (max-width: 560px) {
   .lexi-controls-guess {
     grid-template-columns: 1fr;
+  }
+
+  .lexi-pattern-input {
+    height: 36px;
+    width: 29px;
   }
 }
