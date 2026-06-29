@@ -194,16 +194,38 @@
     return cumulative[cumulative.length - 1].item;
   }
 
+  function validateWordLength(value) {
+    const wordLength = Number(value);
+    if (!Number.isInteger(wordLength) || wordLength < 2 || wordLength > 45) {
+      throw new Error("Please choose a word length between 2 and 45.");
+    }
+    return wordLength;
+  }
+
+  function normalizeInitialPattern(value, wordLength) {
+    const source = Array.isArray(value) ? value : Array.from(String(value || ""));
+    return Array.from({ length: wordLength }, (_unused, index) => {
+      const character = String(source[index] || "").trim().toLowerCase();
+      if (!character || character === "_") return "_";
+      if (!/^[a-z]$/.test(character)) {
+        throw new Error(`Fixed position ${index + 1} must contain one English letter.`);
+      }
+      return character;
+    });
+  }
+
   function generateModelWord(model, options) {
-    const wordLength = Number(options.wordLength || 8);
+    const wordLength = validateWordLength(options.wordLength || 8);
     const temperature = Number(options.temperature ?? 0.85);
     const rng = options.rng || Math.random;
     const nUsed = chooseNForWordLength(wordLength, model);
 
-    const currentWord = Array(wordLength).fill("_");
+    const initialPattern = normalizeInitialPattern(options.initialPattern, wordLength);
+    const currentWord = initialPattern.slice();
+    const blanksToFill = currentWord.filter((character) => character === "_").length;
     const trace = [];
 
-    for (let step = 0; step < wordLength; step += 1) {
+    for (let step = 0; step < blanksToFill; step += 1) {
       let candidates = generationCandidateScores(model, currentWord, nUsed);
       let usedFallback = false;
       if (!candidates.length) {
@@ -228,6 +250,8 @@
       wordLength,
       nUsed,
       temperature,
+      initialPattern: initialPattern.join(""),
+      fixedCount: wordLength - blanksToFill,
       trace,
     };
   }
@@ -374,14 +398,72 @@
     };
   }
 
-  function renderSlots(word) {
+  function renderSlots(word, fixedPattern = "") {
     return Array.from(word)
-      .map((letter) => {
+      .map((letter, index) => {
         const known = letter !== "_";
+        const fixed = fixedPattern[index] && fixedPattern[index] !== "_";
         const label = known ? letter.toUpperCase() : "";
-        return `<span class="lexi-slot${known ? " known" : ""}">${escapeHtml(label)}</span>`;
+        return `<span class="lexi-slot${known ? " known" : ""}${fixed ? " fixed" : ""}">${escapeHtml(label)}</span>`;
       })
       .join("");
+  }
+
+  function renderPatternInputs(container, wordLength) {
+    container.innerHTML = Array.from({ length: wordLength }, (_unused, index) => `
+      <input
+        class="lexi-pattern-input"
+        type="text"
+        maxlength="1"
+        inputmode="text"
+        autocomplete="off"
+        autocapitalize="characters"
+        aria-label="Fixed letter at position ${index + 1}"
+        data-lexinet-pattern-position="${index}"
+      >
+    `).join("");
+  }
+
+  function readPatternInputs(container, wordLength) {
+    const values = Array.from(container.querySelectorAll("[data-lexinet-pattern-position]"))
+      .map((input) => input.value || "_");
+    return normalizeInitialPattern(values, wordLength);
+  }
+
+  function clearPatternInputs(container) {
+    container.querySelectorAll("[data-lexinet-pattern-position]").forEach((input) => {
+      input.value = "";
+      input.classList.remove("is-fixed");
+    });
+  }
+
+  function configurePatternEditor(container, onChange) {
+    container.addEventListener("input", (event) => {
+      const input = event.target.closest("[data-lexinet-pattern-position]");
+      if (!input) return;
+      const character = String(input.value || "").replace(/[^a-z]/gi, "").slice(0, 1).toUpperCase();
+      input.value = character;
+      input.classList.toggle("is-fixed", Boolean(character));
+      if (onChange) onChange();
+      if (character) {
+        const next = input.nextElementSibling;
+        if (next?.matches("[data-lexinet-pattern-position]")) next.focus();
+      }
+    });
+
+    container.addEventListener("keydown", (event) => {
+      const input = event.target.closest("[data-lexinet-pattern-position]");
+      if (!input) return;
+      if (event.key === "ArrowLeft" && input.previousElementSibling) {
+        event.preventDefault();
+        input.previousElementSibling.focus();
+      } else if (event.key === "ArrowRight" && input.nextElementSibling) {
+        event.preventDefault();
+        input.nextElementSibling.focus();
+      } else if (event.key === "Backspace" && !input.value && input.previousElementSibling) {
+        input.previousElementSibling.focus();
+      }
+    });
   }
 
   function renderGeneratedTrace(trace) {
@@ -397,7 +479,7 @@
         </tr>`
       )
       .join("");
-    return `<details class="lexi-trace"><summary>Show generation trace for the first word</summary>
+    return `<details class="lexi-trace"><summary>Show generation trace</summary>
       <table class="lexi-history"><thead><tr><th>Step</th><th>Position</th><th>Letter</th><th>Pattern</th><th>Source</th></tr></thead><tbody>${rows}</tbody></table>
     </details>`;
   }
@@ -408,17 +490,17 @@
     const cards = words
       .map(
         (item) => `<div class="lexi-word-card">
-          <div class="lexi-word">${renderSlots(item.word)}</div>
+          <div class="lexi-word">${renderSlots(item.word, item.initialPattern)}</div>
           <div class="lexi-generated-text">${escapeHtml(item.word)}</div>
         </div>`
       )
       .join("");
 
     return `<div class="lexi-results-panel">
-      <div class="lexi-status">Generated ${words.length} model word${words.length === 1 ? "" : "s"}</div>
+      <div class="lexi-status">Generated model word</div>
       <div class="lexi-grid">
         <div class="lexi-stat"><div class="lexi-label">Word length</div><div class="lexi-value">${first.wordLength}</div></div>
-        <div class="lexi-stat"><div class="lexi-label">Samples</div><div class="lexi-value">${words.length}</div></div>
+        <div class="lexi-stat"><div class="lexi-label">Fixed letters</div><div class="lexi-value">${first.fixedCount}</div></div>
         <div class="lexi-stat"><div class="lexi-label">Temperature</div><div class="lexi-value">${first.temperature}</div></div>
       </div>
       <div class="lexi-word-list">${cards}</div>
@@ -486,7 +568,34 @@
     const guessForm = root.querySelector("[data-lexinet-guess-form]");
     const generateOutput = root.querySelector("[data-lexinet-generate-output]");
     const guessOutput = root.querySelector("[data-lexinet-guess-output]");
+    const patternEditor = root.querySelector("[data-lexinet-pattern]");
+    const clearPatternButton = root.querySelector("[data-lexinet-clear-pattern]");
     const buttons = root.querySelectorAll("button[type='submit']");
+
+    if (generateForm && patternEditor) {
+      const wordLengthInput = generateForm.elements.wordLength;
+      renderPatternInputs(patternEditor, validateWordLength(wordLengthInput.value));
+      configurePatternEditor(patternEditor, () => {
+        if (generateOutput) generateOutput.innerHTML = "";
+      });
+      wordLengthInput.addEventListener("input", () => {
+        wordLengthInput.setCustomValidity("");
+      });
+      wordLengthInput.addEventListener("change", () => {
+        try {
+          renderPatternInputs(patternEditor, validateWordLength(wordLengthInput.value));
+          if (generateOutput) generateOutput.innerHTML = "";
+        } catch (error) {
+          wordLengthInput.setCustomValidity(error.message);
+          wordLengthInput.reportValidity();
+        }
+      });
+      clearPatternButton?.addEventListener("click", () => {
+        clearPatternInputs(patternEditor);
+        if (generateOutput) generateOutput.innerHTML = "";
+        patternEditor.querySelector("[data-lexinet-pattern-position]")?.focus();
+      });
+    }
 
     try {
       if (status) status.textContent = "Loading compact n-gram tables...";
@@ -506,15 +615,19 @@
       generateForm.addEventListener("submit", (event) => {
         event.preventDefault();
         const data = new FormData(generateForm);
+        const wordLength = Number(data.get("wordLength"));
         const options = {
-          wordLength: Number(data.get("wordLength")),
-          count: Number(data.get("count")),
+          wordLength,
           temperature: Number(data.get("temperature")),
           seed: String(data.get("seed") || ""),
+          initialPattern: patternEditor ? readPatternInputs(patternEditor, wordLength) : null,
         };
         try {
-          const words = generateModelWords(root.lexinetModel, options);
-          generateOutput.innerHTML = renderGeneratedWords(words);
+          const generatedWord = generateModelWord(root.lexinetModel, {
+            ...options,
+            rng: seededRandom(options.seed),
+          });
+          generateOutput.innerHTML = renderGeneratedWords([generatedWord]);
         } catch (error) {
           generateOutput.innerHTML = `<div class="lexi-error">${escapeHtml(error.message)}</div>`;
         }
