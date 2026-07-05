@@ -110,13 +110,17 @@
         postings.forEach((pair) => {
           const docIndex = pair[0];
           const tf = pair[1];
-          const contribution = this._scoreTerm(tf, this.docLens[docIndex] || 0, idf);
+          const tfWeight = this._tfWeight(tf, this.docLens[docIndex] || 0);
+          const contribution = idf * tfWeight;
+          const previous = perTermStats.get(docIndex);
           scores[docIndex] += contribution;
           touched.add(docIndex);
           perTermStats.set(docIndex, {
             tf,
+            query_tf: (previous?.query_tf || 0) + 1,
+            tf_weight: tfWeight,
             idf,
-            contribution: (perTermStats.get(docIndex)?.contribution || 0) + contribution,
+            contribution: (previous?.contribution || 0) + contribution,
           });
         });
         termStats.set(term, perTermStats);
@@ -173,6 +177,8 @@
           termRows.push({
             term,
             doc_tf: stat.tf,
+            query_tf: stat.query_tf,
+            bm25_tf_weight: stat.tf_weight,
             idf: stat.idf,
             contribution: stat.contribution,
           });
@@ -225,11 +231,15 @@
       return snippet;
     }
 
-    _scoreTerm(tf, docLen, idf) {
+    _tfWeight(tf, docLen) {
       const k1 = Number(this.config.k1 || 1.5);
       const b = Number(this.config.b || 0.75);
       const denomConst = k1 * (1 - b + b * (Number(docLen) || 0) / Math.max(this.avgdl, 1e-9));
-      return idf * ((tf * (k1 + 1)) / (tf + denomConst || 1));
+      return (tf * (k1 + 1)) / (tf + denomConst || 1);
+    }
+
+    _scoreTerm(tf, docLen, idf) {
+      return idf * this._tfWeight(tf, docLen);
     }
 
     _scoresToConfidence(scores) {
@@ -265,17 +275,23 @@
     const second = results[1];
     const gap = second ? top.bm25_score - second.bm25_score : top.bm25_score;
     container.innerHTML = `
-      <p class="stanlyric-kicker">top candidate</p>
-      <h3 class="stanlyric-top-title">${escapeHtml(top.title)}</h3>
-      <p class="stanlyric-artist">${escapeHtml(top.artist)}</p>
-      <div class="stanlyric-stat-grid">
-        <div class="stanlyric-stat"><span>BM25 score</span><strong>${formatNumber(top.bm25_score, 3)}</strong></div>
-        <div class="stanlyric-stat"><span>Top-k confidence</span><strong>${formatPercent(top.confidence, 1)}</strong></div>
-        <div class="stanlyric-stat"><span>Score gap</span><strong>${formatNumber(gap, 3)}</strong></div>
-        <div class="stanlyric-stat"><span>Corpus percentile</span><strong>${formatNumber(top.score_percentile, 1)}</strong></div>
-      </div>
-      <div class="stanlyric-source-note">
-        Matched ${top.matched_terms.length} of ${queryTokens.length} unique query terms across ${corpusSize.toLocaleString()} indexed songs. Method: ${escapeHtml(top.method)}.
+      <div class="stanlyric-summary-layout">
+        <div class="stanlyric-candidate-identity">
+          <p class="stanlyric-kicker">top candidate</p>
+          <h3 class="stanlyric-top-title">${escapeHtml(top.title)}</h3>
+          <p class="stanlyric-artist">${escapeHtml(top.artist)}</p>
+        </div>
+        <div class="stanlyric-summary-evidence">
+          <div class="stanlyric-stat-grid">
+            <div class="stanlyric-stat"><span>BM25 score</span><strong>${formatNumber(top.bm25_score, 3)}</strong></div>
+            <div class="stanlyric-stat"><span>Top-k confidence</span><strong>${formatPercent(top.confidence, 1)}</strong></div>
+            <div class="stanlyric-stat"><span>Score gap</span><strong>${formatNumber(gap, 3)}</strong></div>
+            <div class="stanlyric-stat"><span>Corpus percentile</span><strong>${formatNumber(top.score_percentile, 1)}</strong></div>
+          </div>
+          <div class="stanlyric-source-note">
+            Matched ${top.matched_terms.length} of ${queryTokens.length} unique query terms across ${corpusSize.toLocaleString()} indexed songs. Method: ${escapeHtml(top.method)}.
+          </div>
+        </div>
       </div>
     `;
   }
@@ -286,22 +302,38 @@
       return;
     }
     const top = results[0];
-    const rows = top.term_rows.slice(0, 10).map((row) => `
-      <div class="stanlyric-term-row">
-        <code>${escapeHtml(row.term)}</code>
-        <span>tf ${row.doc_tf}</span>
-        <span>idf ${formatNumber(row.idf, 2)}</span>
-        <span>+${formatNumber(row.contribution, 2)}</span>
-      </div>
-    `).join('');
+    const rows = top.term_rows.slice(0, 10).map((row) => {
+      return `
+        <div class="stanlyric-term-row" role="row" aria-label="BM25 contribution calculation for ${escapeHtml(row.term)}">
+          <code role="cell">${escapeHtml(row.term)}</code>
+          <span class="stanlyric-term-value" role="cell">${row.doc_tf}</span>
+          <span class="stanlyric-term-value" role="cell">${formatNumber(row.bm25_tf_weight, 3)}</span>
+          <span class="stanlyric-term-value" role="cell">${row.query_tf}</span>
+          <span class="stanlyric-term-value" role="cell">${formatNumber(row.idf, 3)}</span>
+          <strong class="stanlyric-term-value stanlyric-term-contribution" role="cell">+${formatNumber(row.contribution, 2)}</strong>
+        </div>
+      `;
+    }).join('');
     const missing = top.missing_terms.length
       ? `<p class="stanlyric-muted">Missing query terms: ${top.missing_terms.map((term) => `<span class="stanlyric-chip">${escapeHtml(term)}</span>`).join(' ')}</p>`
       : '<p class="stanlyric-muted">Every unique query term appeared in the top result.</p>';
     container.innerHTML = `
       <p class="stanlyric-kicker">explanation</p>
       <h3>Why this result?</h3>
-      <p class="stanlyric-muted">Rare matched terms are more influential because BM25 uses inverse document frequency. The contribution column approximates how much each term added to the top score.</p>
-      <div class="stanlyric-explain-list">${rows || '<p class="stanlyric-muted">No query terms from the index matched this result.</p>'}</div>
+      <p class="stanlyric-muted">Each row shows the term arithmetic used in the top score. BM25 first turns raw document frequency into a saturated, length-normalized TF weight, then multiplies by query frequency and IDF. Factors are rounded for display.</p>
+      <div class="stanlyric-term-table-wrap">
+        <div class="stanlyric-term-table" role="table" aria-label="BM25 matched-term contribution breakdown">
+          <div class="stanlyric-term-header" role="row">
+            <span role="columnheader">Term</span>
+            <span role="columnheader">Raw TF</span>
+            <span role="columnheader" title="Raw TF after BM25 saturation and document-length normalization.">BM25 TF weight</span>
+            <span role="columnheader" title="Number of times the term occurs in the query.">Query TF</span>
+            <span role="columnheader">IDF</span>
+            <span role="columnheader">Contribution</span>
+          </div>
+          <div class="stanlyric-explain-list" role="rowgroup">${rows || '<p class="stanlyric-muted">No query terms from the index matched this result.</p>'}</div>
+        </div>
+      </div>
       ${missing}
     `;
   }

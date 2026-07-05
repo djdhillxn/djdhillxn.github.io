@@ -83,7 +83,7 @@ img_size: small
       <p class="stanlyric-muted">Run a query to see the top song, confidence, matched terms, and score gap.</p>
     </div>
     <div class="stanlyric-panel" data-stanlyric-explanation>
-      <p class="stanlyric-muted">The explanation panel will show the query terms that contributed most by IDF.</p>
+      <p class="stanlyric-muted">The explanation panel will decompose each matched term from raw frequency through its final BM25 contribution.</p>
     </div>
   </section>
 
@@ -127,6 +127,7 @@ img_size: small
         <p class="stanlyric-kicker">semantic map</p>
         <h3>Song Embedding Atlas</h3>
         <p>Cohere Embed v4 song representations projected with 3D UMAP. Switch between broad Regions, stable Communities, and fine-grained Neighborhoods.</p>
+        <p class="stanlyric-atlas-report-note">Methods and evaluation are detailed in the <a href="{{ '/assets/pdf/stanlyric_cohere_hierarchy_report.pdf' | relative_url }}" target="_blank" rel="noopener">technical report</a>.</p>
         <p class="stanlyric-atlas-projection-note" data-atlas-projection-note></p>
       </div>
       <div class="stanlyric-atlas-metrics" aria-label="atlas statistics">
@@ -415,7 +416,19 @@ $$
 {f(q,D)+k_1\left(1-b+b\frac{|D|}{\operatorname{avgdl}}\right)}
 $$
 
-Here, $$f(q,D)$$ is the term frequency: how often the query word appears in that song's lyrics. The inverse document frequency is based on how many of the $$N$$ songs contain the term:
+Here, $$f(q,D)$$ is the raw term frequency: how often the query word appears in that song's lyrics. The explanation calls the fraction multiplying IDF the **BM25 TF weight**. It is the saturated, document-length-normalized version of raw TF, so it does not need to lie between zero and one. The interface also exposes query TF, the number of times the term appears in the submitted fragment. The exact contribution is therefore shown as:
+
+$$
+\text{BM25 TF weight}(q,D)
+\times \text{query TF}(q,Q)
+\times \operatorname{IDF}(q)
+=
+\text{term contribution}(q,D)
+$$
+
+Query TF is one for a term that appears once in the query, so it usually leaves the simpler BM25 TF weight times IDF calculation unchanged.
+
+The inverse document frequency is based on how many of the $$N$$ songs contain the term:
 
 $$
 \operatorname{IDF}(q)
@@ -434,7 +447,7 @@ StanLyric uses $$k_1=1.5$$ and $$b=0.75$$. The $$k_1$$ parameter controls how qu
 
 The offline pipeline builds a browser-ready artifact from the prepared StanLyric corpus. The artifact stores song metadata, document lengths, inverse document frequency values, and an inverted index of token frequencies. At runtime, the browser tokenizes the query and computes BM25 scores only for matching postings. This keeps the portfolio page static while still allowing interactive retrieval.
 
-The explanation panel is intentionally simple: it shows which query terms appeared in the retrieved song, which were missing, the term frequency in the top song, each matched term's IDF, and the approximate BM25 contribution. All these efforts are aimed at making the retrieval system more transparent!
+The explanation panel shows which query terms appeared in the retrieved song, which were missing, and the exact scoring path for every matched term: raw TF, BM25 TF weight, query TF, IDF, and their resulting contribution. All these efforts are aimed at making the retrieval system more transparent!
 
 <!-- 
 StanLyric is kept separate from the Spotify dashboard for now. The Spotify project analyzes personal listening and playlist curation, while StanLyric focuses on lyric-level retrieval. Later, the two can be connected by using Spotify playlists as taste profiles and StanLyric as the lyrics-aware discovery layer. 

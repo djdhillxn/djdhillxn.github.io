@@ -39,6 +39,18 @@
   margin-top: 0.35rem;
 }
 
+.stanlyric-atlas-heading .stanlyric-atlas-report-note {
+  font-size: 0.82rem;
+  margin-top: 0.3rem;
+}
+
+.stanlyric-atlas-report-note a {
+  color: var(--global-theme-color);
+  font-weight: 750;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
 .stanlyric-atlas-metrics {
   display: grid;
   flex: 0 0 auto;
