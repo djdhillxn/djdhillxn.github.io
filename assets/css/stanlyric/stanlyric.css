@@ -374,11 +374,6 @@ body[data-theme='dark'] .stanlyric-app {
   color: var(--stan-accent);
 }
 
-.stanlyric-chart svg {
-  display: block;
-  max-width: 100%;
-}
-
 .stanlyric-result-list {
   display: grid;
   gap: 0.9rem;
@@ -482,6 +477,49 @@ body[data-theme='dark'] .stanlyric-app {
   margin: 0.35rem 0 0;
   opacity: 0.78;
   overflow-wrap: anywhere;
+}
+
+.stanlyric-result-scorebar {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.7rem;
+}
+
+.stanlyric-result-scorebar-header {
+  align-items: center;
+  display: flex;
+  gap: 0.8rem;
+  justify-content: space-between;
+}
+
+.stanlyric-result-scorebar-header span {
+  color: var(--stan-muted);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stanlyric-result-scorebar-header strong {
+  color: var(--stan-ink);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.stanlyric-result-scorebar-track {
+  background: var(--global-bg-color, #fff);
+  border: 1px solid var(--stan-border);
+  border-radius: 999px;
+  height: 12px;
+  overflow: hidden;
+}
+
+.stanlyric-result-scorebar-track span {
+  background: var(--stan-accent);
+  border-radius: inherit;
+  display: block;
+  height: 100%;
+  opacity: 0.78;
 }
 
 @media (max-width: 900px) {

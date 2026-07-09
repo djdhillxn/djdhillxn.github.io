@@ -284,6 +284,11 @@
   white-space: nowrap;
 }
 
+.stanlyric-atlas-suggestions strong {
+  color: #f7f8fa;
+  font-weight: 750;
+}
+
 .stanlyric-atlas-suggestions span {
   color: var(--atlas-muted);
   font-size: 0.78rem;

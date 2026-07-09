@@ -64,15 +64,6 @@ img_size: small
           <option value="20">Top 20</option>
         </select>
       </label>
-      <label>
-        Chart bars
-        <select data-stanlyric-chartk>
-          <option value="5">5</option>
-          <option value="10" selected>10</option>
-          <option value="15">15</option>
-          <option value="20">20</option>
-        </select>
-      </label>
       <button type="button" class="stanlyric-button" data-stanlyric-search disabled>Search lyrics</button>
       <button type="button" class="stanlyric-button stanlyric-button-secondary" data-stanlyric-example disabled>Try example</button>
     </div>
@@ -96,21 +87,10 @@ img_size: small
   <section class="stanlyric-panel">
     <div class="stanlyric-panel-header">
       <div>
-        <p class="stanlyric-kicker">visualization</p>
-        <h3>Top BM25 scores</h3>
+        <p class="stanlyric-kicker">BM25 score visualization</p>
+        <h3>Ranked search results</h3>
       </div>
-      <span class="stanlyric-muted">A larger first-rank gap usually means a cleaner lyric match.</span>
-    </div>
-    <div class="stanlyric-chart" data-stanlyric-chart></div>
-  </section>
-
-  <section class="stanlyric-panel">
-    <div class="stanlyric-panel-header">
-      <div>
-        <p class="stanlyric-kicker">ranked candidates</p>
-        <h3>Search results</h3>
-      </div>
-      <span class="stanlyric-muted">Snippets are shown only when the exported artifact includes lyric text.</span>
+      <span class="stanlyric-muted">Top BM25 score bars show relative strength; a larger first-rank gap usually means a cleaner lyric match. Snippets are shown only when the exported artifact includes lyric text.</span>
     </div>
     <div data-stanlyric-results></div>
   </section>
@@ -348,16 +328,6 @@ img_size: small
         <h4 class="stanlyric-hierarchy-section-heading">Most represented artists</h4>
         <div class="stanlyric-hierarchy-artists" data-hierarchy-artists-list></div>
       </section>
-
-      <section class="stanlyric-hierarchy-evidence-section">
-        <h4 class="stanlyric-hierarchy-section-heading">Centroid representatives</h4>
-        <ol class="stanlyric-hierarchy-song-list" data-hierarchy-representatives></ol>
-      </section>
-
-      <section class="stanlyric-hierarchy-evidence-section">
-        <h4 class="stanlyric-hierarchy-section-heading">Boundary songs</h4>
-        <ol class="stanlyric-hierarchy-song-list" data-hierarchy-boundaries></ol>
-      </section>
     </div>
 
     <section class="stanlyric-hierarchy-catalog">
@@ -380,6 +350,18 @@ img_size: small
         </button>
       </div>
     </section>
+
+    <div class="stanlyric-hierarchy-evidence stanlyric-hierarchy-song-examples">
+      <section class="stanlyric-hierarchy-evidence-section">
+        <h4 class="stanlyric-hierarchy-section-heading">Centroid representatives</h4>
+        <ol class="stanlyric-hierarchy-song-list" data-hierarchy-representatives></ol>
+      </section>
+
+      <section class="stanlyric-hierarchy-evidence-section">
+        <h4 class="stanlyric-hierarchy-section-heading">Boundary songs</h4>
+        <ol class="stanlyric-hierarchy-song-list" data-hierarchy-boundaries></ol>
+      </section>
+    </div>
 
     <p class="stanlyric-hierarchy-language-note">
       <i class="fas fa-info-circle" aria-hidden="true"></i>

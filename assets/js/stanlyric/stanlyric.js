@@ -338,31 +338,6 @@
     `;
   }
 
-  function renderChart(container, results, chartK) {
-    const rows = results.slice(0, chartK);
-    if (!rows.length) {
-      container.innerHTML = '<p class="stanlyric-muted">Run a query to plot candidate scores.</p>';
-      return;
-    }
-    const width = 920;
-    const rowHeight = 38;
-    const labelWidth = 230;
-    const valueWidth = 82;
-    const height = rows.length * rowHeight + 18;
-    const maxScore = Math.max(...rows.map((row) => row.bm25_score), 1e-9);
-    const bars = rows.map((row, index) => {
-      const y = index * rowHeight + 10;
-      const barWidth = Math.max(4, ((width - labelWidth - valueWidth - 30) * row.bm25_score) / maxScore);
-      const label = `${row.rank}. ${row.title}${row.artist ? ` — ${row.artist}` : ''}`;
-      return `
-        <text x="0" y="${y + 19}" font-size="13" fill="currentColor">${escapeHtml(label.slice(0, 36))}</text>
-        <rect x="${labelWidth}" y="${y}" width="${barWidth}" height="24" rx="8" fill="currentColor" opacity="0.72"></rect>
-        <text x="${labelWidth + barWidth + 8}" y="${y + 17}" font-size="12" fill="currentColor">${formatNumber(row.bm25_score, 2)}</text>
-      `;
-    }).join('');
-    container.innerHTML = `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Top BM25 score chart">${bars}</svg>`;
-  }
-
   function renderResults(container, results) {
     if (!results.length) {
       container.innerHTML = '<p class="stanlyric-muted">No ranked results to show.</p>';
@@ -371,7 +346,8 @@
     const snippetNote = results.some((row) => !row.snippet)
       ? '<div class="stanlyric-source-note stanlyric-results-note">Matched lyric snippets are unavailable in this public web artifact because it was exported without lyric text.</div>'
       : '';
-    container.innerHTML = `${snippetNote}<div class="stanlyric-result-list">${results.map((row) => renderResultCard(row)).join('')}</div>`;
+    const maxScore = Math.max(...results.map((row) => Number(row.bm25_score) || 0), 1e-9);
+    container.innerHTML = `${snippetNote}<div class="stanlyric-result-list">${results.map((row) => renderResultCard(row, maxScore)).join('')}</div>`;
   }
 
   function formatMetadataValue(value) {
@@ -403,10 +379,27 @@
     return `<p class="stanlyric-result-id">${ids.map(([label, value]) => `<span><strong>${escapeHtml(label)}</strong> ${escapeHtml(value)}</span>`).join('')}</p>`;
   }
 
-  function renderResultCard(row) {
+  function renderResultScoreBar(row, maxScore) {
+    const score = Math.max(Number(row.bm25_score) || 0, 0);
+    const percent = Math.max(1.5, Math.min(100, (score / maxScore) * 100));
+    return `
+      <div class="stanlyric-result-scorebar" aria-label="Relative BM25 score">
+        <div class="stanlyric-result-scorebar-header">
+          <span>Relative BM25 score</span>
+          <strong>${formatNumber(score, 2)}</strong>
+        </div>
+        <div class="stanlyric-result-scorebar-track">
+          <span style="width: ${percent.toFixed(2)}%"></span>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderResultCard(row, maxScore) {
     const matched = row.matched_terms.slice(0, 10).map((term) => `<span class="stanlyric-chip">${escapeHtml(term)}</span>`).join(' ');
     const metadata = renderSongMetadata(row);
     const resultIds = renderResultIds(row);
+    const scoreBar = renderResultScoreBar(row, maxScore);
     const snippet = row.snippet
       ? `<div class="stanlyric-snippet">${highlightTerms(row.snippet, new Set(row.matched_terms))}</div>`
       : '';
@@ -431,6 +424,7 @@
         </div>
         <p class="stanlyric-muted">Matched terms: ${matched || 'none'}</p>
         ${resultIds}
+        ${scoreBar}
         ${snippet}
         ${fullLyrics}
       </article>
@@ -451,12 +445,10 @@
     };
     const queryEl = app.querySelector('[data-stanlyric-query]');
     const topKEl = app.querySelector('[data-stanlyric-topk]');
-    const chartKEl = app.querySelector('[data-stanlyric-chartk]');
     const searchButton = app.querySelector('[data-stanlyric-search]');
     const exampleButton = app.querySelector('[data-stanlyric-example]');
     const summaryEl = app.querySelector('[data-stanlyric-summary]');
     const explanationEl = app.querySelector('[data-stanlyric-explanation]');
-    const chartEl = app.querySelector('[data-stanlyric-chart]');
     const resultsEl = app.querySelector('[data-stanlyric-results]');
 
     let engine = null;
@@ -485,7 +477,6 @@
         return;
       }
       const topK = Number(topKEl.value || 10);
-      const chartK = Number(chartKEl.value || 10);
       const t0 = performance.now();
       lastResults = engine.search(query, topK);
       lastQueryTokens = uniquePreserveOrder(tokenize(query));
@@ -493,7 +484,6 @@
       setStatus(app, `Retrieved ${lastResults.length} results in ${elapsed.toFixed(0)} ms`, 'is-ready');
       renderSummary(summaryEl, lastResults, lastQueryTokens, engine.size);
       renderExplanation(explanationEl, lastResults);
-      renderChart(chartEl, lastResults, chartK);
       renderResults(resultsEl, lastResults);
     }
 
@@ -505,7 +495,6 @@
     queryEl.addEventListener('keydown', (event) => {
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') runSearch();
     });
-    chartKEl.addEventListener('change', () => renderChart(chartEl, lastResults, Number(chartKEl.value || 10)));
   }
 
   document.addEventListener('DOMContentLoaded', () => {
