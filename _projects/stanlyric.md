@@ -98,27 +98,18 @@ img_size: small
       <div class="stanlyric-atlas-heading">
         <p class="stanlyric-kicker">semantic map</p>
         <h3>Song Embedding Atlas</h3>
-        <p>Cohere Embed v4 song representations projected with 3D UMAP. Switch between broad Regions, stable Communities, and fine-grained Neighborhoods.</p>
-        <p class="stanlyric-atlas-report-note">Methods and evaluation are detailed in the <a href="{{ '/assets/pdf/stanlyric_cohere_hierarchy_report.pdf' | relative_url }}" target="_blank" rel="noopener">technical report</a>.</p>
-        <p class="stanlyric-atlas-projection-note" data-atlas-projection-note></p>
-      </div>
-      <div class="stanlyric-atlas-metrics" aria-label="atlas statistics">
-        <div class="stanlyric-atlas-metric">
-          <span>Songs</span>
-          <strong data-atlas-song-count>--</strong>
-        </div>
-        <div class="stanlyric-atlas-metric">
-          <span>Regions</span>
-          <strong data-atlas-region-count>--</strong>
-        </div>
-        <div class="stanlyric-atlas-metric">
-          <span>Communities</span>
-          <strong data-atlas-community-count>--</strong>
-        </div>
-        <div class="stanlyric-atlas-metric">
-          <span>Neighborhoods</span>
-          <strong data-atlas-neighborhood-count>--</strong>
-        </div>
+        <p>
+          Cohere Embed v4 song representations project the cleaned
+          <strong data-atlas-song-count>36,545</strong>-song corpus into a 3D UMAP atlas.
+          Switch between <strong data-atlas-region-count>20</strong> broad Regions,
+          <strong data-atlas-community-count>139</strong> stable Communities, and
+          <strong data-atlas-neighborhood-count>175</strong> fine-grained Neighborhoods.
+          Methods and evaluation are detailed in the
+          <a href="{{ '/assets/pdf/stanlyric_cohere_hierarchy_report.pdf' | relative_url }}" target="_blank" rel="noopener">technical report</a>.
+        </p>
+        <p class="stanlyric-atlas-projection-note" data-atlas-projection-note>
+          The 3D projection reports UMAP trustworthiness of 0.753, top-15 neighbor overlap of 0.129, and a PCA three-dimensional explained-variance baseline of 6.1%.
+        </p>
       </div>
     </header>
 

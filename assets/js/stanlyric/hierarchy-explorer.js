@@ -521,13 +521,14 @@ class StanLyricHierarchyExplorer {
         element('strong', '', song.title),
         element('span', '', song.artist),
       );
-      const evidence = element(
-        'small',
-        '',
-        `${formatPercent.format(song.localAgreement)} local · `
-        + `${formatPercent.format(song.meanNeighborStrength)} edge strength · `
-        + `${formatPercent.format(song.stability)} stable`,
-      );
+      const evidence = element('small', 'stanlyric-hierarchy-catalog-evidence');
+      [
+        `${formatPercent.format(song.localAgreement)} local`,
+        `${formatPercent.format(song.meanNeighborStrength)} edge strength`,
+        `${formatPercent.format(song.stability)} stable`,
+      ].forEach((metric) => {
+        evidence.appendChild(element('span', '', metric));
+      });
       const icon = element('i', 'fas fa-crosshairs');
       button.append(rank, identity, evidence, icon);
       button.addEventListener('click', () => {
@@ -552,7 +553,10 @@ class StanLyricHierarchyExplorer {
         element('strong', '', song.title),
         element('span', '', song.artist),
       );
-      const detail = element('small', '', detailFormatter(song));
+      const detail = element('small', '');
+      String(detailFormatter(song)).split(' · ').forEach((part) => {
+        detail.appendChild(element('span', '', part));
+      });
       const icon = element('i', 'fas fa-crosshairs');
       button.append(identity, detail, icon);
       button.addEventListener('click', () => {
