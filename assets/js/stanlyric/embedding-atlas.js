@@ -42,6 +42,7 @@ class StanLyricEmbeddingAtlas {
     this.levelButtons = [...root.querySelectorAll('[data-atlas-level]')];
     this.hierarchySelect = root.querySelector('[data-atlas-hierarchy-node]');
     this.resetButton = root.querySelector('[data-atlas-reset]');
+    this.lockButton = root.querySelector('[data-atlas-lock-selection]');
     this.rotateButton = root.querySelector('[data-atlas-rotate]');
     this.fullscreenButton = root.querySelector('[data-atlas-fullscreen]');
     this.closeDetailsButton = root.querySelector('[data-atlas-close-details]');
@@ -52,6 +53,8 @@ class StanLyricEmbeddingAtlas {
     this.points = null;
     this.hoveredIndex = -1;
     this.selectedIndex = -1;
+    this.selectionLocked = false;
+    this.lockAttentionTimeout = 0;
     this.hierarchyLevel = 'region';
     this.hierarchyFilter = 'all';
     this.pointer = new THREE.Vector2(2, 2);
@@ -307,6 +310,7 @@ class StanLyricEmbeddingAtlas {
       this.applyHierarchyFilter();
     });
     this.resetButton.addEventListener('click', () => this.resetView());
+    this.lockButton.addEventListener('click', () => this.toggleSelectionLock());
     this.rotateButton.addEventListener('click', () => this.toggleRotation());
     this.fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
     this.closeDetailsButton.addEventListener('click', () => this.clearSelection());
@@ -366,6 +370,7 @@ class StanLyricEmbeddingAtlas {
       String(this.controls.autoRotate),
     );
     this.updateRotationButton();
+    this.updateLockButton();
   }
 
   populateHierarchySelect(selectedId = 'all') {
@@ -490,7 +495,17 @@ class StanLyricEmbeddingAtlas {
     };
   }
 
-  selectSong(index, focusCamera) {
+  selectSong(index, focusCamera, options = {}) {
+    if (
+      this.selectionLocked
+      && this.selectedIndex >= 0
+      && index !== this.selectedIndex
+      && !options.force
+    ) {
+      this.flashSelectionLock();
+      return;
+    }
+
     this.selectedIndex = index;
     const song = this.songAt(index);
     const position = new THREE.Vector3().fromArray(this.positions, index * 3);
@@ -501,6 +516,7 @@ class StanLyricEmbeddingAtlas {
     this.details.hidden = false;
     this.hideSuggestions();
     this.searchInput.value = `${song.title} - ${song.artist}`;
+    this.updateLockButton();
     window.dispatchEvent(new CustomEvent('stanlyric:atlas-song-selected', {
       detail: {
         docId: song.docId,
@@ -625,12 +641,51 @@ class StanLyricEmbeddingAtlas {
   }
 
   clearSelection() {
+    this.setSelectionLocked(false);
     this.selectedIndex = -1;
     this.selectedMarker.visible = false;
     this.neighborGeometry.deleteAttribute('position');
     this.neighborLineGeometry.deleteAttribute('position');
     this.details.hidden = true;
+    this.updateLockButton();
     this.renderRequested = true;
+  }
+
+  toggleSelectionLock() {
+    if (this.selectedIndex < 0) return;
+    this.setSelectionLocked(!this.selectionLocked);
+  }
+
+  setSelectionLocked(locked) {
+    this.selectionLocked = Boolean(locked && this.selectedIndex >= 0);
+    this.root.classList.toggle('has-locked-selection', this.selectionLocked);
+    this.updateLockButton();
+  }
+
+  updateLockButton() {
+    if (!this.lockButton) return;
+    const hasSelection = this.selectedIndex >= 0;
+    this.lockButton.disabled = !hasSelection;
+    if (!hasSelection) {
+      this.selectionLocked = false;
+      this.root.classList.remove('has-locked-selection');
+    }
+    this.lockButton.classList.toggle('is-active', this.selectionLocked);
+    this.lockButton.setAttribute('aria-pressed', String(this.selectionLocked));
+    const title = this.selectionLocked ? 'Unlock selected song' : 'Lock selected song';
+    this.lockButton.title = title;
+    this.lockButton.setAttribute('aria-label', title);
+    const icon = this.lockButton.querySelector('i');
+    if (icon) icon.className = this.selectionLocked ? 'fas fa-lock' : 'fas fa-lock-open';
+  }
+
+  flashSelectionLock() {
+    if (!this.lockButton) return;
+    this.lockButton.classList.add('is-attention');
+    window.clearTimeout(this.lockAttentionTimeout);
+    this.lockAttentionTimeout = window.setTimeout(() => {
+      this.lockButton.classList.remove('is-attention');
+    }, 450);
   }
 
   searchMatches() {
