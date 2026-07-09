@@ -3,7 +3,7 @@ layout: page
 title: Spotify Wrapped, But Everyday
 description: personal Spotify library intelligence from playlists, liked songs, and artist-level curation patterns
 github: "https://github.com/djdhillxn/spotify"
-importance: -3
+importance: -2
 category: NLP
 ---
 

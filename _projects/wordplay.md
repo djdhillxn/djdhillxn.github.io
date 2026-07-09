@@ -3,7 +3,7 @@ layout: page
 title: WordPlay
 description: bidirectional character n-gram language models for word generation and Hangman word guessing challenge
 github: "https://github.com/djdhillxn/lexinet"
-importance: -2
+importance: -3
 category: NLP
 ---
 
