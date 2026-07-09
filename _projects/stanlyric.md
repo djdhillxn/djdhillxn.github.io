@@ -68,7 +68,6 @@ img_size: small
       <button type="button" class="stanlyric-button stanlyric-button-secondary" data-stanlyric-example disabled>Try example</button>
     </div>
   </section>
-
   <section class="stanlyric-grid">
     <div class="stanlyric-panel" data-stanlyric-summary>
       <p class="stanlyric-muted">Run a query to see the top song, confidence, matched terms, and score gap.</p>
@@ -77,13 +76,6 @@ img_size: small
       <p class="stanlyric-muted">The explanation panel will decompose each matched term from raw frequency through its final BM25 contribution.</p>
     </div>
   </section>
-
-<div class="stanlyric-intro">
-  <p>
-    StanLyric tokenizes the fragment, scores the lyric corpus using BM25-Okapi, and explains why the top candidate was retrieved. Find the code for training the song name retrieval model <a href="https://github.com/djdhillxn/stanlyric">here</a>.   
-  </p>
-</div>
-
   <section class="stanlyric-panel">
     <div class="stanlyric-panel-header">
       <div>
@@ -385,15 +377,15 @@ img_size: small
 
 ## Technical implementation
 
-StanLyric is a lyric-first music search project. The first version focuses on one useful retrieval task: <strong>type a lyric fragment and identify the songs most likely to contain it.</strong> It runs BM25 directly in the browser from a static search artifact, so the page does not need a backend server or live API. 
+StanLyric is a lyric-first music search project. Its first goal is simple: type a lyric fragment and find the songs most likely to contain it. It runs BM25 in the browser from a static search artifact, so the page does not need a backend server or live API. StanLyric breaks the fragment into tokens, scores the lyric corpus with BM25-Okapi, and explains why the top candidate was retrieved. Find the code for training the song name retrieval model <a href="https://github.com/djdhillxn/stanlyric">here</a>.   
 
-The embedding atlas adds a second retrieval view over the cleaned 36,545-song corpus. Cohere Embed v4 maps each song to 1,024 dimensions, and 3D UMAP provides the browser coordinates. Projection quality is reported with trustworthiness and original-space neighbor overlap; PCA's first three components remain a transparent linear explained-variance baseline. The page ships quantized coordinates, song metadata, six strong graph neighbors per song, and compact hierarchy assignments rather than dense vectors.
+The embedding atlas adds a second retrieval view over the cleaned 36,545-song corpus. Cohere Embed v4 maps each song to 1,024 dimensions, and 3D UMAP provides the browser coordinates. Projection quality is reported using trustworthiness and original-space neighbor overlap; the first three PCA components serve as a transparent linear explained-variance baseline. The page ships quantized coordinates, song metadata, six strong graph neighbors per song, and compact hierarchy assignments rather than dense vectors.
 
 The semantic structure is a strict three-level Leiden hierarchy built with the Constant Potts Model. A multiseed resolution sweep selects 139 middle Communities using adjusted Rand agreement, normalized variation of information, adjacent-resolution stability, and balance constraints. Those Communities are aggregated into 20 broad Regions. Large Communities are then split only when the proposed Neighborhoods pass minimum-size, seed-stability, internal-edge-retention, embedding-cohesion-gain, and topic-separation gates. This produces 175 Neighborhoods, with every Neighborhood contained by exactly one Community and every Community contained by exactly one Region.
 
-Each hierarchy level receives the same interpretation contract. Binary song-incidence c-TF-IDF finds distinctive unigrams and bigrams without allowing repeated choruses to multiply their weight. Corpus prevalence lift and smoothed log-odds distinguish characteristic language from merely frequent lyric vocabulary. Representative songs are nearest to each node's centroid in the original 1,024-dimensional cosine space, while boundary songs devote substantial graph strength outside the node. Cohesion, weighted conductance, internal edge strength, artist diversity, sampled cosine silhouette, per-song assignment stability, and weighted local-neighbor agreement remain visible as diagnostics.
+Each hierarchy level receives the same interpretation contract. Binary song-incidence c-TF-IDF finds distinctive unigrams and bigrams without letting repeated choruses multiply their weight. Corpus prevalence lift and smoothed log-odds separate characteristic language from merely frequent lyric vocabulary. Representative songs are nearest to each node's centroid in the original 1,024-dimensional cosine space, while boundary songs place substantial graph strength outside the node. Cohesion, weighted conductance, internal edge strength, artist diversity, sampled cosine silhouette, per-song assignment stability, and weighted local-neighbor agreement remain visible as diagnostics.
 
-StanLyric is an information-retrieval system over a lyrics corpus. Each song is treated as one document, and the user-provided lyric fragment is treated as a query. The current version uses BM25-Okapi, short for **Best Matching 25**, because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
+StanLyric is an information retrieval system for a lyrics corpus. Each song is one document, and the user-provided lyric fragment is one query. The current version uses BM25-Okapi, short for **Best Matching 25**, because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
 
 For a query $$Q$$ and song document $$D$$, the implementation adds one contribution for each query term $$q$$:
 
@@ -430,9 +422,9 @@ $$
 \right)
 $$
 
-The value $$n(q)$$ is the number of songs containing $$q$$. This gives more weight to unusual words that occur in relatively few songs; a word such as *rabbit* is therefore more discriminative than a common word such as *the*. During offline export, exceptionally common terms whose raw IDF would be negative are assigned a small positive floor based on $$\epsilon=0.25$$ and the corpus-average IDF. Repeating a term helps, but the term-frequency fraction in the BM25 formula saturates its contribution, so ten occurrences are not treated as ten times stronger than one.
+The value $$n(q)$$ is the number of songs containing $$q$$. This gives more weight to unusual words that occur in relatively few songs; a word such as *rabbit* is therefore more useful than a common word such as *the*. During offline export, exceptionally common terms whose raw IDF would be negative are assigned a small positive floor based on $$\epsilon=0.25$$ and the corpus-average IDF. Repeating a term helps, but the term-frequency fraction in the BM25 formula saturates its contribution, so ten occurrences are not treated as ten times stronger than one.
 
-The denominator also normalizes for document length. Without it, long lyrics would tend to score highly simply because they contain more words and have more opportunities to match. The ratio $$\lvert D\rvert/\operatorname{avgdl}$$ compares a song's token count with the corpus average. In the current deduplicated 36,545-song artifact, the average document length is approximately **266 tokens**.
+The denominator also normalizes for document length. Without it, long lyrics would tend to score highly simply because they contain more words and have more chances to match. The ratio $$\lvert D\rvert/\operatorname{avgdl}$$ compares a song's token count with the corpus average. In the current deduplicated 36,545-song artifact, the average document length is approximately **266 tokens**.
 
 StanLyric uses $$k_1=1.5$$ and $$b=0.75$$. The $$k_1$$ parameter controls how quickly repeated term frequency reaches diminishing returns. The $$b$$ parameter controls the strength of length normalization: $$b=0$$ would ignore document length, while $$b=1$$ would apply the full normalization. A value of 0.75 provides substantial normalization without letting length dominate the score.
 
