@@ -7,7 +7,7 @@
   margin: 4rem 50% 2.5rem;
   scroll-margin-top: 76px;
   transform: translateX(-50%);
-  width: min(calc(100vw - 24px), 1500px);
+  width: min(calc(100vw - 96px), 1360px);
 }
 
 .stanlyric-atlas-header {
@@ -221,6 +221,27 @@
   color: #07090d;
 }
 
+.stanlyric-atlas-icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.stanlyric-atlas-icon-button:disabled:hover {
+  background: var(--atlas-panel);
+  color: var(--atlas-text);
+}
+
+.stanlyric-atlas-icon-button.is-active {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #07090d;
+}
+
+.stanlyric-atlas-icon-button.is-attention {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+}
+
 .stanlyric-atlas-suggestions {
   background: #111620;
   border: 1px solid var(--atlas-border);
@@ -315,6 +336,12 @@
   white-space: nowrap;
 }
 
+.stanlyric-atlas-tooltip strong {
+  color: #f7f8fa;
+  font-weight: 750;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
+}
+
 .stanlyric-atlas-tooltip span {
   color: var(--atlas-muted);
   font-size: 0.76rem;
@@ -365,14 +392,14 @@
 }
 
 .stanlyric-atlas .stanlyric-atlas-details [data-detail-title] {
-  color: #ffffff !important;
+  color: #edf2f7 !important;
   font-size: 1.25rem;
   font-weight: 750;
   letter-spacing: 0;
   line-height: 1.2;
   margin: 0;
   overflow-wrap: anywhere;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.42);
 }
 
 .stanlyric-atlas-detail-artist {
@@ -549,6 +576,10 @@
 }
 
 @media (max-width: 900px) {
+  .stanlyric-atlas {
+    width: calc(100vw - 32px);
+  }
+
   .stanlyric-atlas-header {
     align-items: start;
     display: grid;

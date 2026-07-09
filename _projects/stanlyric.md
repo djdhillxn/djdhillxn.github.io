@@ -190,6 +190,15 @@ img_size: small
           <button
             type="button"
             class="stanlyric-atlas-icon-button"
+            data-atlas-lock-selection
+            title="Lock selected song"
+            aria-label="Lock selected song"
+            aria-pressed="false"
+            disabled
+          ><i class="fas fa-lock-open" aria-hidden="true"></i></button>
+          <button
+            type="button"
+            class="stanlyric-atlas-icon-button"
             data-atlas-rotate
             title="Pause rotation"
             aria-label="Pause rotation"
