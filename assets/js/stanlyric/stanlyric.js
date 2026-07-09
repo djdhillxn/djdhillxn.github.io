@@ -361,7 +361,6 @@
       ['Year', row.year],
       ['Genre', row.genre],
       ['Language', row.language],
-      ['Lyric chars', row.lyrics_char_len],
     ].map(([label, value]) => [label, formatMetadataValue(value)])
       .filter(([, value]) => value);
 
@@ -371,9 +370,10 @@
 
   function renderResultIds(row) {
     const ids = [
+      ['Lyric chars', row.lyrics_char_len],
       ['Dataset ID', row.doc_id],
-      ['Source hash', row.source],
-    ].filter(([, value]) => value);
+    ].map(([label, value]) => [label, formatMetadataValue(value)])
+      .filter(([, value]) => value);
 
     if (!ids.length) return '';
     return `<p class="stanlyric-result-id">${ids.map(([label, value]) => `<span><strong>${escapeHtml(label)}</strong> ${escapeHtml(value)}</span>`).join('')}</p>`;

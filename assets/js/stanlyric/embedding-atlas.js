@@ -356,11 +356,14 @@ class StanLyricEmbeddingAtlas {
     setText(
       this.root,
       '[data-atlas-projection-note]',
-      `UMAP trust ${projection.diagnostics.trustworthiness.toFixed(3)} · `
-      + `top-15 neighbor overlap ${projection.diagnostics.mean_neighbor_overlap.toFixed(3)} · `
-      + `PCA 3D variance ${formatPercent.format(
+      `The 3D projection reports UMAP trustworthiness of `
+      + `${projection.diagnostics.trustworthiness.toFixed(3)}, `
+      + `top-15 neighbor overlap of `
+      + `${projection.diagnostics.mean_neighbor_overlap.toFixed(3)}, `
+      + `and a PCA three-dimensional explained-variance baseline of `
+      + `${formatPercent.format(
         projection.diagnostics.pca_cumulative_explained_variance_ratio,
-      )}`,
+      )}.`,
     );
 
     this.populateHierarchySelect();
