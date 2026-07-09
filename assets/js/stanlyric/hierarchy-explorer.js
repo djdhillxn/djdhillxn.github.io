@@ -23,6 +23,19 @@ function element(tag, className, text) {
   return node;
 }
 
+function displayLabel(node) {
+  return node?.label_title || node?.label || node?.term_label || node?.id || '';
+}
+
+function summaryText(node) {
+  return node?.one_line_summary || '';
+}
+
+function confidenceLabel(value) {
+  if (!value) return '';
+  return `${String(value).charAt(0).toUpperCase()}${String(value).slice(1)} confidence`;
+}
+
 class StanLyricHierarchyExplorer {
   constructor(root) {
     this.root = root;
@@ -184,7 +197,7 @@ class StanLyricHierarchyExplorer {
     nodes.forEach((node) => {
       const option = document.createElement('option');
       option.value = node.id;
-      option.textContent = `${node.id} · ${node.label} · ${formatInteger.format(node.size)}`;
+      option.textContent = `${node.id} · ${displayLabel(node)} · ${formatInteger.format(node.size)}`;
       select.appendChild(option);
     });
     select.disabled = nodes.length === 0;
@@ -322,7 +335,7 @@ class StanLyricHierarchyExplorer {
 
     setText(this.root, '[data-hierarchy-node-level]', levelLabel(node.level));
     setText(this.root, '[data-hierarchy-node-id]', node.id);
-    setText(this.root, '[data-hierarchy-node-label]', node.label);
+    setText(this.root, '[data-hierarchy-node-label]', displayLabel(node));
     setText(this.root, '[data-hierarchy-size]', formatInteger.format(node.size));
     setText(
       this.root,
@@ -351,6 +364,7 @@ class StanLyricHierarchyExplorer {
     );
 
     this.renderBreadcrumb(this.pathForNode(node));
+    this.renderNodeDescription(node);
     this.renderTerms(node.terms);
     this.activeSongRows = this.songRowsForNode(node);
     this.catalogPage = 0;
@@ -381,17 +395,38 @@ class StanLyricHierarchyExplorer {
       }
       const button = element('button', 'stanlyric-hierarchy-crumb');
       button.type = 'button';
-      button.title = `View ${node.id}: ${node.label}`;
+      button.title = `View ${node.id}: ${displayLabel(node)}`;
       const dot = element('span', 'stanlyric-hierarchy-dot');
       dot.style.backgroundColor = nodeColorHex(node);
       button.append(
         dot,
         element('span', '', node.id),
-        element('strong', '', node.label),
+        element('strong', '', displayLabel(node)),
       );
       button.addEventListener('click', () => this.selectNode(node.id));
       host.appendChild(button);
     });
+  }
+
+  renderNodeDescription(node) {
+    const host = this.root.querySelector('[data-hierarchy-node-copy]');
+    const summary = this.root.querySelector('[data-hierarchy-node-summary]');
+    const description = this.root.querySelector('[data-hierarchy-node-description]');
+    const confidence = this.root.querySelector('[data-hierarchy-label-confidence]');
+    const evidence = this.root.querySelector('[data-hierarchy-label-evidence]');
+    const hasCopy = Boolean(summaryText(node) || node.description);
+    host.hidden = !hasCopy;
+    if (!hasCopy) return;
+
+    summary.textContent = summaryText(node);
+    description.textContent = node.description || '';
+    confidence.textContent = confidenceLabel(node.label_confidence);
+    confidence.hidden = !node.label_confidence;
+    evidence.replaceChildren();
+    (node.label_evidence || []).slice(0, 8).forEach((item) => {
+      evidence.appendChild(element('span', '', item));
+    });
+    evidence.hidden = evidence.childElementCount === 0;
   }
 
   renderTerms(terms) {
@@ -589,11 +624,12 @@ class StanLyricHierarchyExplorer {
     children.forEach((child) => {
       const button = element('button', 'stanlyric-hierarchy-child');
       button.type = 'button';
+      button.title = summaryText(child) || `View ${child.id}: ${displayLabel(child)}`;
       const dot = element('span', 'stanlyric-hierarchy-dot');
       dot.style.backgroundColor = nodeColorHex(child);
       const identity = element('span', 'stanlyric-hierarchy-child-identity');
       identity.append(
-        element('strong', '', `${child.id} · ${child.label}`),
+        element('strong', '', `${child.id} · ${displayLabel(child)}`),
         element(
           'small',
           '',

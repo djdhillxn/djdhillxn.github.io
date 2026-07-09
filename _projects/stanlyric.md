@@ -272,6 +272,15 @@ img_size: small
       <span class="stanlyric-hierarchy-node-label" data-hierarchy-node-label>--</span>
     </div>
 
+    <div class="stanlyric-hierarchy-node-copy" data-hierarchy-node-copy hidden>
+      <p class="stanlyric-hierarchy-node-summary" data-hierarchy-node-summary></p>
+      <p class="stanlyric-hierarchy-node-description" data-hierarchy-node-description></p>
+      <div class="stanlyric-hierarchy-label-meta">
+        <span class="stanlyric-hierarchy-label-confidence" data-hierarchy-label-confidence></span>
+        <div class="stanlyric-hierarchy-label-evidence" data-hierarchy-label-evidence></div>
+      </div>
+    </div>
+
     <div class="stanlyric-hierarchy-metrics" aria-label="selected hierarchy node statistics">
       <div class="stanlyric-hierarchy-metric">
         <span>Songs</span>
