@@ -30,6 +30,14 @@ function debounce(callback, wait) {
   };
 }
 
+function displayLabel(node) {
+  return node?.label_title || node?.label || node?.term_label || node?.id || '';
+}
+
+function summaryText(node) {
+  return node?.one_line_summary || '';
+}
+
 class StanLyricEmbeddingAtlas {
   constructor(root) {
     this.root = root;
@@ -386,7 +394,7 @@ class StanLyricEmbeddingAtlas {
     nodes.forEach((node) => {
       const option = document.createElement('option');
       option.value = node.id;
-      option.textContent = `${node.id} · ${node.label} · ${formatInteger.format(node.size)}`;
+      option.textContent = `${node.id} · ${displayLabel(node)} · ${formatInteger.format(node.size)}`;
       this.hierarchySelect.appendChild(option);
     });
     this.hierarchySelect.value = selectedId;
@@ -457,7 +465,7 @@ class StanLyricEmbeddingAtlas {
       this.tooltip,
       '[data-tooltip-community]',
       `${song.hierarchy[this.hierarchyLevel].id} · `
-      + song.hierarchy[this.hierarchyLevel].label,
+      + displayLabel(song.hierarchy[this.hierarchyLevel]),
     );
     const stageBounds = this.root.querySelector('.stanlyric-atlas-stage').getBoundingClientRect();
     const tooltipWidth = this.tooltip.offsetWidth || 220;
@@ -617,7 +625,9 @@ class StanLyricEmbeddingAtlas {
       button.type = 'button';
       button.className = 'stanlyric-atlas-hierarchy-node';
       if (level === this.hierarchyLevel) button.classList.add('is-current');
-      button.title = `Explore ${node.id}: ${node.label}`;
+      button.title = summaryText(node)
+        ? `Explore ${node.id}: ${displayLabel(node)} — ${summaryText(node)}`
+        : `Explore ${node.id}: ${displayLabel(node)}`;
 
       const swatch = document.createElement('span');
       swatch.className = 'stanlyric-atlas-swatch';
@@ -627,7 +637,8 @@ class StanLyricEmbeddingAtlas {
       const levelName = document.createElement('small');
       levelName.textContent = `${levelLabel(level)} ${node.id}`;
       const label = document.createElement('strong');
-      label.textContent = node.label;
+      label.textContent = displayLabel(node);
+      label.title = summaryText(node) || node.term_label || displayLabel(node);
       identity.append(levelName, label);
       const size = document.createElement('span');
       size.className = 'stanlyric-atlas-hierarchy-size';
