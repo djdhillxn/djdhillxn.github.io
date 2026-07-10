@@ -617,6 +617,11 @@ footer.sticky-bottom {
     }
   }
 
+  .project-card-image-link,
+  .project-card-text-link {
+    display: block;
+  }
+
   .card {
     img {
       width: 100%;

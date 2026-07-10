@@ -5,6 +5,8 @@ description: Policy gradients methods in reinforcement learning
 importance: -3
 category: RL
 github: "https://github.com/djdhillxn/trpo"
+img: assets/img/qbert-cartoon-project-thumb.webp
+img_size: small
 ---
 
 I performed a theoretical study on policy optimization that included reading the papers on Conservative Policy Iteration (CPI), Trust Region Policy Optimization (TRPO), Natural Policy Gradient (NPG), and Proximal Policy Optimization (PPO). A major component of the project was studying the monotonic improvement proofs behind the theoretically justified policy improvement algorithms of CPI and TRPO. I analyzed how the surrogate objective and mixture-update constraints in CPI inspired the KL-divergence constraint in TRPO and the clipped objective in PPO. 
