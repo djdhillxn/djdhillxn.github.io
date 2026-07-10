@@ -6,7 +6,7 @@ nav: true
 nav_order: 2
 ---
 
-#### <span style="color:#DC143C">My adoration for Music ever since I was a kid</span> <!-- crimson red -->
+#### <span style="color:#DC143C">My endearment for Music ever since I was a kid</span> <!-- crimson red -->
 <!--### <span style="color:orange">Academics</span>-->
 
 I am very happy when I am listening to music, and this has led me to create a lot of playlists
@@ -19,7 +19,7 @@ My spotify insights dashboard can be found [here](/projects/spotify).
 
 I am looking for opportunities in the domains of RL, NLP, and their intersection. -->
 
-#### <span style="color:#4169E1">My adoration for Reinforcement Learning ever since I was an adult</span> <!-- royal blue -->
+#### <span style="color:#4169E1">My endearment for Reinforcement Learning ever since I was an adult</span> <!-- royal blue -->
 
 In Spring 2026 at UW-Madison, I took a course on the Mathematical Principles of RL. With a core focus on theoretical derivations, I completed an extensive study of the policy gradient
 algorithms literature reading the papers on CPI(2002), NPG(2001), TRPO(2015), and PPO(2017). I also did a [project](/projects/trpo) implementing TRPO, NPG, and PPO algorithms and evaluating locomotion and Atari game tasks.
