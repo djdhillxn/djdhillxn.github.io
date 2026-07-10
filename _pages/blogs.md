@@ -6,13 +6,20 @@ nav: true
 nav_order: 2
 ---
 
-<link rel="stylesheet" href="{{ '/assets/css/blogs.css' | relative_url }}">
+#### <span style="color:#DC143C">My adoration for Music ever since I was a kid</span> <!-- crimson red -->
+<!--### <span style="color:orange">Academics</span>-->
 
-#### Research Statement
+I am very happy when I am listening to music, and this has led me to create a lot of playlists
+over at [spotify](https://open.spotify.com/user/316evrj3akm6ieuhefckw6kpj6eq?si=bc183398ab8946d0).
+I am also working on a project to make the playlists better, more inclusive of songs, that you may not have already added to your spotify playlists. 
+My spotify insights dashboard can be found [here](/projects/spotify).
 
-I am looking for opportunities in the domains of RL, NLP, and their intersection.
 
-#### Reinforcement Learning
+<!-- #### Research Statement
+
+I am looking for opportunities in the domains of RL, NLP, and their intersection. -->
+
+#### <span style="color:#4169E1">My adoration for Reinforcement Learning ever since I was an adult</span> <!-- royal blue -->
 
 In Spring 2026 at UW-Madison, I took a course on the Mathematical Principles of RL. With a core focus on theoretical derivations, I completed an extensive study of the policy gradient
 algorithms literature reading the papers on CPI(2002), NPG(2001), TRPO(2015), and PPO(2017). I also did a [project](/projects/trpo) implementing TRPO, NPG, and PPO algorithms and evaluating locomotion and Atari game tasks.
@@ -20,25 +27,11 @@ algorithms literature reading the papers on CPI(2002), NPG(2001), TRPO(2015), an
 With these foundations I gained from doing this project, it became easier to follow the research built on top of these methods and motivated me to pursue this RL field further. Further is the large language models domain which makes full use of policy optimization, where the next token prediction is the action in RL literature sense. This InstructGPT (2022) paper seems to be a good read that I found an interesting read.
 Reinforcement learning from human feedback premise is given in this paper. There have so many numerous methods advancing research in this domain ever since including Group Relative Policy Optimization (GRPO), Direct policy optimization (DPO), DAPO, and many more to come. 
 
+I first got to read in detail about RL while working on an project for learning about Multi-Armed Bandits working at HiLabs in September 2023. I had read at a surface level about it earlier in August 2022 as well.
+
 #### Working at a startup in Bangalore
 
 I was fortunate to start my career in the industry by working at a startup straight out of graduation, at [HiLabs](https://www.linkedin.com/company/hilabsinc/). I was lucky to learn under the supervision of a manager who gave me the confidence in my abilities to work on a myriad of problem statements. I became an expert in Git version control. The core product I worked on aimed to automate the ingestion of Medicaid/Medicare roster documents into databases in a standardized format, enabling data interoperability. I also had the opportunity to take research tasks to extract information for these rosters and store them in structured formats, which I worked through using named entity recognition methods and information extraction methods.
-
-#### Research at IIT Roorkee
-
-<figure class="iit-research-figure">
-  <img src="{{ '/assets/img/elephant_detection_results.png' | relative_url }}" alt="Elephant detection results from the IIT Roorkee thermal-imaging research project" loading="lazy">
-</figure>
-
-During my undergraduate studies, I led a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Working under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. The dataset covered varied and challenging environmental conditions, allowing us to test how different modeling choices generalized across settings. Fine-tuning pretrained YOLO models on this noisy dataset initially resulted in overfitting and poor recall in specific test locations. To address this, I systematically evaluated the impact of various preprocessing techniques on the input thermal frames. I found that inversion and bilateral filtering were the most effective techniques, improving contrast and reducing noise, respectively. Combining these techniques yielded even stronger results. Ultimately, I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
-
-Supervisor: Prof. Vinod Pankajakshan \\
-Department of Electronics and Communication Engineering, IIT Roorkee
-
-Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**.
-The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch.
-
-<div class="iit-research-clear" aria-hidden="true"></div>
 
 #### Favorite book readings <!--Repetitive Book Reads-->
 *The Elements of Statistical Learning* Hastie, Tibshirani, Friedman \\

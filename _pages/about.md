@@ -41,7 +41,9 @@ Brief summaries of select projects are:
 
  <!-- explores whether preference feedback can make a small instruction-tuned language model more helpful. I built an end-to-end pipeline around Qwen2.5-0.5B and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and a custom token-level PPO loop with LoRA, GAE, and KL control.  -->
 
-- [StanLyric](/projects/stanlyric) Implemented information retrieval (IR) system to identify songs based on input queries consisting of a few lyrical sentences from a songs lyrics corpus. Developed using the BM25-Okapi method, I deployed online the static inverted indices for 44,480 songs to have a running lyric [search engine](/projects/stanlyric). This app also exhibits the ranked result's interpratability based on quantified contributions of matched keywords which vary for each candidate song based on its underlying term frequencies (TFs). 
+- [StanLyric](/projects/stanlyric) Implemented information retrieval (IR) system to identify songs based on input queries consisting of a few lyrical sentences from a songs lyrics corpus. Developed using the BM25-Okapi method, I deployed online the static inverted indices for 44,480 songs to have a running lyric [search engine](/projects/stanlyric). \
+<!-- This app also exhibits the ranked result's interpratability based on quantified contributions of matched keywords which vary for each candidate song based on its underlying term frequencies (TFs).  -->
+
 <!-- - [StanLyric](/projects/stanlyric) helps identify a song from the fragment of a lyric stuck in your head. It runs a BM25-Okapi retrieval engine over 44,480 songs entirely in the browser, with a compact static index and score explanations that show why each result matched. -->
 
 - [WordPlay](/projects/wordplay/) This project uses character-level language models to play the Hangman Challenge. I trained forward and reverse n-gram models with padding at word start and end. During training, I also used smoothing techniques such as add-k smoothing and kneser key smoothing to mitigate sparsity and encourage exploration. For predicting during game simulation, I incorporating backoff and interpolation. With the trained probabilistic distributions, it can also be used to generate plausible new english words. I also designed interactive [simulator](/projects/wordplay/) for game playing and word generation.
@@ -50,7 +52,7 @@ Brief summaries of select projects are:
 
 <!-- Some generated words are surprisingly convincing; others clearly need a dictionary and a quiet moment. -->
 
-- [Warfarin](/projects/warfarin) Investigated contextual multi-arm bandits for personalized Warfarin dosage selection in online learning setting with sequential feedback. Evaluated LinUCB and its regularized ridge and lasso variants, and the Linear Thompson sampling bandit. Compared performances along with those obtained through clinically recommended Pharmacogenetic formula. 
+- [Warfarin](/projects/warfarin) Investigated contextual multi-arm bandits for an offline dataset setting of personalized Warfarin dosage selection in online learning setting with sequential feedback. Evaluated LinUCB and its regularized ridge and lasso variants, and the Linear Thompson sampling bandit. Compared performances along with those obtained through clinically recommended Pharmacogenetic formula. 
 
 <!-- Resume bullet points
 Evaluated contextual and linear bandit strategies for personalized Warfarin dosage selection under sequential
@@ -63,24 +65,34 @@ patient-specific treatment optimization. -->
 <!-- Warfarin Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS. Online learning on 5,528 patients data. Performed data cleaning and imputations using various methods. -->
 
 
-#### Coursework
+#### Graduate Coursework
 
-Machine Learning, Reinforcement Learning, 
-Game Theory, Operating Systems, Linear Optimization, Non-linear optimization
+Non-linear Optimization, Natural Language Processing (Planned for Fall 2026) \
+Machine Learning, Reinforcement Learning (Spring 2026) \
+Game Theory, Operating Systems (Fall 2025) 
 
-I have written about my passion for these courses in my [blogs](/blogs).
+<!-- I have written about my passion for these courses in my [blogs](/blogs). -->
 
 #### Research work
 InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
 Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
 The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch.
-See overview in my [work blogs](/blogs).
 
-#### Industry experiences
+<!-- #### Research at IIT Roorkee -->
 
-At Gartner, working as an associate data scientist in the client retention analytics team. 
-Before that, I worked at Hilabs, in Bangalore, as a data scientist in the Roster Automation team. 
-See my work details here in [my blog posts](/blogs).
+<figure style="float: right; width: 40%; margin: 0 0 1rem 1rem;">
+  <img src="{{ '/assets/img/elephant_detection_results.png' | relative_url }}" alt="Elephant detection results from the IIT Roorkee thermal-imaging research project" loading="lazy" style="width: 100%; height: auto;">
+</figure>
+
+During my undergraduate studies, I led a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Working under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. The dataset covered varied and challenging environmental conditions, allowing us to test how different modeling choices generalized across settings. Fine-tuning pretrained YOLO models on this noisy dataset initially resulted in overfitting and poor recall in specific test locations. To address this, I systematically evaluated the impact of various preprocessing techniques on the input thermal frames. I found that inversion and bilateral filtering were the most effective techniques, improving contrast and reducing noise, respectively. Combining these techniques yielded even stronger results. Ultimately, I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
+
+Supervisor: Prof. Vinod Pankajakshan \\
+Department of Electronics and Communication Engineering, IIT Roorkee
+
+<!-- Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**.
+The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. -->
+
+<!-- #### Industry experiences -->
 
 <!-- **My work projects detailed**\
 I specialize in the domain of reinforcement learning and natural langauge sprocessing. 
@@ -103,14 +115,16 @@ The topics range from broad areas of statistical algorithms, reinforcement learn
 !-->
 
 #### <span style="color:gray">Education and work</span>
-**University of Wisconsin-Madison** August 2025 - Present \
-Masters of Science, Computer Science \
-Data Scientist at **Gartner Inc.**, Mar 2024 - August 2025 \
-<!--### <span style="color:orange">Academics</span>-->
-Bachelor of Technology, Electronics and Communication Engineering \
-**Indian Institute of Technology Roorkee**, July 2019 - May 2023
-<!--### <span style="color:red">Contact</span>-->
+**University of Wisconsin-Madison**, August 2025 - Present \
+Masters of Science, Computer Science
 
+**My experiences in the industry**, July 2023 - August 2025 \
+At Gartner, I worked as an Associate data scientist in the Client Retention Analytics team from March 2024 to August 2025, and before that, I worked at HiLabs, in Bangalore, as a Data Scientist in the Roster Automation team from July 2023 to March 2024.
+<!--### <span style="color:orange">Academics</span>-->
+
+**Indian Institute of Technology Roorkee**, July 2019 - May 2023 \
+Bachelor of Technology, Electronics and Communication Engineering
+<!--### <span style="color:red">Contact</span>-->
 
 #### Emails and Socials
 [dhillondheeraj84@gmail.com](mailto:dhillondheeraj84@gmail.com) \
@@ -122,13 +136,9 @@ Bachelor of Technology, Electronics and Communication Engineering \
 [g scholar](https://scholar.google.com/citations?user=njVX6ngAAAAJ&hl=en), [ORCID](https://orcid.org/0009-0002-0234-124X)
 , [IEEE Xplore](https://ieeexplore.ieee.org/author/542676216429361)
 
-#### <span style="color:gray">My experiences with music</span>
+I am also social with artistic licenses over here in my [blogs](/blogs).
 
-I am very happy when I am listening to music, and this has led me to create a lot of playlists
-over at [spotify](https://open.spotify.com/user/316evrj3akm6ieuhefckw6kpj6eq?si=bc183398ab8946d0).
-I am also working on a project to make the playlists better, more inclusive of songs, that you may not have already added to your spotify playlists. 
-My spotify insights dashboard can be found [here](/projects/spotify).
-
+<!-- See overview in my [work blogs](/blogs). -->
 
 <!--
 Additional academic details can be added here:
