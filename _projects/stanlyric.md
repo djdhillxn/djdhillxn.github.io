@@ -8,9 +8,11 @@ img: assets/img/8milecover.jpg
 img_size: small
 ---
 
+{% assign stanlyric_hierarchy_asset_version = '20260710-labels' %}
+
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/stanlyric.css' | relative_url }}">
-<link rel="stylesheet" href="{{ '/assets/css/stanlyric/embedding-atlas.css' | relative_url }}">
-<link rel="stylesheet" href="{{ '/assets/css/stanlyric/hierarchy-explorer.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/assets/css/stanlyric/embedding-atlas.css' | relative_url }}?v={{ stanlyric_hierarchy_asset_version }}">
+<link rel="stylesheet" href="{{ '/assets/css/stanlyric/hierarchy-explorer.css' | relative_url }}?v={{ stanlyric_hierarchy_asset_version }}">
 
 <figure class="stanlyric-reference-figure">
   <div class="stanlyric-reference-crop">
@@ -92,7 +94,7 @@ img_size: small
     class="stanlyric-atlas"
     data-stanlyric-atlas
     data-atlas-url="{{ '/assets/json/stanlyric/stanlyric_embedding_atlas.json' | relative_url }}"
-    data-hierarchy-url="{{ '/assets/json/stanlyric/stanlyric_hierarchy.json' | relative_url }}"
+    data-hierarchy-url="{{ '/assets/json/stanlyric/stanlyric_hierarchy.json' | relative_url }}?v={{ stanlyric_hierarchy_asset_version }}"
   >
     <header class="stanlyric-atlas-header">
       <div class="stanlyric-atlas-heading">
@@ -209,7 +211,7 @@ img_size: small
   <section
     class="stanlyric-hierarchy"
     data-stanlyric-hierarchy
-    data-hierarchy-url="{{ '/assets/json/stanlyric/stanlyric_hierarchy.json' | relative_url }}"
+    data-hierarchy-url="{{ '/assets/json/stanlyric/stanlyric_hierarchy.json' | relative_url }}?v={{ stanlyric_hierarchy_asset_version }}"
     data-atlas-url="{{ '/assets/json/stanlyric/stanlyric_embedding_atlas.json' | relative_url }}"
   >
     <header class="stanlyric-hierarchy-header">
@@ -372,8 +374,8 @@ img_size: small
   }
 }
 </script>
-<script type="module" src="{{ '/assets/js/stanlyric/embedding-atlas.js' | relative_url }}"></script>
-<script type="module" src="{{ '/assets/js/stanlyric/hierarchy-explorer.js' | relative_url }}"></script>
+<script type="module" src="{{ '/assets/js/stanlyric/embedding-atlas.js' | relative_url }}?v={{ stanlyric_hierarchy_asset_version }}"></script>
+<script type="module" src="{{ '/assets/js/stanlyric/hierarchy-explorer.js' | relative_url }}?v={{ stanlyric_hierarchy_asset_version }}"></script>
 
 ## Technical implementation
 

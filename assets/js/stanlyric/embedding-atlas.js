@@ -80,7 +80,7 @@ class StanLyricEmbeddingAtlas {
     try {
       const [atlasResponse, hierarchyResponse] = await Promise.all([
         fetch(this.root.dataset.atlasUrl, { cache: 'force-cache' }),
-        fetch(this.root.dataset.hierarchyUrl, { cache: 'force-cache' }),
+        fetch(this.root.dataset.hierarchyUrl, { cache: 'no-cache' }),
       ]);
       if (!atlasResponse.ok) {
         throw new Error(`Atlas data request failed with HTTP ${atlasResponse.status}.`);

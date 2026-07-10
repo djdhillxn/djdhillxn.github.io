@@ -59,7 +59,7 @@ class StanLyricHierarchyExplorer {
   async init() {
     try {
       const [hierarchyResponse, atlasResponse] = await Promise.all([
-        fetch(this.root.dataset.hierarchyUrl, { cache: 'force-cache' }),
+        fetch(this.root.dataset.hierarchyUrl, { cache: 'no-cache' }),
         fetch(this.root.dataset.atlasUrl, { cache: 'force-cache' }),
       ]);
       if (!hierarchyResponse.ok) {
