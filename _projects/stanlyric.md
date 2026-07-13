@@ -8,7 +8,7 @@ img: assets/img/8milecover.jpg
 img_size: small
 ---
 
-{% assign stanlyric_hierarchy_asset_version = '20260710-labels' %}
+{% assign stanlyric_hierarchy_asset_version = '20260713-llm-report' %}
 
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/stanlyric.css' | relative_url }}">
 <link rel="stylesheet" href="{{ '/assets/css/stanlyric/embedding-atlas.css' | relative_url }}?v={{ stanlyric_hierarchy_asset_version }}">
@@ -107,7 +107,7 @@ img_size: small
           <strong data-atlas-community-count>139</strong> stable Communities, and
           <strong data-atlas-neighborhood-count>175</strong> fine-grained Neighborhoods.
           Methods and evaluation are detailed in the
-          <a href="{{ '/assets/pdf/stanlyric_cohere_hierarchy_report.pdf' | relative_url }}" target="_blank" rel="noopener">technical report</a>.
+          <a href="{{ '/assets/pdf/stanlyric_cohere_hierarchy_report.pdf' | relative_url }}?v={{ stanlyric_hierarchy_asset_version }}" target="_blank" rel="noopener">technical report</a>.
         </p>
         <p class="stanlyric-atlas-projection-note" data-atlas-projection-note>
           The 3D projection reports UMAP trustworthiness of 0.753, top-15 neighbor overlap of 0.129, and a PCA three-dimensional explained-variance baseline of 6.1%.
@@ -218,7 +218,7 @@ img_size: small
       <div class="stanlyric-hierarchy-heading">
         <p class="stanlyric-kicker">hierarchy explorer</p>
         <h3>From lyric regions to song neighborhoods</h3>
-        <p>Follow the strict Region → Community → Neighborhood structure, then inspect the language, artists, representative songs, and graph evidence that explain each node.</p>
+        <p>Follow the strict Region → Community → Neighborhood structure, then inspect the language, artists, representative songs, and graph evidence that explain each node. Node titles and descriptions are generated offline by GPT-5.5 from those evidence packets.</p>
       </div>
       <div class="stanlyric-hierarchy-summary" aria-label="hierarchy statistics">
         <div>
@@ -386,6 +386,8 @@ The embedding atlas adds a second retrieval view over the cleaned 36,545-song co
 The semantic structure is a strict three-level Leiden hierarchy built with the Constant Potts Model. A multiseed resolution sweep selects 139 middle Communities using adjusted Rand agreement, normalized variation of information, adjacent-resolution stability, and balance constraints. Those Communities are aggregated into 20 broad Regions. Large Communities are then split only when the proposed Neighborhoods pass minimum-size, seed-stability, internal-edge-retention, embedding-cohesion-gain, and topic-separation gates. This produces 175 Neighborhoods, with every Neighborhood contained by exactly one Community and every Community contained by exactly one Region.
 
 Each hierarchy level receives the same interpretation contract. Binary song-incidence c-TF-IDF finds distinctive unigrams and bigrams without letting repeated choruses multiply their weight. Corpus prevalence lift and smoothed log-odds separate characteristic language from merely frequent lyric vocabulary. Representative songs are nearest to each node's centroid in the original 1,024-dimensional cosine space, while boundary songs place substantial graph strength outside the node. Cohesion, weighted conductance, internal edge strength, artist diversity, sampled cosine silhouette, per-song assignment stability, and weighted local-neighbor agreement remain visible as diagnostics.
+
+The readable hierarchy labels are generated in a separate offline OpenAI pass. For each of the 334 hierarchy nodes, StanLyric packages the node's top terms, NMF topic bridges, representative and boundary songs, artist counts, graph metrics, and parent/child/sibling context, then asks GPT-5.5 for a title, one-line summary, short description, confidence flag, and evidence list. These LLM outputs are presentation metadata layered on top of the deterministic graph pipeline; they do not change song membership, stability, or any quantitative diagnostic.
 
 StanLyric is an information retrieval system for a lyrics corpus. Each song is one document, and the user-provided lyric fragment is one query. The current version uses BM25-Okapi, short for **Best Matching 25**, because it is lightweight, interpretable, and especially strong when the query contains rare phrase fragments or distinctive words.
 
