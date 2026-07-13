@@ -41,7 +41,12 @@ Brief summaries of select projects are:
 
  <!-- explores whether preference feedback can make a small instruction-tuned language model more helpful. I built an end-to-end pipeline around Qwen2.5-0.5B and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and a custom token-level PPO loop with LoRA, GAE, and KL control.  -->
 
-- [StanLyric](/projects/stanlyric) Implemented information retrieval (IR) system to identify songs based on input queries consisting of a few lyrical sentences from a songs lyrics corpus. Developed using the BM25-Okapi method, I deployed online the static inverted indices for 44,480 songs to have a running lyric [search engine](/projects/stanlyric). \
+- [StanLyric](/projects/stanlyric) Built a information retrieval (IR) system to identify songs based on a few sentences of lyrics. The corpus over which the search takes place has 36,545 songs. With BM25-Okapi as the algorithmic backbone, the search engine is live for use. Also live is a three-dimensional interactive graph with nodes as songs on which Lieden community detection is performed to uncover overarching themes over the lyrics of songs using their Cohere Embed v4 embeddings.
+
+<!-- lyrics IR project over a cleaned 36,545-song corpus. The browser-side BM25-Okapi search engine explains matched-term contributions, while Cohere Embed v4 song vectors power a 3D semantic atlas. I used Leiden community detection to organize songs into Regions, Communities, and Neighborhoods, then generated evidence-grounded LLM titles and descriptions for the hierarchy nodes. \ -->
+
+<!-- [StanLyric](/projects/stanlyric) Implemented information retrieval (IR) system to identify songs based on input queries consisting of a few lyrical sentences from a songs lyrics corpus. Developed using the BM25-Okapi method, I deployed online the static inverted indices for 44,480 songs to have a running lyric [search engine](/projects/stanlyric). \ -->
+
 <!-- This app also exhibits the ranked result's interpratability based on quantified contributions of matched keywords which vary for each candidate song based on its underlying term frequencies (TFs).  -->
 
 <!-- - [StanLyric](/projects/stanlyric) helps identify a song from the fragment of a lyric stuck in your head. It runs a BM25-Okapi retrieval engine over 44,480 songs entirely in the browser, with a compact static index and score explanations that show why each result matched. -->
