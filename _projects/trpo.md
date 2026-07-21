@@ -1,11 +1,11 @@
 ---
 layout: page
-title: Trust Region Policy Optimization & Proximal Policy Optimization
+title: TRPO, PPO, and NPG Experiments
 description: Policy gradients methods in reinforcement learning
 importance: -3
 category: RL
 github: "https://github.com/djdhillxn/trpo"
-img: assets/img/qbert-side-art.jpg
+img: assets/img/qbert-cartoon-project-thumb.webp
 img_size: small
 ---
 
