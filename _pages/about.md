@@ -21,9 +21,9 @@ social: false  # includes social icons at the bottom of the page
 <span style="color:WhiteSmoke">Hi, my name is, what? My name is, who? My name is, chka-chka, Slim Shady (fan).</span>
 
 **TL;DR**
-I am Dheeraj, currently pursuing an MS in Computer Science at UW-Madison, where I will be graduating in May 2027. I have 2 years of industry experience as a data scientist at Gartner and HiLabs, a healthcare data interoperability startup. I completed my undergrad in ECE at IIT Roorkee. Here is my **[resume](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
+I am Dheeraj, currently pursuing an MS in Computer Science at UW-Madison, where I will be graduating in May 2027. I have 2 years of industry experience as a data scientist at Gartner and HiLabs, a healthcare data interoperability startup. I completed my undergrad in ECE at IIT Roorkee. The resume detailing my experiences is present **[here](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
 
-I am looking for opportunities that will challenge me to solve meaningful problems by leveraging methodologies in my domain of study, spanning Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the applications/use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight. Consequently, I am even more excited to be part of and contribute to a startup.
+I am looking for opportunities that will challenge me to solve meaningful problems by leveraging methodologies in my domain of study, spanning Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the applications or use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight. Consequently, I am even more excited to be part of and contribute to a startup.
 
 <!-- I am actively seeking internship opportunities for Summer and Fall 2026 to work as an ML researcher, applied scientist, or data scientist. Ping me on email or LinkedIn, I would be happy to connect! -->
 
@@ -52,7 +52,9 @@ Brief summaries of select projects are:
 
 <!-- - [StanLyric](/projects/stanlyric) helps identify a song from the fragment of a lyric stuck in your head. It runs a BM25-Okapi retrieval engine over 44,480 songs entirely in the browser, with a compact static index and score explanations that show why each result matched. -->
 
-- [WordPlay](/projects/wordplay/) This project uses character-level language models to play the Hangman Challenge. I trained forward and reverse n-gram models with padding at word start and end. During training, I also used smoothing techniques such as add-k smoothing and kneser key smoothing to mitigate sparsity and encourage exploration. For predicting during game simulation, I incorporating backoff and interpolation. With the trained probabilistic distributions, it can also be used to generate plausible new english words. I also designed interactive [simulator](/projects/wordplay/) for game playing and word generation.
+- [WordPlay](/projects/wordplay/) This project uses character-level language models to play the Hangman Challenge. I trained forward and reverse n-gram models with padding at word start and end.
+<!-- During training, I also used smoothing techniques such as add-k smoothing and kneser key smoothing to mitigate sparsity and encourage exploration. -->
+For predicting during game simulation, I incorporating backoff and interpolation. With the trained probabilistic distributions, it can also be used to generate plausible new english words. I also designed interactive [simulator](/projects/wordplay/) for game playing and word generation.
 
 <!-- then packaged the public models into an interactive browser demo.  -->
 
