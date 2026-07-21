@@ -17,14 +17,16 @@ social: false  # includes social icons at the bottom of the page
 ---
 
 <!--Areas of Interest: **Natural Language Processing**, **Graph Neural Networks**-->
-Hi there, from one Machine Learning enthusiast to another!
+<!-- Hi there, from one Machine Learning enthusiast to another! -->
+
+Hi, my name is, what? My name is, who? My name is, chka-chka, Slim Shady (fan).
 
 **TL;DR**
 I am Dheeraj, currently pursuing an MS in Computer Science at UW-Madison, where I will be graduating in May 2027. I have 2 years of industry experience as a data scientist at Gartner and HiLabs, a healthcare data interoperability startup. I completed my undergrad in ECE at IIT Roorkee. Here is my **[resume](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
 
 I am looking for opportunities that will challenge me to solve meaningful problems by leveraging methodologies in my domain of study, spanning Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the applications/use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight. Consequently, I am even more excited to be part of and contribute to a startup.
 
-I am actively seeking internship opportunities for Summer and Fall 2026 to work as an ML researcher, applied scientist, or data scientist. Ping me on email or LinkedIn, I would be happy to connect!
+<!-- I am actively seeking internship opportunities for Summer and Fall 2026 to work as an ML researcher, applied scientist, or data scientist. Ping me on email or LinkedIn, I would be happy to connect! -->
 
 <!--fellow enthusiast to another-->
 #### Project work
@@ -141,7 +143,8 @@ Bachelor of Technology, Electronics and Communication Engineering
 [g scholar](https://scholar.google.com/citations?user=njVX6ngAAAAJ&hl=en), [ORCID](https://orcid.org/0009-0002-0234-124X)
 , [IEEE Xplore](https://ieeexplore.ieee.org/author/542676216429361)
 
-I am also social with artistic licenses over here in my [blogs](/blogs).
+<!-- I am also social with artistic licenses over here in my [blogs](/blogs). -->
+I am also social with creative licenses over here in my [blogs](/blogs).
 
 <!-- See overview in my [work blogs](/blogs). -->
 
