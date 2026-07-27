@@ -8,8 +8,16 @@ middle_name:
 last_name: Dhillon
 email: dhillondheeraj84@gmail.com
 description: > # the ">" symbol means to ignore newlines until "footer_text:"
+  Dheeraj Dhillon is an MS Computer Science student at UW-Madison working on
+  reinforcement learning, natural language processing, and information retrieval.
 footer_text: >
 keywords: # add your own keywords or leave empty
+  - reinforcement learning
+  - machine learning
+  - natural language processing
+  - information retrieval
+  - autonomous driving
+  - RLHF
 
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
 icon: icons8-gta-5-16.png # 🐾  # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
