@@ -33,8 +33,7 @@ I am looking for opportunities that will challenge me to solve meaningful proble
 My [projects page](/projects) goes into extensive details on several of the projects I have worked on implementing RL and NLP methodologies. These projects range from policy optimization experiments on robotic locomotion and Atari control to post-training RLHF alignment of LLMs and autonomous driving. 
 
 #### Research work
-InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
-Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
+InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025. See more details about [InfraNet](/_projects/infranet.md) and read the published **[paper](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
 The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. Supervised by Prof. Vinod Pankajakshan at the
 Department of Electronics and Communication Engineering, IIT Roorkee.
 

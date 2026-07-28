@@ -13,7 +13,7 @@ layout: default
 
         <article>
           {% if page.profile -%}
-          <div class="profile float-{%- if page.profile.align == 'left' -%}left{%- else -%}right{%- endif -%}">
+          <div class="profile about-profile float-{%- if page.profile.align == 'left' -%}left{%- else -%}right{%- endif -%}">
             {%- if page.profile.image %}
               {%- assign profile_image_path = page.profile.image | prepend: 'assets/img/' -%}
               {%- assign profile_image_alt = page.profile.image_alt | default: page.profile.image -%}
@@ -30,6 +30,26 @@ layout: default
               alt=profile_image_alt
               cache_bust=true -%}
             {% endif -%}
+            <nav class="about-profile-social" aria-label="Profile social links">
+              {%- if site.github_username -%}
+                <a href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener" title="GitHub">
+                  <i class="fab fa-github" aria-hidden="true"></i>
+                  <span>GitHub</span>
+                </a>
+              {%- endif -%}
+              {%- if site.linkedin_username -%}
+                <a href="https://www.linkedin.com/in/{{ site.linkedin_username }}" target="_blank" rel="noopener" title="LinkedIn">
+                  <i class="fab fa-linkedin" aria-hidden="true"></i>
+                  <span>LinkedIn</span>
+                </a>
+              {%- endif -%}
+              {%- if site.twitter_username -%}
+                <a href="https://twitter.com/{{ site.twitter_username }}" target="_blank" rel="noopener" title="Twitter">
+                  <i class="fab fa-twitter" aria-hidden="true"></i>
+                  <span>Twitter</span>
+                </a>
+              {%- endif -%}
+            </nav>
             {%- if page.profile.more_info %}
             <div class="more-info">
               {{ page.profile.more_info }}

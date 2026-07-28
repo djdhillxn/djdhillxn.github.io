@@ -219,6 +219,37 @@ blockquote {
   margin-right: 1rem;
 }
 
+.about-profile-social {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  margin-top: 0.75rem;
+
+  a {
+    align-items: center;
+    color: var(--global-text-color);
+    display: inline-flex;
+    gap: 0.45rem;
+    line-height: 1.25;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+
+    i {
+      font-size: 0.95rem;
+      width: 1rem;
+
+      &::before {
+        color: inherit;
+      }
+    }
+
+    &:hover {
+      color: var(--global-theme-color);
+      text-decoration: none;
+    }
+  }
+}
+
 @media (min-width: 576px) {
   .profile {
     width: 30%;
@@ -228,6 +259,10 @@ blockquote {
         display: block;
       }
     }
+  }
+
+  .profile.about-profile {
+    width: 24%;
   }
 }
 
