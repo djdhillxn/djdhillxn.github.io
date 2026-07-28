@@ -29,6 +29,22 @@ My presentation for this project on April 24, 2026 followed these [slides](/asse
 
 Find project report [here](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf). The code implementation is at the [GitHub repo](https://github.com/djdhillxn/trpo). In the repository, we have also implemented parallel rollouts for faster simulation trajectory collection. This work was my main projectwork for the course, Mathematical Principles of RL, I took at UW-Madison in Spring 2026. I have written more about this RL course and my broader experiences with RL in my [blogs](/blogs).
 
+<figure style="float: left; width: 100%;">
+<img src="{{'assets/img/fig1-trpo.png' | relative_url }}" alt="trpo fig 1"
+loading="lazy" style="width: 100%; height: auto;">
+</figure>
+
+<figure style="float: left; width: 100%;">
+<img src="{{'assets/img/fig2-trpo.png' | relative_url }}" alt="trpo fig 2"
+loading="lazy" style="width: 100%; height: auto;">
+</figure>
+
+<figure style="float: left; width: 100%;">
+<img src="{{'assets/img/fig3-trpo.png' | relative_url }}" alt="trpo fig 3"
+loading="lazy" style="width: 100%; height: auto;">
+</figure>
+
+I rendered the trained policies for one of the Atari control task of the Q*bert game as following:
 
 <div class="trpo-demo-video">
 {% include video.html path="https://www.youtube.com/embed/5aAyjBLfW0o" class="trpo-demo-iframe" width="800" height="480" title="PPO trained Q*bert agent with 2000 epochs and 256 size 2-hidden layer CNN policy simulation" caption="A simulation rollout of the Q*bert agent trained with PPO for 2000 epochs with 2x256 hidden dim policy." %}
