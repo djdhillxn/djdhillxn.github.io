@@ -30,40 +30,45 @@ I am looking for opportunities that will challenge me to solve meaningful proble
 
 <!--fellow enthusiast to another-->
 #### Project work
-See my [projects page](/projects) which goes into extensive details on several of the projects I have worked on implementing RL and NLP methodologies. These projects range from policy optimization experiments on robotic locomotion and Atari control to post-training RLHF alignment of LLMs and autonomous driving. 
+My [projects page](/projects) goes into extensive details on several of the projects I have worked on implementing RL and NLP methodologies. These projects range from policy optimization experiments on robotic locomotion and Atari control to post-training RLHF alignment of LLMs and autonomous driving. 
 
 #### Research work
 InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
 Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
-The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch.
+The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. Supervised by Prof. Vinod Pankajakshan at the
+Department of Electronics and Communication Engineering, IIT Roorkee.
 
 <!-- #### Research at IIT Roorkee -->
 
-<figure style="float: right; width: 40%; margin: 0 0 1rem 1rem;">
+<!-- <figure style="float: right; width: 40%; margin: 0 0 1rem 1rem;">
   <img src="{{ '/assets/img/elephant_detection_results.png' | relative_url }}" alt="Elephant detection results from the IIT Roorkee thermal-imaging research project" loading="lazy" style="width: 100%; height: auto;">
-</figure>
+</figure> -->
 
-During my undergraduate studies, I led a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Working under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. The dataset covered varied and challenging environmental conditions, allowing us to test how different modeling choices generalized across settings. Fine-tuning pretrained YOLO models on this noisy dataset initially resulted in overfitting and poor recall in specific test locations. To address this, I systematically evaluated the impact of various preprocessing techniques on the input thermal frames. I found that inversion and bilateral filtering were the most effective techniques, improving contrast and reducing noise, respectively. Combining these techniques yielded even stronger results. Ultimately, I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
-
-Supervisor: Prof. Vinod Pankajakshan \\
-Department of Electronics and Communication Engineering, IIT Roorkee
+During my undergraduate studies, I worked on a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. 
+I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
 
 
-#### Graduate Coursework
 
+<!-- The dataset covered varied and challenging environmental conditions, allowing us to test how different modeling choices generalized across settings. Fine-tuning pretrained YOLO models on this noisy dataset initially resulted in overfitting and poor recall in specific test locations. To address this, I systematically evaluated the impact of various preprocessing techniques on the input thermal frames. I found that inversion and bilateral filtering were the most effective techniques, improving contrast and reducing noise, respectively. Combining these techniques yielded even stronger results. Ultimately,  -->
+
+
+
+#### Industry experience
+At Gartner, I was an Associate Data Scientist in the Client Retention Analytics team from March 2024 to August 2025, and before that, I worked at HiLabs, in Bangalore, as a Data Scientist in the Roster Automation team from July 2023 to March 2024.
+
+<!-- #### <span style="color:gray">Education</span> -->
+
+#### Education
+**University of Wisconsin-Madison**, August 2025 - Present \
+Masters of Science, Computer Science
+
+Graduate coursework: \
 Non-linear Optimization, Natural Language Processing (Planned for Fall 2026) \
 Machine Learning, Reinforcement Learning (Spring 2026) \
 Game Theory, Operating Systems (Fall 2025) 
 
 <!-- I have written about my passion for these courses in my [blogs](/blogs). -->
 
-
-#### <span style="color:gray">Education and work</span>
-**University of Wisconsin-Madison**, August 2025 - Present \
-Masters of Science, Computer Science
-
-**My experiences in the industry**, July 2023 - August 2025 \
-At Gartner, I worked as an Associate data scientist in the Client Retention Analytics team from March 2024 to August 2025, and before that, I worked at HiLabs, in Bangalore, as a Data Scientist in the Roster Automation team from July 2023 to March 2024.
 <!--### <span style="color:orange">Academics</span>-->
 
 **Indian Institute of Technology Roorkee**, July 2019 - May 2023 \
