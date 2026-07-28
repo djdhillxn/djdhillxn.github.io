@@ -25,9 +25,9 @@ I performed a theoretical study on policy optimization that included reading the
 
 I implemented TRPO, PPO, and NPG in PyTorch to reproduce and benchmark a subset of the paper results, comparing their performance on several MuJoCo robotic locomotion and Atari game environments. I also designed ablation studies on the Hopper locomotion task by varying step-size magnitudes for NPG. This helped me underscore the role of adaptive step sizing and line search in TRPO in stabilizing policy updates and preventing catastrophic performance degradation. In the empirical experiments, the PPO implementation with the clipped objective achieved stronger results using only one-tenth of the sampled environment steps for the Hopper and Walker tasks.
 
-My presentation for this project on April 24, 2026 followed these [slides](/assets/pdf/A%20Study%20of%20Policy%20Optimization_April_20_final.pdf).
+My presentation for this project on April 24, 2026 followed these [slides](/assets/pdf/A%20Study%20of%20Policy%20Optimization_April_20_final.pdf). Find project report [here](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf) finalized as on May 7, 2026. 
 
-Find project report [here](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf). The code implementation is at the [GitHub repo](https://github.com/djdhillxn/trpo). In the repository, we have also implemented parallel rollouts for faster simulation trajectory collection. This work was my main projectwork for the course, Mathematical Principles of RL, I took at UW-Madison in Spring 2026. I have written more about this RL course and my broader experiences with RL in my [blogs](/blogs).
+The code implementation is at the [GitHub repo](https://github.com/djdhillxn/trpo). In the repository, we have also implemented parallel rollouts for faster simulation trajectory collection. This work was my main projectwork for the course, Mathematical Principles of RL, I took at UW-Madison in Spring 2026. I have written more about this RL course and my broader experiences with RL in my [blogs](/blogs).
 
 <figure style="float: left; width: 100%;">
 <img src="{{'assets/img/fig1-trpo.png' | relative_url }}" alt="trpo fig 1"
