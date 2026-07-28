@@ -7,8 +7,8 @@ permalink: /
 
 profile:
   align: right
-  image: cold_diet_coke_in_sun.jpg
-  image_alt: A cold Diet Coke in the sun back home
+  image: IMG_1993_Original.jpg
+  image_alt: cafe coffee day at iit roorkee
   image_circular: false # crops the image to make it circular
   more_info: >
 
