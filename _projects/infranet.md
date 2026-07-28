@@ -30,3 +30,26 @@ I worked with a 50,694-frame annotated dataset covering humans, elephants, and o
 The final ensemble used four preprocessed variants with a lightweight pretrained detector and improved elephant recall from **0.35 to 0.62**. The goal was not only higher recall, but a practical balance between detection quality and inference speed for real-time deployment.
 
 Read the published **[paper PDF]({{ '/assets/pdf/InfraNet%20-%20AVSS%202025.pdf' | relative_url }})**, view the [IEEE Xplore record](https://ieeexplore.ieee.org/document/11149967), or browse the implementation in the [infrared repository](https://github.com/djdhillxn/infrared/tree/pipeline).
+
+<figure style="float: left; width: 50%;">
+<img src="{{'assets/img/figure1-thermal.png' | relative_url }}" alt="trpo fig 1"
+loading="lazy" style="width: 90%; height: auto;">
+</figure>
+
+<figure style="float: left; width: 50%;">
+<img src="{{'assets/img/elephant_detection_results.png' | relative_url }}" alt="trpo fig 1"
+loading="lazy" style="width: 100%; height: auto;">
+</figure>
+
+<figure style="float: left; width: 100%;">
+<img src="{{'assets/img/table1-thermal.png' | relative_url }}" alt="trpo fig 2"
+loading="lazy" style="width: 100%; height: auto;">
+</figure>
+
+<figure style="float: left; width: 100%;">
+<img src="{{'assets/img/table2-thermal.png' | relative_url }}" alt="trpo fig 3"
+loading="lazy" style="width: 100%; height: auto;">
+</figure>
+
+
+.
