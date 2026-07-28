@@ -155,6 +155,14 @@ blockquote {
   }
 }
 
+.about-namecheck {
+  border-left: 3px solid var(--global-divider-color);
+  color: var(--global-text-color-light);
+  font-size: 0.95rem;
+  margin: 0 0 1rem;
+  padding: 0.35rem 0.75rem;
+}
+
 // Card
 
 .card {
@@ -658,6 +666,205 @@ footer.sticky-bottom {
     margin-top: 2rem;
     margin-bottom: 1rem;
     text-align: right;
+  }
+
+  &.projects-home {
+    margin-top: 1rem;
+
+    .projects-home-intro {
+      color: var(--global-text-color-light);
+      margin-bottom: 1.5rem;
+    }
+
+    .project-feature {
+      border-top: 1px solid var(--global-divider-color);
+      clear: both;
+      padding: 1.35rem 0 1.5rem;
+
+      &:last-of-type {
+        border-bottom: 1px solid var(--global-divider-color);
+      }
+    }
+
+    .project-feature-header {
+      margin-bottom: 0.65rem;
+    }
+
+    .project-feature-title {
+      font-size: 1.45rem;
+      line-height: 1.2;
+      margin: 0;
+      text-transform: none;
+
+      a {
+        color: var(--global-text-color);
+
+        &:hover {
+          color: var(--global-theme-color);
+        }
+      }
+    }
+
+    .project-feature-subtitle-row {
+      align-items: baseline;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.2rem;
+    }
+
+    .project-feature-subtitle {
+      color: var(--global-text-color-light);
+      margin: 0;
+    }
+
+    .project-feature-github {
+      color: #6f42c1;
+      display: inline-flex;
+      font-size: 1.05rem;
+      line-height: 1;
+
+      &:hover {
+        color: var(--global-theme-color);
+      }
+    }
+
+    .project-feature-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.65rem;
+    }
+
+    .project-feature-tag {
+      border: 1px solid var(--global-divider-color);
+      border-radius: 4px;
+      color: var(--global-text-color-light);
+      font-size: 0.78rem;
+      line-height: 1.2;
+      padding: 0.16rem 0.42rem;
+    }
+
+    .project-feature-body {
+      color: var(--global-text-color);
+
+      &::after {
+        clear: both;
+        content: "";
+        display: block;
+      }
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .project-feature-summary {
+      &::after {
+        clear: both;
+        content: "";
+        display: block;
+      }
+    }
+
+    .project-feature-image {
+      float: right;
+      margin: 0.15rem 0 1rem 1.25rem;
+      max-width: 240px;
+      width: 30%;
+
+      img {
+        display: block;
+        height: auto;
+        margin-left: auto;
+        max-width: 100%;
+        width: 100%;
+      }
+    }
+
+    .project-summary-figure {
+      margin: 0 0 1rem;
+      max-width: 100%;
+
+      img {
+        display: block;
+        height: auto;
+        max-width: 100%;
+        width: 100%;
+      }
+
+      figcaption {
+        color: var(--global-text-color-light);
+        font-size: 0.82rem;
+        line-height: 1.35;
+        margin-top: 0.35rem;
+      }
+    }
+
+    .project-summary-figure--small {
+      width: min(100%, 180px);
+    }
+
+    .project-summary-figure--medium {
+      width: min(36%, 320px);
+    }
+
+    .project-summary-figure--large {
+      width: min(48%, 420px);
+    }
+
+    .project-summary-figure--full {
+      width: 100%;
+    }
+
+    .project-summary-figure--left {
+      float: left;
+      margin: 0.25rem 1.25rem 1rem 0;
+    }
+
+    .project-summary-figure--right {
+      float: right;
+      margin: 0.25rem 0 1rem 1.25rem;
+    }
+
+    .project-summary-figure--center {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+  }
+}
+
+.portfolio-project-note {
+  border-top: 1px solid var(--global-divider-color);
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+}
+
+@media (max-width: 576px) {
+  .projects.projects-home {
+    .project-feature-image {
+      float: none;
+      margin: 0 0 1rem;
+      max-width: 240px;
+      width: 100%;
+    }
+
+    .project-summary-figure--left,
+    .project-summary-figure--right {
+      float: none;
+      margin: 0 0 1rem;
+    }
+
+    .project-summary-figure--small,
+    .project-summary-figure--medium,
+    .project-summary-figure--large {
+      width: 100%;
+    }
+
+    .project-feature-title {
+      font-size: 1.3rem;
+    }
   }
 }
 

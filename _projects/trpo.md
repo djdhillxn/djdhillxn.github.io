@@ -7,7 +7,19 @@ category: RL
 github: "https://github.com/djdhillxn/trpo"
 img: assets/img/qbert-cartoon-project-thumb.webp
 img_size: small
+portfolio_order: 30
+portfolio_tags: [TRPO, PPO, policy optimization, MuJoCo, Atari]
+portfolio_image: assets/img/qbert-cartoon-project-thumb.webp
+portfolio_image_alt: Q*bert project thumbnail
+portfolio_summary: |
+  I studied the policy-optimization thread in reinforcement learning: Conservative Policy Iteration, Natural Policy Gradient, Trust Region Policy Optimization, and Proximal Policy Optimization. The project follows how constrained or clipped policy updates try to keep improvement stable while still letting the policy move.
+
+  I implemented TRPO, PPO, and NPG from scratch in PyTorch, benchmarked them on MuJoCo locomotion and Atari environments, and ran a Hopper step-size ablation to study where NPG becomes brittle. In the empirical runs, PPO reached stronger Hopper and Walker results with roughly one-tenth of the sampled environment interactions used by the TRPO setup. See the [code](https://github.com/djdhillxn/trpo), **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**, and my broader RL reflection [here](/blogs).
 ---
+
+<!-- TRPO/PPO I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, see github, the project report, and overview writeup. -->
+
+<!-- -- [TRPO/PPO](/projects/trpo). I studied the broad domain of policy optimization in RL where the recurring idea of constrained policy changes gave way to powerful methods starting from mixture updates methods to TRPO and PPO. I implemented TRPO, PPO, and NPG in PyTorch and benchmarked them on several MuJoCo locomotion and Atari environments. See the [code](https://github.com/djdhillxn/trpo) and **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**. I have also expressed my fervor for RL [here](/blogs). -->
 
 I performed a theoretical study on policy optimization that included reading the papers on Conservative Policy Iteration (CPI), Trust Region Policy Optimization (TRPO), Natural Policy Gradient (NPG), and Proximal Policy Optimization (PPO). A major component of the project was studying the monotonic improvement proofs behind the theoretically justified policy improvement algorithms of CPI and TRPO. I analyzed how the surrogate objective and mixture-update constraints in CPI inspired the KL-divergence constraint in TRPO and the clipped objective in PPO. 
 

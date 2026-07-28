@@ -5,7 +5,20 @@ description: TRL supervised fine-tuning, reward modeling, and PPO alignment on H
 importance: -4
 category: RL
 github: "https://github.com/djdhillxn/rlhf"
+portfolio_order: 20
+portfolio_tags: [RLHF, PPO, reward modeling, LLM alignment, TRL]
+portfolio_summary: |
+  Motivated after applying PPO on Atari and MuJoCo, I wanted to apply it to LLM alignment. I built an end-to-end RLHF pipeline around Qwen2.5-0.5B-Instruct and NVIDIA HelpSteer3: supervised fine-tuning, pairwise reward modeling, and token-level PPO with LoRA, KL control, reward-model scoring, and qualitative response auditing.
+
+  The final training data used 36K+ HelpSteer3 preference pairs. The reward model reached 65.6% held-out preference accuracy, and the response explorer exposes 2,017 held-out evaluation prompts. Under the learned reward model, the PPO policy achieved a 50.9% win rate against Base and 57.7% against SFT, with important caveats around verbosity, repetition, and reward-model mismatch.
 ---
+
+<!-- RLHF Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF using PPO with reference SFT model and using trained reward model. See codes. -->
+
+<!--> [RLHF using PPO](/projects/rlhf) Motivated after applying PPO on Atari and MuJoCo, I wanted to apply it to LLMs. I built an RLHF pipeline around Qwen2.5-0.5B-Instruct and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and token-level PPO with LoRA, KL control, reward-model scoring, and qualitative response auditing.
+--> 
+<!-- explores whether preference feedback can make a small instruction-tuned language model more helpful. I built an end-to-end pipeline around Qwen2.5-0.5B and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and a custom token-level PPO loop with LoRA, GAE, and KL control.  -->
+
 
 <link rel="stylesheet" href="{{ '/assets/css/rlhf/project.css' | relative_url }}">
 

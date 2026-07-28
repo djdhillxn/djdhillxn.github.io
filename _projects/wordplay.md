@@ -5,7 +5,29 @@ description: bidirectional character n-gram language models for word generation 
 github: "https://github.com/djdhillxn/lexinet"
 importance: -3
 category: NLP
+portfolio_order: 60
+portfolio_tags: [character n-grams, language modeling, NLP, interactive demo]
+portfolio_summary: |
+  WordPlay uses bidirectional character n-gram language models for two small browser-side demos. WordGuesser plays a Hangman-style challenge by scoring letters from visible forward and reverse contexts, while WordGenerator samples plausible new English-like words from the same learned character distributions.
+
+  The generator now supports fixed letter positions, so a user can choose a word length, lock in known characters, and repeatedly ask the model to complete the remaining blanks. Both demos run from a static JSON model export with backoff, interpolation, and smoothing.
 ---
+
+
+<!-- earlier writeup
+
+-- [WordPlay](/projects/wordplay/) This project uses character-level language models to play the Hangman Challenge. I trained forward and reverse n-gram models with padding at word start and end. For predicting during game simulation, I incorporating backoff and interpolation. With the trained probabilistic distributions, it can also be used to generate plausible new english words. I also designed interactive [simulator](/projects/wordplay/) for game playing and word generation.
+
+# another commented line
+# During training, I also used smoothing techniques such as add-k smoothing and kneser key smoothing to mitigate sparsity and encourage exploration. 
+
+-->
+
+<!-- then packaged the public models into an interactive browser demo.  -->
+
+<!-- Some generated words are surprisingly convincing; others clearly need a dictionary and a quiet moment. -->
+
+
 
 <link rel="stylesheet" href="{{ '/assets/css/lexinet/word_generator.css' | relative_url }}">
 

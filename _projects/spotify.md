@@ -5,6 +5,12 @@ description: personal Spotify library intelligence from playlists, liked songs, 
 github: "https://github.com/djdhillxn/spotify"
 importance: -2
 category: NLP
+portfolio_order: 80
+portfolio_tags: [recommendation systems, data visualization, Jaccard similarity, Spotify API]
+portfolio_summary: |
+  I built a static Spotify library intelligence dashboard from playlists, liked songs, artist metadata, and saved-track history. It summarizes playlist coverage, curation gaps, artist affinity, playlist diversity, overlap, and listening-memory patterns without requiring a live Spotify login.
+
+  The recommendation layer treats missing liked songs as candidate additions and uses lightweight Jaccard-similarity heuristics over playlist and track evidence to suggest where saved songs might belong. It is intentionally interpretable: the page surfaces the overlap reason instead of hiding the recommendation behind a black box.
 ---
 
 <link rel="stylesheet" href="{{ '/assets/css/spotify/dashboard.css' | relative_url }}">
@@ -63,7 +69,7 @@ I like a ton of music, but if I don't add it to any my playlists, it is buried d
 
 Absolutely nothing. Good song in Rush hour. Also, My love's in Jeopardy, baby.
 
-This is placeholder text for the recommendations section. You can replace this with your own explanation of why the missing liked songs matter, how the suggested playlists are chosen, and what a reader should notice before opening the recommendation table.
+<!-- This is placeholder text for the recommendations section. You can replace this with your own explanation of why the missing liked songs matter, how the suggested playlists are chosen, and what a reader should notice before opening the recommendation table. -->
 
 <!--</section>-->
 

@@ -1,0 +1,47 @@
+{%- assign project = include.project -%}
+{%- assign project_image = project.portfolio_image | default: project.img -%}
+{%- assign project_image_alt = project.portfolio_image_alt | default: project.title -%}
+{%- assign project_summary = project.portfolio_summary | default: project.description -%}
+{%- assign project_tags = project.portfolio_tags | default: project.tags -%}
+
+<article class="project-feature">
+  <header class="project-feature-header">
+    <h2 class="project-feature-title">
+      <a href="{{ project.url | relative_url }}">{{ project.title }}</a>
+    </h2>
+    <div class="project-feature-subtitle-row">
+      {%- if project.description -%}
+        <p class="project-feature-subtitle">{{ project.description }}</p>
+      {%- endif -%}
+      {%- if project.github -%}
+        <a class="project-feature-github" href="{{ project.github }}" target="_blank" rel="noopener" aria-label="{{ project.title }} GitHub repository">
+          <i class="fab fa-github"></i>
+        </a>
+      {%- endif -%}
+    </div>
+    {%- if project_tags -%}
+      <div class="project-feature-tags" aria-label="{{ project.title }} tags">
+        {%- for tag in project_tags -%}
+          <span class="project-feature-tag">{{ tag }}</span>
+        {%- endfor -%}
+      </div>
+    {%- elsif project.category -%}
+      <div class="project-feature-tags" aria-label="{{ project.title }} tags">
+        <span class="project-feature-tag">{{ project.category }}</span>
+      </div>
+    {%- endif -%}
+  </header>
+
+  <div class="project-feature-body">
+    {%- if project_image -%}
+      <figure class="project-feature-image">
+        <a href="{{ project.url | relative_url }}" aria-label="{{ project.title }}">
+          <img src="{{ project_image | relative_url }}" alt="{{ project_image_alt }}" loading="lazy">
+        </a>
+      </figure>
+    {%- endif -%}
+    <div class="project-feature-summary">
+      {{ project_summary | markdownify }}
+    </div>
+  </div>
+</article>
