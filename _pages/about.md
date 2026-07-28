@@ -3,10 +3,12 @@ layout: about
 title: About
 permalink: /
 #subtitle: Machine Learning Enthusiast | Track Athlete
+# subtitle: Reinforcement Learning · Natural Language Processing · Information Retrieval
 
 profile:
   align: right
   image: cold_diet_coke_in_sun.jpg
+  image_alt: A cold Diet Coke in the sun back home
   image_circular: false # crops the image to make it circular
   more_info: >
 
@@ -18,7 +20,6 @@ social: false  # includes social icons at the bottom of the page
 
 <!--Areas of Interest: **Natural Language Processing**, **Graph Neural Networks**-->
 <!-- Hi there, from one Machine Learning enthusiast to another! -->
-<span style="color:WhiteSmoke">Hi, my name is, what? My name is, who? My name is, chka-chka, Slim Shady (fan).</span>
 
 **TL;DR**
 I am Dheeraj, currently pursuing an MS in Computer Science at UW-Madison, where I will be graduating in May 2027. I have 2 years of industry experience as a data scientist at Gartner and HiLabs, a healthcare data interoperability startup. I completed my undergrad in ECE at IIT Roorkee. The resume detailing my experiences is present **[here](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
@@ -29,57 +30,7 @@ I am looking for opportunities that will challenge me to solve meaningful proble
 
 <!--fellow enthusiast to another-->
 #### Project work
-See my projects page [here](/projects) which goes into extensive details on each of the projects, and implementations are available at my [GitHub](https://github.com/djdhillxn).
-Brief summaries of select projects are:
-
-<!-- TRPO/PPO I worked on a reinforcement learning project implementing Trust Region Policy Optimization (TRPO) and Proximal Policy Optimization (PPO) algorithms, see github, the project report, and overview writeup. -->
-
-- [TRPO/PPO](/projects/trpo). I studied the broad domain of policy optimization in RL where the recurring idea of constrained policy changes gave way to powerful methods starting from mixture updates methods to TRPO and PPO. I implemented TRPO, PPO, and NPG in PyTorch and benchmarked them on several MuJoCo locomotion and Atari environments. See the [code](https://github.com/djdhillxn/trpo) and **[project report](/assets/pdf/A%20Study%20of%20Policy%20Optimization%20in%20RL%20-%20Project%20Report.pdf)**. I have also expressed my fervor for RL [here](/blogs).
-
-<!-- RLHF Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF using PPO with reference SFT model and using trained reward model. See codes. -->
-
-- [RLHF using PPO](/projects/rlhf) Motivated after applying PPO on Atari and MuJoCo, I wanted to apply it to LLMs. I built an RLHF pipeline around Qwen2.5-0.5B-Instruct and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and token-level PPO with LoRA, KL control, reward-model scoring, and qualitative response auditing.
-
- <!-- explores whether preference feedback can make a small instruction-tuned language model more helpful. I built an end-to-end pipeline around Qwen2.5-0.5B and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and a custom token-level PPO loop with LoRA, GAE, and KL control.  -->
-
-- [StanLyric](/projects/stanlyric) Built a information retrieval (IR) system to identify songs based on a few sentences of lyrics. The corpus over which the search takes place has 36,545 songs. With BM25-Okapi as the algorithmic backbone, the search engine is live for use. Also live is a three-dimensional interactive graph with nodes as songs on which Lieden community detection is performed to uncover overarching themes over the lyrics of songs using their Cohere Embed v4 embeddings.
-
-<!-- lyrics IR project over a cleaned 36,545-song corpus. The browser-side BM25-Okapi search engine explains matched-term contributions, while Cohere Embed v4 song vectors power a 3D semantic atlas. I used Leiden community detection to organize songs into Regions, Communities, and Neighborhoods, then generated evidence-grounded LLM titles and descriptions for the hierarchy nodes. \ -->
-
-<!-- [StanLyric](/projects/stanlyric) Implemented information retrieval (IR) system to identify songs based on input queries consisting of a few lyrical sentences from a songs lyrics corpus. Developed using the BM25-Okapi method, I deployed online the static inverted indices for 44,480 songs to have a running lyric [search engine](/projects/stanlyric). \ -->
-
-<!-- This app also exhibits the ranked result's interpratability based on quantified contributions of matched keywords which vary for each candidate song based on its underlying term frequencies (TFs).  -->
-
-<!-- - [StanLyric](/projects/stanlyric) helps identify a song from the fragment of a lyric stuck in your head. It runs a BM25-Okapi retrieval engine over 44,480 songs entirely in the browser, with a compact static index and score explanations that show why each result matched. -->
-
-- [WordPlay](/projects/wordplay/) This project uses character-level language models to play the Hangman Challenge. I trained forward and reverse n-gram models with padding at word start and end.
-<!-- During training, I also used smoothing techniques such as add-k smoothing and kneser key smoothing to mitigate sparsity and encourage exploration. -->
-For predicting during game simulation, I incorporating backoff and interpolation. With the trained probabilistic distributions, it can also be used to generate plausible new english words. I also designed interactive [simulator](/projects/wordplay/) for game playing and word generation.
-
-<!-- then packaged the public models into an interactive browser demo.  -->
-
-<!-- Some generated words are surprisingly convincing; others clearly need a dictionary and a quiet moment. -->
-
-- [Warfarin](/projects/warfarin) Investigated contextual multi-arm bandits for an offline dataset setting of personalized Warfarin dosage selection in online learning setting with sequential feedback. Evaluated LinUCB and its regularized ridge and lasso variants, and the Linear Thompson sampling bandit. Compared performances along with those obtained through clinically recommended Pharmacogenetic formula. 
-
-<!-- Resume bullet points
-Evaluated contextual and linear bandit strategies for personalized Warfarin dosage selection under sequential
-feedback, comparing Epsilon-Greedy, Upper Confidence Bound (UCB), Thompson Sampling, and LinUCB.
-● Benchmarked online decision accuracy at 68% on dose selection, highlighting the trade-off between exploration and
-patient-specific treatment optimization. -->
-
-<!-- Warfarin frames personalized weekly dose selection as an online contextual-bandit problem over 5,528 patient records. I built a clinical preprocessing pipeline, implemented contextual bandits and compared contextual bandits and compared fixed and published dosing baselines with LinUCB, hybrid ridge, sparse LASSO UCB, and Linear Thompson Sampling policies. -->
-
-<!-- Warfarin Project on multi-arm bandits for warfarin drug dosage estimation. Implemented contextual bandits using LinUCB and LinTS. Online learning on 5,528 patients data. Performed data cleaning and imputations using various methods. -->
-
-
-#### Graduate Coursework
-
-Non-linear Optimization, Natural Language Processing (Planned for Fall 2026) \
-Machine Learning, Reinforcement Learning (Spring 2026) \
-Game Theory, Operating Systems (Fall 2025) 
-
-<!-- I have written about my passion for these courses in my [blogs](/blogs). -->
+See my [projects page](/projects) which goes into extensive details on several of the projects I have worked on implementing RL and NLP methodologies. These projects range from policy optimization experiments on robotic locomotion and Atari control to post-training RLHF alignment of LLMs and autonomous driving. 
 
 #### Research work
 InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025.\
@@ -97,8 +48,28 @@ During my undergraduate studies, I led a research project focused on real-time e
 Supervisor: Prof. Vinod Pankajakshan \\
 Department of Electronics and Communication Engineering, IIT Roorkee
 
-<!-- Read the published **[paper pdf](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**.
-The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. -->
+
+#### Graduate Coursework
+
+Non-linear Optimization, Natural Language Processing (Planned for Fall 2026) \
+Machine Learning, Reinforcement Learning (Spring 2026) \
+Game Theory, Operating Systems (Fall 2025) 
+
+<!-- I have written about my passion for these courses in my [blogs](/blogs). -->
+
+
+#### <span style="color:gray">Education and work</span>
+**University of Wisconsin-Madison**, August 2025 - Present \
+Masters of Science, Computer Science
+
+**My experiences in the industry**, July 2023 - August 2025 \
+At Gartner, I worked as an Associate data scientist in the Client Retention Analytics team from March 2024 to August 2025, and before that, I worked at HiLabs, in Bangalore, as a Data Scientist in the Roster Automation team from July 2023 to March 2024.
+<!--### <span style="color:orange">Academics</span>-->
+
+**Indian Institute of Technology Roorkee**, July 2019 - May 2023 \
+Bachelor of Technology, Electronics and Communication Engineering
+<!--### <span style="color:red">Contact</span>-->
+
 
 <!-- #### Industry experiences -->
 
@@ -121,18 +92,6 @@ The topics range from broad areas of statistical algorithms, reinforcement learn
 <!--Must check out by clicking on the header above. \
 
 !-->
-
-#### <span style="color:gray">Education and work</span>
-**University of Wisconsin-Madison**, August 2025 - Present \
-Masters of Science, Computer Science
-
-**My experiences in the industry**, July 2023 - August 2025 \
-At Gartner, I worked as an Associate data scientist in the Client Retention Analytics team from March 2024 to August 2025, and before that, I worked at HiLabs, in Bangalore, as a Data Scientist in the Roster Automation team from July 2023 to March 2024.
-<!--### <span style="color:orange">Academics</span>-->
-
-**Indian Institute of Technology Roorkee**, July 2019 - May 2023 \
-Bachelor of Technology, Electronics and Communication Engineering
-<!--### <span style="color:red">Contact</span>-->
 
 #### Emails and Socials
 [dhillondheeraj84@gmail.com](mailto:dhillondheeraj84@gmail.com) \
