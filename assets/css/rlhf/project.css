@@ -1,3 +1,19 @@
+.rlhf-technical-notes-link {
+  font-size: 0.95rem;
+  font-weight: 750;
+  margin: 0 0 1rem;
+}
+
+.rlhf-technical-notes-link a {
+  color: #d63384;
+  text-decoration: none;
+}
+
+.rlhf-technical-notes-link a:hover {
+  color: var(--global-theme-color);
+  text-decoration: underline;
+}
+
 .rlhf-eval-tables {
   align-items: start;
   display: grid;
