@@ -220,10 +220,12 @@ blockquote {
 }
 
 .about-profile-social {
+  align-items: flex-end;
   display: flex;
   flex-direction: column;
   gap: 0.28rem;
   margin-top: 0.75rem;
+  text-align: right;
 
   a {
     align-items: center;
