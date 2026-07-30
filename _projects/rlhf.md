@@ -288,9 +288,12 @@ The short version of what I would do next:
 - **Controlled token-budget studies.** Compare 512, 768, and 1,024 generated-token evaluations with the same checkpoint, decoding settings, prompt order, batch size, and software environment.
 - **Better PPO stopping rules.** Select checkpoints using reward win rate, KL, EOS rate, cap-hit rate, repetition, and human review rather than reward score alone.
 - **Longer or curriculum PPO.** Continue PPO only when those diagnostics remain healthy, or train with a response-length curriculum instead of jumping straight to very long rollouts.
-- **Preference-objective baselines.** Compare PPO against DPO/IPO/ORPO/GRPO-style methods from the same SFT checkpoint so the project can separate reward-model quality from the online RL algorithm.
-- **Scale carefully.** Repeat the pipeline on a stronger 1.5B or 3B model after the evaluator and reward model become more trustworthy.
+- **Preference-objective baselines** Compare PPO against DPO/IPO/ORPO/GRPO-style methods from the same SFT checkpoint so the project can separate reward-model quality from the online RL algorithm.
+<!-- - **Scale carefully.**--> 
+Repeat the pipeline on a stronger 1.5B or 3B model after the evaluator and reward model become more trustworthy.
 
-## About this project's motivation
+I would also be able to use this response explorer app and the heuristics and the code infrastructure to experiment on different alignment methods and their qualitative performance.
 
-I got motivated to work on this project after learning in detail about policy optimization methods and using them to run [training experiments](/projects/trpo) on Atari games and MuJoCo locomotion tasks.
+<!-- ## About this project's motivation
+
+I got motivated to work on this project after learning in detail about policy optimization methods and using them to run [training experiments](/projects/trpo) on Atari games and MuJoCo locomotion tasks. -->
