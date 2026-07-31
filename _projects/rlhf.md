@@ -1,29 +1,27 @@
 ---
 layout: page
-title: Aligning Qwen2.5-0.5B with RLHF and PPO
-description: TRL supervised fine-tuning, reward modeling, and PPO alignment on HelpSteer3
+title: Post Training Qwen2.5-0.5B with RLHF on Heterogenous, Long-Form Preference Data
+description: Supervised Fine-Tuning, Reward Modeling, and PPO on diverse data from HelpSteer3 
 importance: -4
 category: RL
 github: "https://github.com/djdhillxn/rlhf"
 portfolio_order: 20
 portfolio_tags: [RLHF, PPO, reward modeling, LLM alignment, TRL]
 portfolio_summary: |
-  Motivated after applying PPO on Atari and MuJoCo, I wanted to apply it to LLM alignment. I built an end-to-end RLHF pipeline around Qwen2.5-0.5B-Instruct and NVIDIA HelpSteer3: supervised fine-tuning, pairwise reward modeling, and token-level PPO with LoRA, KL control, reward-model scoring, and qualitative response auditing.
-
+  Motivated after applying PPO on Atari and MuJoCo, I wanted to apply it to LLMs. I built an RLHF pipeline around Qwen2.5-0.5B-Instruct and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and token-level PPO with LoRA, KL control, reward-model scoring, and qualitative response auditing.
+  
+  
   The final training data used 36K+ HelpSteer3 preference pairs. The reward model reached 65.6% held-out preference accuracy, and the response explorer exposes 2,017 held-out evaluation prompts. Under the learned reward model, the PPO policy achieved a 50.9% win rate against Base and 57.7% against SFT, with important caveats around verbosity, repetition, and reward-model mismatch.
 ---
-
 <!-- RLHF Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF using PPO with reference SFT model and using trained reward model. See codes. -->
 
-<!-- [RLHF using PPO](/projects/rlhf) Motivated after applying PPO on Atari and MuJoCo, I wanted to apply it to LLMs. I built an RLHF pipeline around Qwen2.5-0.5B-Instruct and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and token-level PPO with LoRA, KL control, reward-model scoring, and qualitative response auditing.
+<!-- [RLHF using PPO](/projects/rlhf) Motivated after applying PPO on Atari and MuJoCo, I asked whether a complete RLHF pipeline could remain measurable on a half-billion-parameter model when the preference task itself was broad and often long-form. I built the experiment around Qwen2.5-0.5B-Instruct and NVIDIA HelpSteer3, spanning supervised fine-tuning, pairwise reward modeling, token-level PPO, and qualitative response auditing.
+
 --> 
 <!-- explores whether preference feedback can make a small instruction-tuned language model more helpful. I built an end-to-end pipeline around Qwen2.5-0.5B and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and a custom token-level PPO loop with LoRA, GAE, and KL control.  -->
-
-
 <link rel="stylesheet" href="{{ '/assets/css/rlhf/project.css' | relative_url }}">
 <link rel="stylesheet" href="{{ '/assets/css/rlhf/response-explorer.css' | relative_url }}">
-
-<p class="rlhf-technical-notes-link"><a href="#technical-notes">Read technical notes here.</a></p>
+<a href="#technical-notes">Read technical notes here.</a>
 
 <div
   id="response-explorer"
@@ -138,6 +136,19 @@ portfolio_summary: |
 
 ## Technical notes
 
+Project question: A small model, but not a small alignment problem. 
+I wanted to test whether the complete RLHF process could remain useful and
+inspectable under a modest compute budget without simplifying the data into
+a short, single-domain task. HelpSteer3 made that question concrete: its
+40,476 preference records span general, code, STEM, and multilingual
+prompts, with responses ranging from compact answers to code and multi-step
+explanations.
+An early length audit showed that a 1,024-token total training budget would
+truncate roughly 40% of SFT and reward-model examples. Expanding it to
+4,096 tokens reduced truncation to about 1%. The goal was not to claim that
+a 0.5B policy solves general alignment, but to train the full pipeline and
+make both its gains and its failures available for inspection.
+
 The goal is to use preference data from [NVIDIA HelpSteer3](https://huggingface.co/datasets/nvidia/HelpSteer3)
 to align the [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) LLM toward responses that a human would prefer over boring or mechanistic bags of words. The 3-step process begins with supervised fine-tuning (SFT) using the preferred responses in the training dataset. Then I train a reward model on HelpSteer3 prompt-response pairs, where one response is preferred over the other. The reward model learns to assign higher scores to preferred responses and lower scores to rejected responses. Finally, I use that reward model to train the LLM policy toward preferred responses using reinforcement learning methods such as PPO, with a frozen SFT reference policy, KL control, and value estimates for token-level optimization.
 
@@ -145,16 +156,19 @@ to align the [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-In
 
 I learned that making PPO training run stably is only one part of LLM alignment; the quality of the preference data, the reward model, the stopping behavior, and the evaluation protocol can matter just as much as the optimizer. This project gave me a working system in which those interactions are visible and measurable, and a concrete foundation for better-controlled alignment experiments. After training, I used the fine-tuned aligned model to generate responses to validation prompts and evaluate its performance using the trained reward model. For human review, I built a response explorer app to compare the outputs of the base and aligned models side by side. Even though the model used was the smallest possible weight, owing to my own compute budgets, I took this project as a learning curve by reading about the progression of developement of the RLHF domain from 2017 onwards and it introduced me to several ideas new to me.
 
-**[Find the full interactive Base vs PPO response explorer here](#response-explorer)**.
+<!-- Using a half-billion-parameter model kept the project within my compute budget while making its capacity limits visible. As a learning project, it also pushed me to trace the development of RLHF from 2017 onward and connect the theory to observed failure modes. -->
+
+<!-- **[Find the full interactive Base vs PPO response explorer here](#response-explorer)**. -->
+
 The RLHF pipeline is implemented in my [RLHF repository](https://github.com/djdhillxn/rlhf), with more documentation on experiments, evaluation, and response analysis.
 
 <!-- The implementation covers supervised fine-tuning, pairwise reward modeling, and KL-controlled token-level PPO.  -->
 
 ## Training pipeline
 
-HelpSteer3 provides 38,459 training and 2,017 validation preference records spanning general, STEM, code, and multilingual prompts. After filtering invalid or tied preference rows, the final TRL training run used 36,264 rows for SFT and reward-model training and 1,917 reward-model validation pairs.
+HelpSteer3 provides 38,459 training and 2,017 validation preference records spanning general, STEM, code, and multilingual prompts. After filtering invalid or tied preference rows, the final TRL training run used 36,264 rows for SFT and reward-model training and 1,917 reward-model validation pairs. Its breadth is operationally important: code, multi-step explanations, multilingual conversations, and long prompt histories make sequence handling part of the method rather than a cosmetic configuration choice.
 
-1. **Supervised fine-tuning.** First, the preferred responses train a LoRA adapter over Qwen2.5-0.5B-Instruct. Expanding the total sequence budget from 1,024 to 4,096 tokens reduced response truncation from roughly 38% to less than 1%. The final SFT run used one epoch, LoRA rank 16, an effective batch size of 32, and reached 72.02% eval mean token accuracy.
+1. **Supervised fine-tuning.** First, the preferred responses train a LoRA adapter over Qwen2.5-0.5B-Instruct. Expanding the total sequence budget from 1,024 to 4,096 tokens reduced SFT truncation from 38.47% to 0.83% and reward-model pair truncation from 40.82% to 1.00%. The final SFT run used one epoch, LoRA rank 16, an effective batch size of 32, and reached 72.02% eval mean token accuracy.
 2. **Reward modeling.** Next, a scalar reward head is trained with a Bradley-Terry pairwise ranking loss so chosen responses score above rejected ones. The final reward model starts from the merged SFT model and uses LoRA rank 32, reward centering, and 2 total epochs. It reached **65.62% validation pairwise audit accuracy** across 1,917 usable pairs.
 3. **PPO alignment.** The SFT checkpoint initializes both the trainable policy and frozen reference. PPO then optimizes generated response tokens using clipped policy and value objectives, reward whitening, an RM-initialized critic, and a KL penalty that limits drift from the reference.
 
@@ -281,16 +295,14 @@ The final PPO policy is stable and measurably changes behavior. It narrowly edge
 
 ## Future work
 
-The short version of what I would do next:
+<!-- The short version of what I would do next: -->
 
-- **Human preference review.** Use blinded human comparison on a stratified sample from the full validation explorer to calibrate where the learned reward model agrees with visible quality and where it fails.
-- **Hard-negative reward modeling.** Retrain the reward model with examples from the audit: repetition loops, prompt restatements, fabricated citations, irrelevant continuations, malformed code, and incorrect STEM answers.
-- **Controlled token-budget studies.** Compare 512, 768, and 1,024 generated-token evaluations with the same checkpoint, decoding settings, prompt order, batch size, and software environment.
-- **Better PPO stopping rules.** Select checkpoints using reward win rate, KL, EOS rate, cap-hit rate, repetition, and human review rather than reward score alone.
-- **Longer or curriculum PPO.** Continue PPO only when those diagnostics remain healthy, or train with a response-length curriculum instead of jumping straight to very long rollouts.
-- **Preference-objective baselines** Compare PPO against DPO/IPO/ORPO/GRPO-style methods from the same SFT checkpoint so the project can separate reward-model quality from the online RL algorithm.
-<!-- - **Scale carefully.**--> 
-Repeat the pipeline on a stronger 1.5B or 3B model after the evaluator and reward model become more trustworthy.
+**Human preference review:** Use blinded human comparison on a stratified sample from the full validation explorer to calibrate where the learned reward model agrees with visible quality and where it fails.
+**Hard-negative reward modeling:** Retrain the reward model with examples from the audit: repetition loops, prompt restatements, fabricated citations, irrelevant continuations, malformed code, and incorrect STEM answers.
+**Controlled token-budget studies:** Compare 512, 768, and 1,024 generated-token evaluations with the same checkpoint, decoding settings, prompt order, batch size, and software environment.
+**Better PPO stopping rules:** Select checkpoints using reward win rate, KL, EOS rate, cap-hit rate, repetition, and human review rather than reward score alone.
+**Longer or curriculum PPO:** Continue PPO only when those diagnostics remain healthy, or train with a response-length curriculum instead of jumping straight to very long rollouts. **Preference-objective baselines:** Compare PPO against DPO/IPO/ORPO/GRPO-style methods from the same SFT checkpoint so the project can separate reward-model quality from the online RL algorithm.
+**Scale carefully:** Repeat the pipeline on a stronger 1.5B or 3B model after the evaluator and reward model become more trustworthy.
 
 I would also be able to use this response explorer app and the heuristics and the code infrastructure to experiment on different alignment methods and their qualitative performance.
 
