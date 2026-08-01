@@ -1,17 +1,16 @@
 ---
 layout: page
-title: Post Training Qwen2.5-0.5B with RLHF on Heterogenous, Long-Form Preference Data
-description: Supervised Fine-Tuning, Reward Modeling, and PPO on diverse data from HelpSteer3 
+title: Post Training Qwen2.5-0.5B with RLHF on Heterogeneous, Long-Form Preference Data
+description: Supervised Fine-Tuning, Reward Modeling, and Guarded PPO on diverse data from HelpSteer3
 importance: -4
 category: RL
 github: "https://github.com/djdhillxn/rlhf"
 portfolio_order: 20
 portfolio_tags: [RLHF, PPO, reward modeling, LLM alignment, TRL]
 portfolio_summary: |
-  Motivated after applying PPO on Atari and MuJoCo, I wanted to apply it to LLMs. I built an RLHF pipeline around Qwen2.5-0.5B-Instruct and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and token-level PPO with LoRA, KL control, reward-model scoring, and qualitative response auditing.
-  
-  
-  The final training data used 36K+ HelpSteer3 preference pairs. The reward model reached 65.6% held-out preference accuracy, and the response explorer exposes 2,017 held-out evaluation prompts. Under the learned reward model, the PPO policy achieved a 50.9% win rate against Base and 57.7% against SFT, with important caveats around verbosity, repetition, and reward-model mismatch.
+  Motivated after applying PPO on Atari and MuJoCo, I wanted to apply policy optimization to language-model post-training. I built an RLHF pipeline around Qwen2.5-0.5B-Instruct and HelpSteer3: supervised fine-tuning, pairwise reward modeling, and guarded token-level PPO with LoRA, a frozen reference policy, value learning, KL control, and qualitative response auditing.
+
+  The final pipeline used 36K+ filtered preference pairs, a reward model with 65.6% held-out pairwise accuracy, and 12K domain-balanced PPO rollouts with responses up to 768 tokens. The full explorer exposes 2,017 held-out prompts. The guarded PPO policy remained stable and less prone to stopping and repetition failures than an earlier high-reward checkpoint, but it did not beat Base under the learned reward proxy; the project therefore emphasizes inspectable training, reward-hacking safeguards, and honest qualitative analysis.
 ---
 <!-- RLHF Trained Qwen2.5-0.5 Instruct LLM model with SFT training on HelpSteer3 dataset. Performed Reward model training using HelpSteer3. Executed Qwen2.5-0.5 Instruct human alignment using RLHF using PPO with reference SFT model and using trained reward model. See codes. -->
 
@@ -136,31 +135,30 @@ portfolio_summary: |
 
 ## Technical notes
 
-Project question: A small model, but not a small alignment problem. 
+**Project question: a small model, but not a small alignment problem.**  
 I wanted to test whether the complete RLHF process could remain useful and
-inspectable under a modest compute budget without simplifying the data into
-a short, single-domain task. HelpSteer3 made that question concrete: its
-40,476 preference records span general, code, STEM, and multilingual
-prompts, with responses ranging from compact answers to code and multi-step
-explanations.
+inspectable under a modest compute budget without simplifying the data into a
+short, single-domain task. HelpSteer3 made that question concrete: its 40,476
+preference records span general, code, STEM, and multilingual prompts, with
+responses ranging from compact answers to code and multi-step explanations.
 An early length audit showed that a 1,024-token total training budget would
-truncate roughly 40% of SFT and reward-model examples. Expanding it to
-4,096 tokens reduced truncation to about 1%. The goal was not to claim that
-a 0.5B policy solves general alignment, but to train the full pipeline and
-make both its gains and its failures available for inspection.
+truncate roughly 40% of SFT and reward-model examples. Expanding it to 4,096
+tokens reduced truncation to about 1%. The goal was not to claim that a 0.5B
+policy solves general alignment, but to train the full pipeline and make both
+its gains and its failures available for inspection.
 
 The goal is to use preference data from [NVIDIA HelpSteer3](https://huggingface.co/datasets/nvidia/HelpSteer3)
-to align the [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) LLM toward responses that a human would prefer over boring or mechanistic bags of words. The 3-step process begins with supervised fine-tuning (SFT) using the preferred responses in the training dataset. Then I train a reward model on HelpSteer3 prompt-response pairs, where one response is preferred over the other. The reward model learns to assign higher scores to preferred responses and lower scores to rejected responses. Finally, I use that reward model to train the LLM policy toward preferred responses using reinforcement learning methods such as PPO, with a frozen SFT reference policy, KL control, and value estimates for token-level optimization.
+to align the [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) LLM toward responses that a human would prefer over boring or mechanistic bags of words. The 3-step process begins with supervised fine-tuning (SFT) using the preferred responses in the training dataset. Then I train a reward model on HelpSteer3 prompt-response pairs, where one response is preferred over the other. The reward model learns to assign higher scores to preferred responses and lower scores to rejected responses. Finally, I use that reward model to train the LLM policy toward preferred responses using PPO, with a frozen SFT reference policy, KL control, and value estimates for token-level optimization.
 
 <!-- The PPO step is discussed in detail below. -->
 
-I learned that making PPO training run stably is only one part of LLM alignment; the quality of the preference data, the reward model, the stopping behavior, and the evaluation protocol can matter just as much as the optimizer. This project gave me a working system in which those interactions are visible and measurable, and a concrete foundation for better-controlled alignment experiments. After training, I used the fine-tuned aligned model to generate responses to validation prompts and evaluate its performance using the trained reward model. For human review, I built a response explorer app to compare the outputs of the base and aligned models side by side. Even though the model used was the smallest possible weight, owing to my own compute budgets, I took this project as a learning curve by reading about the progression of developement of the RLHF domain from 2017 onwards and it introduced me to several ideas new to me.
+I learned that making PPO run stably is only one part of LLM alignment; the quality of the preference data, the reward model, the stopping behavior, and the evaluation protocol can matter just as much as the optimizer. This project gave me a working system in which those interactions are visible and measurable. After training, I used the Base, SFT, and PPO policies to generate responses to all validation prompts and scored them with the same learned reward model. For human review, I built the response explorer at the top of this page so I could move from a number in a table to the actual text that produced it. Even though I used the smallest model in the Qwen2.5 family because of my own compute budget, the project became a substantial learning curve: I read through the development of RLHF and policy optimization, implemented the complete training sequence, and learned most from the places where a high reward did not mean a good answer.
 
 <!-- Using a half-billion-parameter model kept the project within my compute budget while making its capacity limits visible. As a learning project, it also pushed me to trace the development of RLHF from 2017 onward and connect the theory to observed failure modes. -->
 
 <!-- **[Find the full interactive Base vs PPO response explorer here](#response-explorer)**. -->
 
-The RLHF pipeline is implemented in my [RLHF repository](https://github.com/djdhillxn/rlhf), with more documentation on experiments, evaluation, and response analysis.
+The RLHF pipeline is implemented in my [RLHF repository](https://github.com/djdhillxn/rlhf), where the concise report, technical companion, resolved configurations, and experiment records document the implementation in more detail.
 
 <!-- The implementation covers supervised fine-tuning, pairwise reward modeling, and KL-controlled token-level PPO.  -->
 
@@ -168,65 +166,66 @@ The RLHF pipeline is implemented in my [RLHF repository](https://github.com/djdh
 
 HelpSteer3 provides 38,459 training and 2,017 validation preference records spanning general, STEM, code, and multilingual prompts. After filtering invalid or tied preference rows, the final TRL training run used 36,264 rows for SFT and reward-model training and 1,917 reward-model validation pairs. Its breadth is operationally important: code, multi-step explanations, multilingual conversations, and long prompt histories make sequence handling part of the method rather than a cosmetic configuration choice.
 
-1. **Supervised fine-tuning.** First, the preferred responses train a LoRA adapter over Qwen2.5-0.5B-Instruct. Expanding the total sequence budget from 1,024 to 4,096 tokens reduced SFT truncation from 38.47% to 0.83% and reward-model pair truncation from 40.82% to 1.00%. The final SFT run used one epoch, LoRA rank 16, an effective batch size of 32, and reached 72.02% eval mean token accuracy.
-2. **Reward modeling.** Next, a scalar reward head is trained with a Bradley-Terry pairwise ranking loss so chosen responses score above rejected ones. The final reward model starts from the merged SFT model and uses LoRA rank 32, reward centering, and 2 total epochs. It reached **65.62% validation pairwise audit accuracy** across 1,917 usable pairs.
-3. **PPO alignment.** The SFT checkpoint initializes both the trainable policy and frozen reference. PPO then optimizes generated response tokens using clipped policy and value objectives, reward whitening, an RM-initialized critic, and a KL penalty that limits drift from the reference.
+1. **Supervised fine-tuning.** The preferred responses train a response-only LoRA adapter over Qwen2.5-0.5B-Instruct. Expanding the total sequence budget from 1,024 to 4,096 tokens reduced SFT truncation from 38.47% to 0.83% and reward-model pair truncation from 40.82% to 1.00%. The final SFT run used one epoch, LoRA rank 16, an effective batch size of 32, and reached 72.02% validation mean token accuracy.
+2. **Reward modeling.** A scalar reward head is trained with a Bradley–Terry pairwise ranking loss so chosen responses score above rejected ones. The final reward model starts from the merged SFT model, uses LoRA rank 32 and two total epochs, and reached **65.62% validation pairwise accuracy** across 1,917 usable pairs. This score is a learned preference proxy, not an oracle; its weaker STEM and general-domain accuracy became important when interpreting PPO.
+3. **Guarded PPO alignment.** The SFT checkpoint initializes both the trainable policy and the frozen reference, while the reward model initializes the value model. The completed PPO run generated **12,032 on-policy responses over 188 updates**, with every batch balanced across general, code, STEM, and multilingual prompts and each response allowed up to **768 new tokens**.
 
-The final PPO run followed the most important N+ implementation details I studied: dropout disabled during PPO, behavior log-probabilities matched to the sampling temperature, EOS-aware fixed-length generation, a missing-EOS reward of `-1.0`, Adam epsilon `1e-5`, reward whitening, and a reward-model-initialized value model. The run used prompts up to 3,072 tokens, PPO responses up to 768 new tokens, temperature 0.7, KL coefficient 0.07, a `3e-6` learning rate, and four PPO epochs per rollout batch. It was configured for 12,000 episodes, and I evaluated the selected policy after 6,400 episodes / 100 optimizer steps. I closely followed the N+ implementation paper for practical RLHF/PPO details that are easy to miss but matter in training.
+The final PPO stage was designed around preventing obvious ways of gaming an imperfect reward model. Reward scores were clipped to empirical 0.5th and 99.5th percentile bounds estimated from a stratified sample; a response that missed EOS received the calibrated lower-bound score; a smooth 4-gram repetition penalty activated only beyond the preferred-response 95th percentile; and KL regularization kept the policy anchored to the SFT reference. The run also saved complete policy, value, optimizer, scheduler, RNG, rollout-position, and guardrail state for exact resume.
+
+Long responses made GPU execution a separate problem. A dense `batch × response × vocabulary` score tensor would consume roughly 27.8 GiB by itself at the final batch and response sizes. The final path generated token IDs without retaining all vocabulary scores, used a rollout-only KV cache, recomputed log-probabilities only for sampled response tokens in bounded chunks, trimmed all-masked prompt columns, shared the reference backbone, and separated policy/value backward graphs. This kept the completed run to about 37.6 GiB peak allocated memory without changing the PPO objective or effective batch size.
 
 ## Discussion
 
-I started out resolved to understand every moving part of the RLHF process, so I wrote my own custom code instead of relying on a ready-made pipeline. I am learning best practices for reward model training and keeping in mind the scaling laws for reward model overoptimization. The length of response outputs must also be controlled. I think the SFT is reasonable as it is, while the reward model and the PPO step need extra attention and iteration. Before moving on to more recent or advanced methods such as GRPO, I want to demonstrate that I can achieve sensible results with PPO alone. Another major factor to consider is the token limits for the context, prompt, and response. This project is my first introduction to Reinforcement Learning from Human Feedback (RLHF), and I know I need to run more experiments throughout the steps of this 3-way process to achieve stronger results. But I am learning a lot. Learning about what things fail. That's precious. This LLM alignment is tricky, and the reward model will surely try to find ways to proxy its way to high rewards, only to later unravel that the outputs for these high-reward responses can fall under the adjectives of repetition, data fabrication, and downright incorrect statements.
+I started out resolved to understand every moving part of the RLHF process, so the project first used custom SFT, reward-model, and token-level PPO code. Those implementations were useful precisely because they failed in visible ways: truncated responses, empty outputs, wrong checkpoint paths, weak EOS handling, unstable reward scales, and high-reward repetition. I later moved the main trainer loops to Hugging Face TRL, while keeping the repository-owned preprocessing, model initialization, reward calibration, exact-resume wrapper, evaluation suite, and response explorer. The custom code exposed assumptions; TRL gave me a cleaner substrate on which to finish the experiment.
 
-With my own evaluation code, I have the freedom to perform a range of evaluations in various ways, such as pairwise comparisons between Base and SFT, Base and PPO, and SFT and PPO. The SFT vs. PPO comparison helps identify whether PPO alignment is actually working. These more granular comparisons can be conducted quantitatively using the reward model and qualitatively through human inspection of anomalous, high-reward cases. The need for human inspection and auditing motivated me to build a visually less-boring response explorer. I might be able to use this explorer in several places across several projects. Qualitative auditing is also implemented using heuristics and 4-grams, and it is surprisingly useful. Further, the evaluation code has a resumable policy evaluation suite because I have limited computing resources, and things break down in the middle of runs. Checkpointing and resuming are the most obvious ways to handle this. I don't have infinite compute, alright! It's also the reason I chose the half-a-billion-parameter model.
+The final guarded run is the iteration I am freezing. It completed its declared 12,000-episode budget as 12,032 rollouts, rather than stopping at the earlier 100-update checkpoint. During the second half of training, EOS became more frequent, cap hits and response length declined, repetition eased, and the value loss settled near the reward scale. That is evidence that the PPO process learned without numerical or empty-output collapse. It is not evidence that the learned reward model captured every human preference.
 
-After wrestling with the complications and illuminating failures in my own code, I eventually transitioned to Hugging Face TRL for the SFT, reward model, and PPO trainer loops. This shift made the final training process cleaner and more in line with established best practices. Despite adopting TRL for the main training, my repository still houses the HelpSteer3 preprocessing, chat formatting, and the response explorer. I built these tools along the way to support and evaluate the project. Having gone through both the hands-on, low-level implementation and the more standardized TRL approach, I gained a perspective that custom code exposed failure points early, while TRL provided the stability needed for robust results. The response explorer linked above now exposes the full 2,017-prompt validation set, rather than just a curated subset. It keeps the Base and PPO outputs side by side and adds rule-based triage labels so I can move quickly from aggregate metrics to concrete examples. The results are not perfect, and there is still a long way to go, but this final TRL run is the most sensible iteration I have obtained. The reward model is not perfect, and the PPO method still needs stronger safeguards against premature stopping and reward-quality issues. One ambitious goal anchoring future experiments is to determine whether a modest LLM can produce human-preferred responses with careful training on a high-quality preference dataset.
+With my evaluation code, I can perform Base vs SFT, Base vs PPO, and SFT vs PPO comparisons from the same generated response table. The quantitative judge is the trained reward model; the qualitative judge is the actual response. The latter matters because a policy can optimize what the reward model likes while becoming longer, repetitive, factually wrong, or merely well-formatted. That need for skeptical auditing motivated the response explorer and the 4-gram, EOS, cap, and reward-margin metadata shown with every row. I don't have infinite compute, alright! It is also the reason I chose the half-a-billion-parameter model and made the evaluation resumable one policy at a time.
 
 ## Evaluation
 
-The evaluator generated Base, SFT, and PPO responses once for each of the 2,017 HelpSteer3 validation prompts and scored every response with the same reward model. For this portfolio page, I focus on the most important comparison: **Base Qwen2.5-0.5B-Instruct vs the PPO-aligned policy**. The comparison below is therefore a reward-model-based comparison, not a human preference study. More granular Base vs SFT and SFT vs PPO tables are documented in the [RLHF repository](https://github.com/djdhillxn/rlhf).
-
-The primary suite allows up to 1,024 generated tokens during evaluation while keeping the prompt budget at 3,072 tokens. The selected PPO policy itself was trained with 768-token rollouts.
+The final evaluator generated Base, SFT, and guarded PPO responses once for each of the 2,017 HelpSteer3 validation prompts. Every policy used the same tokenizer, prompt budget of 3,072 tokens, response budget of 768 new tokens, and sampled decoding settings. The same two-epoch reward model scored all responses. These are reward-model comparisons, not a blinded human preference study.
 
 <div class="rlhf-eval-tables rlhf-eval-tables-focused">
   <section class="rlhf-eval-table-card" aria-labelledby="rlhf-base-ppo-heading">
-    <h3 id="rlhf-base-ppo-heading">Base vs PPO reward-model comparison</h3>
+    <h3 id="rlhf-base-ppo-heading">Base vs guarded PPO</h3>
     <div class="rlhf-eval-table-scroll">
       <table>
         <thead>
           <tr>
             <th>Policy</th>
-            <th>Wins</th>
-            <th>Win rate</th>
-            <th>Mean reward</th>
+            <th>Mean tokens</th>
             <th>Median tokens</th>
             <th>Cap-hit rate</th>
+            <th>Repeated 4-grams &gt;25%</th>
+            <th>Mean reward</th>
+            <th>Pairwise wins</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>Base</td><td>981</td><td>48.64%</td><td>0.0803</td><td>331</td><td>8.82%</td></tr>
-          <tr><td>PPO</td><td>1027</td><td>50.92%</td><td>0.7300</td><td>520</td><td>27.42%</td></tr>
-          <tr><td>Tie</td><td>9</td><td>0.45%</td><td>-</td><td>-</td><td>-</td></tr>
+          <tr><td>Base</td><td>373.5</td><td>333</td><td>16.21%</td><td>165 (8.18%)</td><td>0.2229</td><td>1,179</td></tr>
+          <tr><td>PPO</td><td>384.1</td><td>355</td><td>16.31%</td><td>326 (16.16%)</td><td>0.1753</td><td>817</td></tr>
+          <tr><td>Tie</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>21</td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
   <section class="rlhf-eval-table-card rlhf-eval-summary-card" aria-labelledby="rlhf-summary-heading">
-    <h3 id="rlhf-summary-heading">Headline result</h3>
+    <h3 id="rlhf-summary-heading">What I take from the result</h3>
     <p>
-      PPO wins <strong>1,027 / 2,017</strong> Base comparisons under the learned reward model, for a <strong>50.92%</strong> win rate and a mean PPO-minus-Base reward delta of <strong>+0.6497</strong>.
+      Under the learned reward model, guarded PPO wins <strong>817 / 2,017</strong> Base comparisons, a <strong>40.51%</strong> win rate, and <strong>974 / 2,017</strong> SFT comparisons, a <strong>48.29%</strong> win rate.
     </p>
     <p>
-      The caveat is just as important: PPO answers are longer and hit the 1,024-token evaluation cap more often.
+      This is not a claim that PPO beat Qwen. The more useful result is that the policy completed long-form PPO without collapse while keeping its median length and cap-hit rate near the baselines, and the explorer makes the remaining reward-model mismatches inspectable.
     </p>
   </section>
 </div>
 
 <div class="rlhf-domain-card" aria-labelledby="rlhf-domain-heading">
-  <h3 id="rlhf-domain-heading">Where PPO helps most</h3>
+  <h3 id="rlhf-domain-heading">PPO versus Base by domain</h3>
   <p>
-    The PPO policy is strongest on general prompts and weaker on code, STEM, and multilingual prompts. Bars show reward-model wins within each domain.
+    The learned reward proxy favors Base in every domain. The bars make that limitation visible rather than hiding it behind selected examples.
   </p>
   <div class="rlhf-domain-legend" aria-hidden="true">
     <span><i class="rlhf-domain-base"></i> Base wins</span>
@@ -236,38 +235,39 @@ The primary suite allows up to 1,024 generated tokens during evaluation while ke
   <div class="rlhf-domain-bars">
     <div class="rlhf-domain-row">
       <div class="rlhf-domain-label"><strong>General</strong><span>931 prompts</span></div>
-      <div class="rlhf-domain-stack" aria-label="General: PPO 56.82%, Base 42.86%, ties 0.32%">
-        <span class="rlhf-domain-segment rlhf-domain-base" style="width:42.86%"></span>
-        <span class="rlhf-domain-segment rlhf-domain-ppo" style="width:56.82%"></span>
-        <span class="rlhf-domain-segment rlhf-domain-tie" style="width:0.32%"></span>
+      <div class="rlhf-domain-stack" aria-label="General: PPO 42.96%, Base 55.53%, ties 1.50%">
+        <span class="rlhf-domain-segment rlhf-domain-base" style="width:55.53%"></span>
+        <span class="rlhf-domain-segment rlhf-domain-ppo" style="width:42.96%"></span>
+        <span class="rlhf-domain-segment rlhf-domain-tie" style="width:1.50%"></span>
       </div>
-      <div class="rlhf-domain-value">PPO 56.82%</div>
+      <div class="rlhf-domain-value">PPO 42.96%</div>
     </div>
     <div class="rlhf-domain-row">
       <div class="rlhf-domain-label"><strong>Code</strong><span>438 prompts</span></div>
-      <div class="rlhf-domain-stack" aria-label="Code: PPO 42.92%, Base 57.08%, ties 0.00%">
-        <span class="rlhf-domain-segment rlhf-domain-base" style="width:57.08%"></span>
-        <span class="rlhf-domain-segment rlhf-domain-ppo" style="width:42.92%"></span>
+      <div class="rlhf-domain-stack" aria-label="Code: PPO 35.84%, Base 63.70%, ties 0.46%">
+        <span class="rlhf-domain-segment rlhf-domain-base" style="width:63.70%"></span>
+        <span class="rlhf-domain-segment rlhf-domain-ppo" style="width:35.84%"></span>
+        <span class="rlhf-domain-segment rlhf-domain-tie" style="width:0.46%"></span>
       </div>
-      <div class="rlhf-domain-value">PPO 42.92%</div>
+      <div class="rlhf-domain-value">PPO 35.84%</div>
     </div>
     <div class="rlhf-domain-row">
       <div class="rlhf-domain-label"><strong>STEM</strong><span>245 prompts</span></div>
-      <div class="rlhf-domain-stack" aria-label="STEM: PPO 48.16%, Base 51.43%, ties 0.41%">
-        <span class="rlhf-domain-segment rlhf-domain-base" style="width:51.43%"></span>
-        <span class="rlhf-domain-segment rlhf-domain-ppo" style="width:48.16%"></span>
+      <div class="rlhf-domain-stack" aria-label="STEM: PPO 39.18%, Base 60.41%, ties 0.41%">
+        <span class="rlhf-domain-segment rlhf-domain-base" style="width:60.41%"></span>
+        <span class="rlhf-domain-segment rlhf-domain-ppo" style="width:39.18%"></span>
         <span class="rlhf-domain-segment rlhf-domain-tie" style="width:0.41%"></span>
       </div>
-      <div class="rlhf-domain-value">PPO 48.16%</div>
+      <div class="rlhf-domain-value">PPO 39.18%</div>
     </div>
     <div class="rlhf-domain-row">
       <div class="rlhf-domain-label"><strong>Multilingual</strong><span>403 prompts</span></div>
-      <div class="rlhf-domain-stack" aria-label="Multilingual: PPO 47.64%, Base 51.12%, ties 1.24%">
-        <span class="rlhf-domain-segment rlhf-domain-base" style="width:51.12%"></span>
-        <span class="rlhf-domain-segment rlhf-domain-ppo" style="width:47.64%"></span>
-        <span class="rlhf-domain-segment rlhf-domain-tie" style="width:1.24%"></span>
+      <div class="rlhf-domain-stack" aria-label="Multilingual: PPO 40.69%, Base 58.31%, ties 0.99%">
+        <span class="rlhf-domain-segment rlhf-domain-base" style="width:58.31%"></span>
+        <span class="rlhf-domain-segment rlhf-domain-ppo" style="width:40.69%"></span>
+        <span class="rlhf-domain-segment rlhf-domain-tie" style="width:0.99%"></span>
       </div>
-      <div class="rlhf-domain-value">PPO 47.64%</div>
+      <div class="rlhf-domain-value">PPO 40.69%</div>
     </div>
   </div>
   <div class="rlhf-eval-table-scroll rlhf-domain-table">
@@ -276,10 +276,10 @@ The primary suite allows up to 1,024 generated tokens during evaluation while ke
         <tr><th>Domain</th><th>Prompts</th><th>PPO wins</th><th>Base wins</th><th>Ties</th><th>PPO win rate</th></tr>
       </thead>
       <tbody>
-        <tr><td>General</td><td>931</td><td>529</td><td>399</td><td>3</td><td>56.82%</td></tr>
-        <tr><td>Code</td><td>438</td><td>188</td><td>250</td><td>0</td><td>42.92%</td></tr>
-        <tr><td>STEM</td><td>245</td><td>118</td><td>126</td><td>1</td><td>48.16%</td></tr>
-        <tr><td>Multilingual</td><td>403</td><td>192</td><td>206</td><td>5</td><td>47.64%</td></tr>
+        <tr><td>General</td><td>931</td><td>400</td><td>517</td><td>14</td><td>42.96%</td></tr>
+        <tr><td>Code</td><td>438</td><td>157</td><td>279</td><td>2</td><td>35.84%</td></tr>
+        <tr><td>STEM</td><td>245</td><td>96</td><td>148</td><td>1</td><td>39.18%</td></tr>
+        <tr><td>Multilingual</td><td>403</td><td>164</td><td>235</td><td>4</td><td>40.69%</td></tr>
       </tbody>
     </table>
   </div>
@@ -289,22 +289,24 @@ The primary suite allows up to 1,024 generated tokens during evaluation while ke
 
 <!-- What the aggregate metrics miss -->
 
-I audited all 2,017 rows using reward margins, response length, cap hits, EOS behavior, repeated word-level 4-grams, and manual inspection of selected extremes. PPO produced useful local improvements, including increased supportive responses and better coverage of some multi-part instructions. It also had the highest repetition rate: **31.88%** of PPO responses crossed a 25% repeated 4-gram threshold, compared with **10.11%** for Base. This signals a substantial repetition cost alongside PPO’s gains. The full rule-based triage assigns 8 likely clean PPO wins, 354 modest clean PPO wins, 64 strong PPO regressions, 288 severe repetition failures, 228 repetition-risk cases, 151 reward-model false-positive risks, and 924 examples that need manual review. Some of the largest apparent PPO victories were visibly broken loops, prompt restatements, or irrelevant continuations. Other failures included fabricated citations and incorrect scientific procedures. These examples expose reward-model blind spots in both directions: the learned reward model sometimes rewarded broken responses and sometimes rejected comparatively useful ones. That makes a stronger, more skeptical read necessary.
+The automated audit uses reward margins, response length, cap hits, EOS behavior, repeated word-level 4-grams, and selected sensitive-term checks to create review queues. It found 9 qualified PPO candidates, 120 strong PPO-loss candidates, 326 repetition-risk rows, and 155 high-reward repetition or stopping mismatches. These groups overlap; they are routes into the data, not quality labels.
 
-The final PPO policy is stable and measurably changes behavior. It narrowly edges the base instruction model under the learned reward model, but it is not a universal improvement. PPO produces meaningful local wins alongside stopping and repetition failures. The result I would defend is the complete, inspectable RLHF system and its diagnostics, which support the conclusion that PPO improved some behaviors while introducing clear tradeoffs. I would not claim that PPO universally improved Qwen2.5-0.5B-Instruct. I hope you will treat the evidence as support for the system rather than as an endorsement of the training parameters I used. The PPO training I ran had only 100 update steps. I believe things could be better or worse if I trained longer, so I think I would need to rethink the PPO training step parameters to make them even more robust. I will continue to iterate on the pipeline to achieve better results and learn best practices empirically. I will do so when I get hold of some more compute!
+The guarded policy is much easier to inspect than the earlier checkpoint that maximized the proxy more aggressively. Its median response is 355 tokens, its cap-hit rate is 16.31%, and 16.16% of responses cross the 25% repeated-4-gram threshold. Base is still cleaner on repetition at 8.18%, so the guardrails alleviated rather than eliminated the problem. Manual inspection finds useful local improvements—clearer structure, better coverage of some multi-part prompts, supportive wording, and compact answers—but also invalid code, confused factual reasoning, prompt restatement, fabricated details, and occasional loops that the reward model still scores highly.
+
+That is the main lesson I would defend. PPO can be numerically stable and remain close to its reference while still optimizing blind spots in a scalar judge. The final policy does not universally improve Qwen2.5-0.5B-Instruct, but the complete training and explorer make the distinction between reward, behavior, and visible response quality concrete. I am freezing this phase here rather than running another unqualified block of PPO against the same imperfect reward model.
 
 ## Future work
 
 <!-- The short version of what I would do next: -->
 
-**Human preference review:** Use blinded human comparison on a stratified sample from the full validation explorer to calibrate where the learned reward model agrees with visible quality and where it fails.
-**Hard-negative reward modeling:** Retrain the reward model with examples from the audit: repetition loops, prompt restatements, fabricated citations, irrelevant continuations, malformed code, and incorrect STEM answers.
-**Controlled token-budget studies:** Compare 512, 768, and 1,024 generated-token evaluations with the same checkpoint, decoding settings, prompt order, batch size, and software environment.
-**Better PPO stopping rules:** Select checkpoints using reward win rate, KL, EOS rate, cap-hit rate, repetition, and human review rather than reward score alone.
-**Longer or curriculum PPO:** Continue PPO only when those diagnostics remain healthy, or train with a response-length curriculum instead of jumping straight to very long rollouts. **Preference-objective baselines:** Compare PPO against DPO/IPO/ORPO/GRPO-style methods from the same SFT checkpoint so the project can separate reward-model quality from the online RL algorithm.
-**Scale carefully:** Repeat the pipeline on a stronger 1.5B or 3B model after the evaluator and reward model become more trustworthy.
+**Independent preference review:** Run a blinded human or strong-LLM comparison on a stratified subset and measure where it agrees with the learned reward model.  
+**Hard-negative reward modeling:** Add audited loops, prompt restatements, fabricated citations, malformed code, and incorrect STEM answers to a new reward-model training set.  
+**Task-specific checks:** Execute code where possible and use factual or symbolic checks for correctness-sensitive prompts.  
+**Controlled token-budget studies:** Compare 512, 768, and 1,024 generated-token budgets while holding checkpoint, prompt order, seed, batch size, and software environment fixed.  
+**Preference-objective baselines:** Evaluate the prepared DPO path from the same SFT checkpoint only when it can be judged with the same full suite.  
+**Scale carefully:** Repeat the pipeline on a stronger model after the evaluator and reward model become more trustworthy.
 
-I would also be able to use this response explorer app and the heuristics and the code infrastructure to experiment on different alignment methods and their qualitative performance.
+I would also be able to reuse this response explorer, the heuristic queues, and the evaluation infrastructure to study other alignment methods without reducing the result to one aggregate score.
 
 <!-- ## About this project's motivation
 
