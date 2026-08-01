@@ -102,8 +102,9 @@ The topics range from broad areas of statistical algorithms, reinforcement learn
 [ddhillon@wisc.edu](mailto:ddhillon@wisc.edu) \
 [dheeraj_d@ec.iitr.ac.in](mailto:dheeraj_d@ec.iitr.ac.in) 
 
-[LinkedIn](https://www.linkedin.com/in/djdhillxn/) \ 
-[Twitter](https://x.com/djdhillxn) \
+<!-- [LinkedIn](https://www.linkedin.com/in/djdhillxn/) \  -->
+<!-- [Twitter](https://x.com/djdhillxn) \ -->
+
 [g scholar](https://scholar.google.com/citations?user=njVX6ngAAAAJ&hl=en), [ORCID](https://orcid.org/0009-0002-0234-124X)
 , [IEEE Xplore](https://ieeexplore.ieee.org/author/542676216429361)
 
