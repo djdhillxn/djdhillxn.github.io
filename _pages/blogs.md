@@ -53,5 +53,11 @@ I have also created an app named as Cinefile. It takes in your preferences, reme
 #### Until It Sleeps
 When not typing: 007, Sopranos \\
 Dearest Author: Malcolm Gladwell \\
-Favorite Restaurant: Mom's Spaghetti \\
-Annual New Year's Eve Spot: Hilltop Goa
+Favorite Restaurant: Mom's Spaghetti
+
+#### Annual New Year's Eve Spot: Hilltop Goa
+
+<figure style="text-align: left; margin: 1.5rem 0;">
+  <img src="{{ '/assets/img/hilltop.jpeg' | relative_url }}" alt="December 2022" loading="lazy" style="max-width: 25%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+  <figcaption style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">Somewhere near Ozran beach; Dil Chahta Hai</figcaption>
+</figure>
