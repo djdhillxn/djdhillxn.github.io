@@ -59,5 +59,5 @@ Favorite Restaurant: Mom's Spaghetti
 
 <figure style="text-align: left; margin: 1.5rem 0;">
   <img src="{{ '/assets/img/hilltop.jpeg' | relative_url }}" alt="December 2022" loading="lazy" style="max-width: 25%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-  <figcaption style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">Somewhere near Ozran beach; Dil Chahta Hai</figcaption>
+  <figcaption style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">Somewhere near Ozran beach; Dil Chahta Hai; Dec 2022</figcaption>
 </figure>
