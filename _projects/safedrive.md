@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "SafeDrive: Constrained Safe Reinforcement Learning for Autonomous Driving"
+title: "SafeDrive: Constrained Safe RL for Autonomous Driving"
 description: "Closed-loop autonomous driving in MetaDrive via SAC-Lagrangian with PID cost adaptation across 1,000 procedural 5-block maps"
 github: "https://github.com/djdhillxn/safedrive"
 category: RL
@@ -21,9 +21,7 @@ portfolio_summary: |
   What makes SafeDrive unique is its end-to-end integration: while standard benchmarks rely on unconstrained reward penalties or fragile multi-stage curriculum switching that causes catastrophic forgetting, SafeDrive combines a 275-dimensional spatial observation space (240 360° LiDAR rays + 4 nearby-vehicle tracking slots) with a multi-domain 12-worker environment mixture over 3-block maps (`map: 3`, densities 0.00, 0.05, 0.30) and an unconstrained Vanilla SAC ablation baseline. A non-overlapping seed evaluation protocol across Screening, Reranking, and Sealed Holdout panels ensures completely auditable safety guarantees.
 ---
 
-SafeDrive is a bounded simulation project in MetaDrive investigating **Constrained Safe Reinforcement Learning** for autonomous vehicle navigation ([what makes SafeDrive unique](#what-makes-safedrive-unique)). 
-
-Rather than relying on unconstrained reward shaping or manual multi-stage curriculum switching, the project formulates closed-loop autonomous driving as a **Constrained Markov Decision Process (CMDP)**. The objective is to learn a single policy that maximizes progress and speed rewards while strictly bounding cumulative collision and off-road safety costs below a declared threshold ($d \le 1.0$).
+SafeDrive is a bounded simulation project in MetaDrive investigating **Constrained Safe Reinforcement Learning** for autonomous vehicle navigation ([what makes SafeDrive unique](#what-makes-safedrive-unique)). Rather than relying on unconstrained reward shaping or manual multi-stage curriculum switching, the project formulates closed-loop autonomous driving as a **Constrained Markov Decision Process (CMDP)**. The objective is to learn a single policy that maximizes progress and speed rewards while strictly bounding cumulative collision and off-road safety costs below a declared threshold ($d \le 1.0$).
 
 ---
 
@@ -41,7 +39,7 @@ The policy receives a 275-dimensional feature vector combining spatial range sen
 - **Ego Kinematics & Navigation (19-D)**: Speed, steering angle, angular velocity, lane offset, route checkpoints, and navigation target vectors.
 
 #### 2. Network Architecture & Policy Optimization
-SafeDrive parameterizes the policy $\pi_\theta(a|s)$, reward critic $Q_{\phi_R}(s, a)$, and safety cost critic $Q_{\psi_C}(s, a)$ using 512-wide Multi-Layer Perceptrons (`[512, 512]`) with ReLU activations:
+We parameterize the policy $\pi_\theta(a|s)$, reward critic $Q_{\phi_R}(s, a)$, and safety cost critic $Q_{\psi_C}(s, a)$ using 512-wide Multi-Layer Perceptrons (`[512, 512]`) with ReLU activations:
 - **Policy Network ($\pi_\theta$)**: Outputs continuous control actions $a = (a_{\text{steer}}, a_{\text{accel}}) \in [-1, 1]^2$ via a squashed Gaussian distribution:
   $$\pi_\theta(a|s) = \tanh(\mu_\theta(s) + \sigma_\theta(s) \odot \epsilon), \quad \epsilon \sim \mathcal{N}(0, I)$$
 - **Dual-Critic Architecture ($Q_{\phi_R}, Q_{\psi_C}$)**: Twin double-critic networks estimate expected cumulative task reward $J_R$ and expected cumulative safety cost $J_C$. Soft Bellman targets are computed via:
@@ -65,11 +63,17 @@ Training is conducted over 1,000 procedural 3-block MetaDrive scenarios (`map: 3
 - **4 Introductory Traffic Workers** (`map: 3`, `traffic_density: 0.05`): Light background traffic flow (~2–6 vehicles per map).
 - **5 Stress Traffic Workers** (`map: 3`, `traffic_density: 0.30`): Dense background traffic flow (~13–27 vehicles per map) for high-pressure gap selection and collision avoidance.
 
+#### 5. Evaluation Protocol & Panel Structure
+To prevent evaluation leakage and maintain auditability over training runs, we use a strict three-panel evaluation protocol with non-overlapping seed assignments:
+- **Screening Panel**: Evaluates checkpoints every 50,000 steps across 50 episodes per condition (`geometry` 0.00 and `traffic` 0.30) using non-overlapping seed range `55000–55049`.
+- **Model Reranking Panel**: Evaluates the top 5 screening checkpoints plus the terminal checkpoint across 100 fresh episodes per condition (`geometry` 0.00 and `traffic` 0.30) using seed range `60000–60099`.
+- **Sealed Holdout Panel**: Single final evaluation of the frozen Reranking Winner across 200 untouched episodes per condition (`geometry` 0.00 and `traffic` 0.30) using seed range `70000–70199`.
+
 ---
 
 ### Controlled Ablation Framework
 
-To evaluate the exact contribution of Lagrangian safety cost constraints, SafeDrive compares **SafeDrive SAC-Lagrangian** against an unconstrained **Vanilla SAC Baseline**. Both runs operate under 100% identical environment parameters, 275-D perception specifications, `[512, 512]` MLP network topology, hyperparameters ($1 \times 10^{-4}$ learning rate, batch size 256, 12 gradient updates per step), 1,000 procedural 3-block maps (`map: 3`, seeds `40000–40999`), 12-worker multi-domain mixtures, and three-panel evaluation protocols.
+To evaluate the exact contribution of Lagrangian safety cost constraints, we compare **SafeDrive SAC-Lagrangian** against an unconstrained **Vanilla SAC Baseline**. Both runs operate under 100% identical environment parameters, 275-D perception specifications, `[512, 512]` MLP network topology, hyperparameters ($1 \times 10^{-4}$ learning rate, batch size 256, 12 gradient updates per step), 1,000 procedural 3-block maps (`map: 3`, seeds `40000–40999`), 12-worker multi-domain mixtures, and three-panel evaluation protocols.
 
 By keeping all environmental, perceptual, structural, and evaluation parameters fixed, the experimental variable is strictly isolated to the algorithm optimization formulation:
 
@@ -79,18 +83,6 @@ By keeping all environmental, perceptual, structural, and evaluation parameters 
 | **Optimization Target** | CMDP ($d \le 1.0$, PID dual multiplier $\lambda$) | Standard unconstrained SAC (task reward optimization only) |
 | **Policy Loss Function** | $J_\pi(\theta) = \mathbb{E} [\alpha \log \pi - Q_R + \lambda Q_C]$ | $J_\pi(\theta) = \mathbb{E} [\alpha \log \pi - Q_R]$ ($\lambda \equiv 0$) |
 | **Dual Multiplier Update** | $\lambda_{t+1} = [\lambda_t + \text{PID}(e_t)]^+$ | N/A ($\lambda = 0$ constant) |
-
----
-
-### Evaluation Protocol & Panel Structure
-
-To prevent evaluation leakage and maintain auditability over training runs, SafeDrive uses a strict three-panel evaluation protocol with non-overlapping seed assignments:
-
-| Evaluation Panel | Checkpoint Frequency | Episodes per Condition | Seed Range | Traffic Conditions |
-| :--- | :--- | :--- | :--- | :--- |
-| **Screening** | Every 50,000 steps | 50 episodes | `55000 - 55049` | `geometry` (0.00), `traffic` (0.30) |
-| **Model Reranking** | Top 5 screening + Terminal checkpoint | 100 fresh episodes | `60000 - 60099` | `geometry` (0.00), `traffic` (0.30) |
-| **Sealed Holdout** | Frozen Reranking Winner (1 evaluation) | 200 untouched episodes | `70000 - 70199` | `geometry` (0.00), `traffic` (0.30) |
 
 ---
 
