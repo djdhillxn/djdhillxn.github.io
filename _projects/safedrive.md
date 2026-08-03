@@ -127,14 +127,12 @@ Below is the comparative benchmark evaluation of the selected **SafeDrive SAC-La
 
 <h3 id="what-makes-safedrive-unique">What Makes SafeDrive Unique</h3>
 
-If asked what sets SafeDrive apart from standard RL baselines or benchmark implementations:
+If asked what sets SafeDrive apart:
 
-1. **PID-Controlled Cost Multiplier Adaptation**: Standard Lagrangian methods suffer from severe multiplier oscillations and hyperparameter instability. SafeDrive implements a proportional-integral-derivative (PID) feedback controller on the dual multiplier $\lambda$, dynamically adjusting penalty intensity to prevent constraint overshooting and ensure smooth convergence.
-2. **Multi-Domain 12-Worker Mixture over 3-Block Maps**: Instead of multi-stage curricula that suffer from catastrophic forgetting when transitioning from geometry to traffic, SafeDrive trains end-to-end on 1,000 procedural 3-block MetaDrive maps (`map: 3`) under a frozen 12-worker mixture (3 geometry workers @ $0.00$ density, 4 introductory traffic workers @ $0.05$ density, and 5 stress traffic workers @ $0.30$ density) to cover diverse road geometries and background traffic conditions.
-3. **High-Resolution Perceptual Integration (275-D)**: Couples dense 240-ray $360^\circ$ LiDAR spatial sensing with 4-vehicle relative motion state vectors and ego kinematics into a 512-wide dual-critic MLP, natively integrated into Stable-Baselines3.
-4. **Elimination of Center-Lane Lock-in Reward Traps**: Explicitly disables lateral reward shaping (`use_lateral_reward: false`) and introduces quadratic steering smoothness regularization ($0.10$) and speed-adaptive range penalties to prevent center-lane lock-in reward traps while preserving dynamic lane-changing and overtaking capabilities.
-5. **Scientifically Isolated Ablation Framework**: Establishes an unconstrained **Vanilla SAC Baseline** (`configs/sac_vanilla_direct_general.yaml`) sharing the exact same 275-D perception, seeds (`40000-40999`), network (`[512, 512]`), batch size (256), 12 gradient steps, and evaluation panels as **SafeDrive SAC-Lagrangian**, isolating the algorithm optimization as the sole experimental variable.
-6. **Leak-Free Auditable Evaluation Protocol**: Enforces strict non-overlapping seed assignments across Screening, Model Reranking, and Sealed Holdout panels, guaranteeing that validation scenarios never overlap with training or final test evaluation.
+1. **PID-Controlled Cost Multiplier Adaptation**: Implements a proportional-integral-derivative (PID) feedback controller on the dual multiplier $\lambda$, dynamically damping multiplier oscillations and ensuring stable constraint enforcement below $d \le 1.0$.
+2. **Native Stable-Baselines3 MetaDrive Integration**: Wraps MetaDrive's procedural environment and vectorized multi-worker interfaces directly into Stable-Baselines3 for clean PyTorch training, custom callbacks, and modular CMDP extensions.
+3. **Vectorized 12-Worker Domain Mixture on Google Colab L4 GPU**: Parallelizes 12 environment workers on an L4 GPU across geometry ($0.00$), light traffic ($0.05$), and stress traffic ($0.30$) conditions over 1,000 procedural 3-block maps (`map: 3`).
+4. **Controlled Unconstrained Ablation Baseline**: Evaluates an unconstrained Vanilla SAC baseline run under identical perception, network architecture, and seeds (`40000–40999`) to isolate the empirical impact of the PID-Lagrangian safety constraint.
 
 ---
 
