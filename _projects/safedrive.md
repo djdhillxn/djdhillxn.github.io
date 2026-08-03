@@ -159,4 +159,15 @@ If asked what sets SafeDrive apart from standard RL baselines or benchmark imple
 
 ---
 
+### Future Directions & Scalability Roadmap
+
+SafeDrive's CMDP optimization framework and PID dual control architecture lay the foundation for several high-impact research extensions:
+
+1. **CARLA High-Fidelity Simulator Transfer**: Transitioning from procedural MetaDrive grid maps to CARLA's urban environments featuring high-fidelity visual rendering, complex multi-lane weather topologies, real-time CARLA ROS2 integrations, and multi-modal sensory suites (RGB cameras, depth sensors, semantic segmentation, and radar).
+2. **Model-Based Safe RL & World Models**: Incorporating model-based predictive safety (e.g., Safe MBPO or DreamerV3 World Models) to imagine trajectory rollouts and evaluate safety cost bounds $Q_C(s,a)$ inside a latent environment model, dramatically accelerating sample efficiency while maintaining zero-collision guarantees during exploration.
+3. **Multi-Agent Safe Reinforcement Learning (MARL)**: Extending the single-agent SAC-Lagrangian formulation to multi-agent game-theoretic settings (e.g., MAPPO-Lagrangian or decentralized dual control) where multiple autonomous vehicles dynamically negotiate right-of-way, multi-lane highway merging, and unsignalized intersection crossings under joint safety bounds.
+4. **Multimodal Vision-Language-Action (VLA) Guidance**: Integrating multimodal foundation models for high-level semantic reasoning (interpreting dynamic road signs, construction signals, and emergency vehicle audio/visual cues) paired with low-level SAC-Lagrangian control bounds for provably safe trajectory execution.
+
+---
+
 **Codebase & Formal Documentation**: The complete PyTorch and MetaDrive codebase is maintained in the [SafeDrive Repository](https://github.com/djdhillxn/safedrive). For full theoretical derivations, preflight verification scripts, and complete BibTeX citations, visit the GitHub repository. Our environment architecture and simulation rollouts derive heavy inspiration from and closely follow the design patterns of the [MetaDrive Simulator](https://github.com/metadrive-simulator/metadrive).
