@@ -53,16 +53,26 @@ The policy receives a 275-dimensional feature vector combining spatial range sen
 - **4 Nearby Vehicle Slots (16-D)**: Relative coordinates $(x, y)$, heading angle, and velocity vectors for the four closest dynamic traffic obstacles.
 - **Ego Kinematics & Navigation (19-D)**: Speed, steering angle, angular velocity, lane offset, route checkpoints, and navigation target vectors.
 
-#### 2. SAC-Lagrangian Optimization & PID Cost Adaptation
+#### 2. Network Architecture & Policy Optimization
+SafeDrive parameterizes the policy $\pi_\theta(a|s)$, reward critic $Q_{\phi_R}(s, a)$, and safety cost critic $Q_{\psi_C}(s, a)$ using 512-wide Multi-Layer Perceptrons (`[512, 512]`) with ReLU activations:
+- **Policy Network ($\pi_\theta$)**: Outputs continuous control actions $a = (a_{\text{steer}}, a_{\text{accel}}) \in [-1, 1]^2$ via a squashed Gaussian distribution:
+  $$\pi_\theta(a|s) = \tanh(\mu_\theta(s) + \sigma_\theta(s) \odot \epsilon), \quad \epsilon \sim \mathcal{N}(0, I)$$
+- **Dual-Critic Architecture ($Q_{\phi_R}, Q_{\psi_C}$)**: Twin double-critic networks estimate expected cumulative task reward $J_R$ and expected cumulative safety cost $J_C$. Soft Bellman targets are computed via:
+  $$y_R = r + \gamma \left( \min_{j=1,2} Q_{\phi_{R,j}'}(s', a') - \alpha \log \pi_\theta(a'|s') \right), \quad a' \sim \pi_\theta(\cdot|s')$$
+  $$y_C = c + \gamma_c \min_{j=1,2} Q_{\psi_{C,j}'}(s', a'), \quad a' \sim \pi_\theta(\cdot|s')$$
+- **Policy Loss Formulation**: Policy parameters $\theta$ are updated by joint optimization over expected task reward, entropy regularization, and safety constraint penalty:
+  $$J_\pi(\theta) = \mathbb{E}_{s \sim \mathcal{D}, a \sim \pi_\theta} \left[ \alpha \log \pi_\theta(a|s) - \min_{j=1,2} Q_{\phi_{R,j}}(s, a) + \lambda \max_{j=1,2} Q_{\psi_{C,j}}(s, a) \right]$$
+- **Optimization & Hyperparameters**: Actor and critic parameters are optimized using Adam with learning rate $1 \times 10^{-4}$, batch size 256, 12 gradient updates per step (1.0 update-to-data ratio), replay buffer capacity $10^6$, and discount factors $\gamma = 0.99, \gamma_c = 0.99$.
+
+#### 3. SAC-Lagrangian Optimization & PID Cost Adaptation
 The Lagrangian objective incorporates a PID feedback mechanism to regulate constraint violations:
 
-$$\lambda_{t+1} = \left[ \lambda_t + K_p e_t + K_i \int e_t dt + K_d \frac{de_t}{dt} \right]^+$$
+$$\lambda_{t+1} = \left[ \lambda_t + K_p e_t + K_i \int_0^t e_\tau d\tau + K_d \frac{de_t}{dt} \right]^+$$
 
-- **Episode Cost Limit ($d$)**: $1.0$ cumulative cost.
-- **PID Parameters**: $K_p = 0.05$, $K_i = 0.0005$, $K_d = 0.1$, $\alpha_{\text{EMA}} = 0.2$, $\lambda_{\max} = 100.0$.
-- **Network Architecture**: 512-wide MLP (`[512, 512]`) for policy $\pi_\theta$, reward critic $Q_R$, and cost critic $Q_C$.
+- **Episode Cost Limit ($d$)**: $1.0$ cumulative cost limit.
+- **PID Controller Parameters**: $K_p = 0.05$, $K_i = 0.0005$, $K_d = 0.1$, $\alpha_{\text{EMA}} = 0.2$, $\lambda_{\max} = 100.0$.
 
-#### 3. Multi-Domain Traffic Mixture & MetaDrive Modes
+#### 4. Multi-Domain Traffic Mixture & MetaDrive Modes
 The training environment allocates 12 parallel subprocess workers to cover distinct driving conditions:
 - **3 Geometry Workers** (`map: 3`, `traffic_density: 0.00`): Traffic-free procedural road geometry to maintain precise curve handling and lane centering.
 - **4 Introductory Traffic Workers** (`map: 3`, `traffic_density: 0.05`): Light background traffic flow (~2–6 vehicles per map).
@@ -72,11 +82,8 @@ The training environment allocates 12 parallel subprocess workers to cover disti
 
 ### Controlled Ablation Framework
 
-To evaluate the exact contribution of Lagrangian safety cost constraints, SafeDrive compares **SafeDrive SAC-Lagrangian** against an unconstrained **Vanilla SAC Baseline**. Both runs operate under 100% identical environment parameters, perception specifications, network topology, procedural maps, worker mixtures, and evaluation protocols:
+To evaluate the exact contribution of Lagrangian safety cost constraints, SafeDrive compares **SafeDrive SAC-Lagrangian** against an unconstrained **Vanilla SAC Baseline**. Both runs operate under 100% identical environment parameters, 275-D perception specifications, `[512, 512]` MLP network topology, hyperparameters ($1 \times 10^{-4}$ learning rate, batch size 256, 12 gradient updates per step), procedural maps, worker mixtures, and evaluation protocols:
 
-- **Perception & State Space**: 275-D representation (240 360° LiDAR range beams + 4 nearby vehicle tracking slots + 19 ego kinematics features; vehicle length and width excluded).
-- **Network Architecture**: Shared `[512, 512]` MLP policy network and critic architecture.
-- **Hyperparameters**: Learning rate $1 \times 10^{-4}$ (actor and critics), batch size 256, 12 gradient updates per step (1.0 update-to-data ratio).
 - **Procedural Maps & Seeds**: 1,000 procedural 3-block MetaDrive maps (`map: 3`), training seeds `40000–40999`.
 - **12-Worker Multi-Domain Mixture**: Vectorized 12-worker distribution consisting of 3 geometry workers ($0.00$ density), 4 introductory traffic workers ($0.05$ density), and 5 stress traffic workers ($0.30$ density).
 - **Evaluation Panels**: Non-overlapping Screening (seeds 55000+), Reranking (seeds 60000+), and Sealed Holdout (seeds 70000+) evaluation panels.
