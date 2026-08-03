@@ -21,22 +21,9 @@ portfolio_summary: |
   What makes SafeDrive unique is its end-to-end integration: while standard benchmarks rely on unconstrained reward penalties or fragile multi-stage curriculum switching that causes catastrophic forgetting, SafeDrive combines a 275-dimensional spatial observation space (240 360° LiDAR rays + 4 nearby-vehicle tracking slots) with a multi-domain 12-worker environment mixture over 3-block maps (`map: 3`, densities 0.00, 0.05, 0.30) and an unconstrained Vanilla SAC ablation baseline. A non-overlapping seed evaluation protocol across Screening, Reranking, and Sealed Holdout panels ensures completely auditable safety guarantees.
 ---
 
-SafeDrive is a bounded simulation project in MetaDrive investigating **Constrained Safe Reinforcement Learning** for autonomous vehicle navigation. 
+SafeDrive is a bounded simulation project in MetaDrive investigating **Constrained Safe Reinforcement Learning** for autonomous vehicle navigation ([what makes SafeDrive unique](#what-makes-safedrive-unique)). 
 
 Rather than relying on unconstrained reward shaping or manual multi-stage curriculum switching, the project formulates closed-loop autonomous driving as a **Constrained Markov Decision Process (CMDP)**. The objective is to learn a single policy that maximizes progress and speed rewards while strictly bounding cumulative collision and off-road safety costs below a declared threshold ($d \le 1.0$).
-
----
-
-### What Makes SafeDrive Unique
-
-If asked what sets SafeDrive apart from standard RL baselines or benchmark implementations:
-
-1. **PID-Controlled Cost Multiplier Adaptation**: Standard Lagrangian methods suffer from severe multiplier oscillations and hyperparameter instability. SafeDrive implements a proportional-integral-derivative (PID) feedback controller on the dual multiplier $\lambda$, dynamically adjusting penalty intensity to prevent constraint overshooting and ensure smooth convergence.
-2. **Multi-Domain 12-Worker Mixture over 3-Block Maps**: Instead of multi-stage curricula that suffer from catastrophic forgetting when transitioning from geometry to traffic, SafeDrive trains end-to-end on 1,000 procedural 3-block MetaDrive maps (`map: 3`) under a frozen 12-worker mixture (3 geometry workers @ $0.00$ density, 4 introductory traffic workers @ $0.05$ density, and 5 stress traffic workers @ $0.30$ density) to cover diverse road geometries and background traffic conditions.
-3. **High-Resolution Perceptual Integration (275-D)**: Couples dense 240-ray $360^\circ$ LiDAR spatial sensing with 4-vehicle relative motion state vectors and ego kinematics into a 512-wide dual-critic MLP, natively integrated into Stable-Baselines3.
-4. **Elimination of Center-Lane Lock-in Reward Traps**: Explicitly disables lateral reward shaping (`use_lateral_reward: false`) and introduces quadratic steering smoothness regularization ($0.10$) and speed-adaptive range penalties to prevent center-lane lock-in reward traps while preserving dynamic lane-changing and overtaking capabilities.
-5. **Scientifically Isolated Ablation Framework**: Establishes an unconstrained **Vanilla SAC Baseline** (`configs/sac_vanilla_direct_general.yaml`) sharing the exact same 275-D perception, seeds (`40000-40999`), network (`[512, 512]`), batch size (256), 12 gradient steps, and evaluation panels as **SafeDrive SAC-Lagrangian**, isolating the algorithm optimization as the sole experimental variable.
-6. **Leak-Free Auditable Evaluation Protocol**: Enforces strict non-overlapping seed assignments across Screening, Model Reranking, and Sealed Holdout panels, guaranteeing that validation scenarios never overlap with training or final test evaluation.
 
 ---
 
@@ -90,6 +77,8 @@ By keeping all environmental, perceptual, structural, and evaluation parameters 
 | :--- | :--- | :--- |
 | **Config File** | `configs/sac_lagrangian_direct_general.yaml` | `configs/sac_vanilla_direct_general.yaml` |
 | **Optimization Target** | CMDP ($d \le 1.0$, PID dual multiplier $\lambda$) | Standard unconstrained SAC (task reward optimization only) |
+| **Policy Loss Function** | $J_\pi(\theta) = \mathbb{E} [\alpha \log \pi - Q_R + \lambda Q_C]$ | $J_\pi(\theta) = \mathbb{E} [\alpha \log \pi - Q_R]$ ($\lambda \equiv 0$) |
+| **Dual Multiplier Update** | $\lambda_{t+1} = [\lambda_t + \text{PID}(e_t)]^+$ | N/A ($\lambda = 0$ constant) |
 
 ---
 
@@ -154,6 +143,19 @@ Below is the benchmark performance summary template for the training run:
 | **Reranking Winner** | `traffic` (0.30) | 100 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
 | **Sealed Holdout** | `geometry` (0.00) | 200 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
 | **Sealed Holdout** | `traffic` (0.30) | 200 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+
+---
+
+<h3 id="what-makes-safedrive-unique">What Makes SafeDrive Unique</h3>
+
+If asked what sets SafeDrive apart from standard RL baselines or benchmark implementations:
+
+1. **PID-Controlled Cost Multiplier Adaptation**: Standard Lagrangian methods suffer from severe multiplier oscillations and hyperparameter instability. SafeDrive implements a proportional-integral-derivative (PID) feedback controller on the dual multiplier $\lambda$, dynamically adjusting penalty intensity to prevent constraint overshooting and ensure smooth convergence.
+2. **Multi-Domain 12-Worker Mixture over 3-Block Maps**: Instead of multi-stage curricula that suffer from catastrophic forgetting when transitioning from geometry to traffic, SafeDrive trains end-to-end on 1,000 procedural 3-block MetaDrive maps (`map: 3`) under a frozen 12-worker mixture (3 geometry workers @ $0.00$ density, 4 introductory traffic workers @ $0.05$ density, and 5 stress traffic workers @ $0.30$ density) to cover diverse road geometries and background traffic conditions.
+3. **High-Resolution Perceptual Integration (275-D)**: Couples dense 240-ray $360^\circ$ LiDAR spatial sensing with 4-vehicle relative motion state vectors and ego kinematics into a 512-wide dual-critic MLP, natively integrated into Stable-Baselines3.
+4. **Elimination of Center-Lane Lock-in Reward Traps**: Explicitly disables lateral reward shaping (`use_lateral_reward: false`) and introduces quadratic steering smoothness regularization ($0.10$) and speed-adaptive range penalties to prevent center-lane lock-in reward traps while preserving dynamic lane-changing and overtaking capabilities.
+5. **Scientifically Isolated Ablation Framework**: Establishes an unconstrained **Vanilla SAC Baseline** (`configs/sac_vanilla_direct_general.yaml`) sharing the exact same 275-D perception, seeds (`40000-40999`), network (`[512, 512]`), batch size (256), 12 gradient steps, and evaluation panels as **SafeDrive SAC-Lagrangian**, isolating the algorithm optimization as the sole experimental variable.
+6. **Leak-Free Auditable Evaluation Protocol**: Enforces strict non-overlapping seed assignments across Screening, Model Reranking, and Sealed Holdout panels, guaranteeing that validation scenarios never overlap with training or final test evaluation.
 
 ---
 
