@@ -21,15 +21,15 @@ portfolio_summary: |
   What makes SafeDrive unique is its end-to-end integration: while standard benchmarks rely on unconstrained reward penalties or fragile multi-stage curriculum switching that causes catastrophic forgetting, SafeDrive combines a 275-dimensional spatial observation space (240 360° LiDAR rays + 4 nearby-vehicle tracking slots) with a multi-domain 12-worker environment mixture over 3-block maps (`map: 3`, densities 0.00, 0.05, 0.30) and an unconstrained Vanilla SAC ablation baseline. A non-overlapping seed evaluation protocol across Screening, Reranking, and Sealed Holdout panels ensures completely auditable safety guarantees.
 ---
 
-SafeDrive is a bounded simulation project in MetaDrive investigating **Constrained Safe Reinforcement Learning** for autonomous vehicle navigation ([what makes SafeDrive unique](#what-makes-safedrive-unique)). Rather than relying on unconstrained reward shaping or manual multi-stage curriculum switching, the project formulates closed-loop autonomous driving as a **Constrained Markov Decision Process (CMDP)**. The objective is to learn a single policy that maximizes progress and speed rewards while strictly bounding cumulative collision and off-road safety costs below a declared threshold ($d \le 1.0$).
+SafeDrive is a bounded simulation project in MetaDrive investigating **Constrained Safe Reinforcement Learning** for autonomous vehicle navigation ([key design principles](#key-design-principles)). Rather than relying on unconstrained reward shaping or manual multi-stage curriculum switching, the project formulates closed-loop autonomous driving as a **Constrained Markov Decision Process (CMDP)**. The objective is to learn a single policy that maximizes progress and speed rewards while strictly bounding cumulative collision and off-road safety costs below a declared threshold ($d \le 1.0$).
 
 ---
 
 ### System Architecture & Perception
 
 <figure style="text-align: center; margin: 1.5rem auto;">
-  <img src="{{ '/assets/img/safedrive/safedrive_architecture_overview.png' | relative_url }}" alt="SafeDrive SAC-Lagrangian System Architecture" loading="lazy" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-  <figcaption style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">Overview of SafeDrive perception pipeline (275-D LiDAR + vehicle tracking), PID cost control, 12-worker multi-domain mixture, and dual-critic network architecture.</figcaption>
+  <img src="{{ '/assets/img/safedrive/safedrive_architecture_overview.png' | relative_url }}" alt="SafeDrive SAC-Lagrangian System Architecture" loading="lazy" style="max-width: 100%; height: auto; border-radius: 8px;">
+  <figcaption style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">Overview of SafeDrive perception pipeline (275-D LiDAR + vehicle tracking), PID cost control, multi-domain worker mixture, and dual-critic network architecture.</figcaption>
 </figure>
 
 #### 1. Perception & Observation Space (275-D)
@@ -57,7 +57,7 @@ $$\lambda_{t+1} = \left[ \lambda_t + K_p e_t + K_i \int_0^t e_\tau d\tau + K_d \
 - **Episode Cost Limit ($d$)**: $1.0$ cumulative cost limit.
 - **PID Controller Parameters**: $K_p = 0.05$, $K_i = 0.0005$, $K_d = 0.1$, $\alpha_{\text{EMA}} = 0.2$, $\lambda_{\max} = 100.0$.
 
-#### 4. Multi-Domain Traffic Mixture & MetaDrive Modes
+#### 4. Multi-Domain Simulation Environments
 Training is conducted over 1,000 procedural 3-block MetaDrive scenarios (`map: 3`, training seeds `40000–40999`). The environment allocates 12 parallel subprocess workers operating under a frozen multi-domain distribution to cover diverse road geometries and dynamic background traffic conditions:
 - **3 Geometry Workers** (`map: 3`, `traffic_density: 0.00`): Traffic-free procedural road geometry to maintain precise curve handling and lane centering.
 - **4 Introductory Traffic Workers** (`map: 3`, `traffic_density: 0.05`): Light background traffic flow (~2–6 vehicles per map).
@@ -90,24 +90,24 @@ By keeping all environmental, perceptual, structural, and evaluation parameters 
 
 Below are curated video simulations across key autonomous driving scenarios:
 
-#### 1. Interactive Multi-Vehicle Traffic Navigation
+##### 1. Interactive Multi-Vehicle Traffic Navigation
 <div style="text-align: center; margin: 1.5rem auto 2rem auto;">
-  {% include video.html path="/assets/video/safedrive/map_SCSCS_d0.30_chase_seed_60009.mp4" class="safedrive-demo-iframe" width="800" height="450" controls=true autoplay=true loop=true muted=true title="SAC-Lagrangian agent navigating 0.30 density interactive MetaDrive traffic on 5-block S-curves" caption="Closed-loop policy simulation negotiating dense background traffic at 0.30 density on 5-block S-curves map." %}
+  {% include video.html path="/assets/video/safedrive/map_SCSCS_d0.30_chase_seed_60009.mp4" class="safedrive-demo-iframe" width="640" height="360" controls=true autoplay=true loop=true muted=true title="SAC-Lagrangian agent navigating 0.30 density interactive MetaDrive traffic on 5-block S-curves" caption="Closed-loop policy simulation negotiating dense background traffic at 0.30 density." %}
 </div>
 
-#### 2. Precision Curve & Lane-Centering Navigation
+##### 2. Precision Curve & Lane-Centering Navigation
 <div style="text-align: center; margin: 1.5rem auto 2rem auto;">
-  {% include video.html path="/assets/video/safedrive/map_C_d0.00_chase_seed_60000.mp4" class="safedrive-demo-iframe" width="800" height="450" controls=true autoplay=true loop=true muted=true title="SAC-Lagrangian agent executing precision curve navigation on geometry maps" caption="Policy executing continuous smooth steering and lateral lane-centering through procedural curves." %}
+  {% include video.html path="/assets/video/safedrive/map_C_d0.00_chase_seed_60000.mp4" class="safedrive-demo-iframe" width="640" height="360" controls=true autoplay=true loop=true muted=true title="SAC-Lagrangian agent executing precision curve navigation on geometry maps" caption="Policy executing continuous smooth steering and lateral lane-centering." %}
 </div>
 
-#### 3. Roundabout & Complex Junction Merging
+##### 3. Roundabout & Complex Junction Merging
 <div style="text-align: center; margin: 1.5rem auto 2rem auto;">
-  {% include video.html path="/assets/video/safedrive/map_OC_d0.30_chase_seed_60007.mp4" class="safedrive-demo-iframe" width="800" height="450" controls=true autoplay=true loop=true muted=true title="SAC-Lagrangian agent navigating MetaDrive roundabout and junction merge" caption="Policy simulation navigating multi-lane roundabout entry, yielding, and junction exit under 0.30 traffic." %}
+  {% include video.html path="/assets/video/safedrive/map_OC_d0.30_chase_seed_60007.mp4" class="safedrive-demo-iframe" width="640" height="360" controls=true autoplay=true loop=true muted=true title="SAC-Lagrangian agent navigating MetaDrive roundabout and junction merge" caption="Policy simulation navigating multi-lane junction entry and yielding under dense traffic." %}
 </div>
 
-#### 4. Emergency Obstacle Evasion & Hazard Avoidance
+##### 4. Emergency Obstacle Evasion & Hazard Avoidance
 <div style="text-align: center; margin: 1.5rem auto 2rem auto;">
-  {% include video.html path="/assets/video/safedrive/map_SC_d0.05_chase_seed_60012.mp4" class="safedrive-demo-iframe" width="800" height="450" controls=true autoplay=true loop=true muted=true title="SAC-Lagrangian agent executing static obstacle hazard avoidance" caption="Obstacle hazard avoidance navigating traffic cones, warning triangles, and blocked lanes while bounding safety cost." %}
+  {% include video.html path="/assets/video/safedrive/map_SC_d0.05_chase_seed_60012.mp4" class="safedrive-demo-iframe" width="640" height="360" controls=true autoplay=true loop=true muted=true title="SAC-Lagrangian agent executing static obstacle hazard avoidance" caption="Obstacle hazard avoidance navigating traffic cones, warning triangles, and blocked lanes." %}
 </div>
 
 ---
@@ -125,9 +125,9 @@ Below is the comparative benchmark evaluation of the selected **SafeDrive SAC-La
 
 ---
 
-<h3 id="what-makes-safedrive-unique">What Makes SafeDrive Unique</h3>
+<h3 id="key-design-principles">Key Design Principles</h3>
 
-If asked what sets SafeDrive apart:
+Key architectural principles driving SafeDrive's empirical performance include:
 
 1. **PID-Controlled Cost Multiplier Adaptation**: Implements a proportional-integral-derivative (PID) feedback controller on the dual multiplier $\lambda$, dynamically damping multiplier oscillations and ensuring stable constraint enforcement below $d \le 1.0$.
 2. **Native Stable-Baselines3 MetaDrive Integration**: Wraps MetaDrive's procedural environment and vectorized multi-worker interfaces directly into Stable-Baselines3 for clean PyTorch training, custom callbacks, and modular CMDP extensions.
@@ -147,4 +147,4 @@ SafeDrive's CMDP optimization framework and PID dual control architecture lay th
 
 ---
 
-**Codebase & Formal Documentation**: The complete PyTorch and MetaDrive codebase is maintained in the [SafeDrive Repository](https://github.com/djdhillxn/safedrive). For full theoretical derivations, preflight verification scripts, and complete BibTeX citations, visit the GitHub repository. Our environment architecture and simulation rollouts derive heavy inspiration from and closely follow the design patterns of the [MetaDrive Simulator](https://github.com/metadrive-simulator/metadrive).
+**Codebase & Formal Documentation**: The complete PyTorch and MetaDrive codebase is maintained in the [SafeDrive Repository](https://github.com/djdhillxn/safedrive). For full theoretical derivations, documented negative results and failed experiments, and complete BibTeX citations, visit the GitHub repository. Our implementation directly utilizes the [MetaDrive Simulator](https://github.com/metadrive-simulator/metadrive) engine and adopts many of its recommended hyperparameter baseline standards.
