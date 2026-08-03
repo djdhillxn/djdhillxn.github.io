@@ -73,7 +73,7 @@ $$\lambda_{t+1} = \left[ \lambda_t + K_p e_t + K_i \int_0^t e_\tau d\tau + K_d \
 - **PID Controller Parameters**: $K_p = 0.05$, $K_i = 0.0005$, $K_d = 0.1$, $\alpha_{\text{EMA}} = 0.2$, $\lambda_{\max} = 100.0$.
 
 #### 4. Multi-Domain Traffic Mixture & MetaDrive Modes
-The training environment allocates 12 parallel subprocess workers to cover distinct driving conditions:
+Training is conducted over 1,000 procedural 3-block MetaDrive scenarios (`map: 3`, training seeds `40000–40999`). The environment allocates 12 parallel subprocess workers operating under a frozen multi-domain distribution to cover diverse road geometries and dynamic background traffic conditions:
 - **3 Geometry Workers** (`map: 3`, `traffic_density: 0.00`): Traffic-free procedural road geometry to maintain precise curve handling and lane centering.
 - **4 Introductory Traffic Workers** (`map: 3`, `traffic_density: 0.05`): Light background traffic flow (~2–6 vehicles per map).
 - **5 Stress Traffic Workers** (`map: 3`, `traffic_density: 0.30`): Dense background traffic flow (~13–27 vehicles per map) for high-pressure gap selection and collision avoidance.
@@ -82,11 +82,7 @@ The training environment allocates 12 parallel subprocess workers to cover disti
 
 ### Controlled Ablation Framework
 
-To evaluate the exact contribution of Lagrangian safety cost constraints, SafeDrive compares **SafeDrive SAC-Lagrangian** against an unconstrained **Vanilla SAC Baseline**. Both runs operate under 100% identical environment parameters, 275-D perception specifications, `[512, 512]` MLP network topology, hyperparameters ($1 \times 10^{-4}$ learning rate, batch size 256, 12 gradient updates per step), procedural maps, worker mixtures, and evaluation protocols:
-
-- **Procedural Maps & Seeds**: 1,000 procedural 3-block MetaDrive maps (`map: 3`), training seeds `40000–40999`.
-- **12-Worker Multi-Domain Mixture**: Vectorized 12-worker distribution consisting of 3 geometry workers ($0.00$ density), 4 introductory traffic workers ($0.05$ density), and 5 stress traffic workers ($0.30$ density).
-- **Evaluation Panels**: Non-overlapping Screening (seeds 55000+), Reranking (seeds 60000+), and Sealed Holdout (seeds 70000+) evaluation panels.
+To evaluate the exact contribution of Lagrangian safety cost constraints, SafeDrive compares **SafeDrive SAC-Lagrangian** against an unconstrained **Vanilla SAC Baseline**. Both runs operate under 100% identical environment parameters, 275-D perception specifications, `[512, 512]` MLP network topology, hyperparameters ($1 \times 10^{-4}$ learning rate, batch size 256, 12 gradient updates per step), 1,000 procedural 3-block maps (`map: 3`, seeds `40000–40999`), 12-worker multi-domain mixtures, and three-panel evaluation protocols.
 
 By keeping all environmental, perceptual, structural, and evaluation parameters fixed, the experimental variable is strictly isolated to the algorithm optimization formulation:
 
@@ -161,4 +157,4 @@ Below is the benchmark performance summary template for the training run:
 
 ---
 
-**Codebase & Formal Documentation**: The complete PyTorch and MetaDrive codebase is maintained in the [SafeDrive Repository](https://github.com/djdhillxn/safedrive). For full theoretical derivations, preflight verification scripts, and complete BibTeX citations, visit the GitHub repository.
+**Codebase & Formal Documentation**: The complete PyTorch and MetaDrive codebase is maintained in the [SafeDrive Repository](https://github.com/djdhillxn/safedrive). For full theoretical derivations, preflight verification scripts, and complete BibTeX citations, visit the GitHub repository. Our environment architecture and simulation rollouts derive heavy inspiration from and closely follow the design patterns of the [MetaDrive Simulator](https://github.com/metadrive-simulator/metadrive).
