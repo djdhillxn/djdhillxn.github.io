@@ -114,27 +114,14 @@ Below are curated video simulations across key autonomous driving scenarios:
 
 ### Empirical Results & Benchmark Performance
 
-Below is the benchmark performance summary template for the training run:
+Below is the comparative benchmark evaluation of the selected **SafeDrive SAC-Lagrangian Winner** against the **Unconstrained Vanilla SAC Baseline** on the final 200-episode Sealed Holdout Panel across both geometry (`traffic_density: 0.00`) and stress traffic (`traffic_density: 0.30`) conditions:
 
-#### Screening Panel Highlights (50K Checkpoints)
-
-| Checkpoint Step | Split / Condition | Safe Completion (%) | Task Success (%) | Route Completion (%) | Cumulative Cost | Collision Rate (%) | Feasibility Status |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `100,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `100,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `250,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `250,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `500,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `500,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-
-#### Reranking & Final Sealed Holdout Results
-
-| Model Stage | Evaluation Condition | Episodes | Route Completion (%) | Task Success (%) | Mean Cost | Max Cost | Constraint Satisfied |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Reranking Winner** | `geometry` (0.00) | 100 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| **Reranking Winner** | `traffic` (0.30) | 100 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| **Sealed Holdout** | `geometry` (0.00) | 200 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| **Sealed Holdout** | `traffic` (0.30) | 200 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| Algorithm Policy | Evaluation Condition | Safe Completion (%) | Task Success (%) | Route Completion (%) | Mean Cost | Max Cost | Collision Rate (%) | Constraint Feasible |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **SafeDrive SAC-Lagrangian** | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| **SafeDrive SAC-Lagrangian** | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| **Vanilla SAC Baseline** | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| **Vanilla SAC Baseline** | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
 
 ---
 
