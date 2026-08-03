@@ -16,14 +16,14 @@ portfolio_tags:
 portfolio_image: assets/img/safedrive/safedrive_architecture_overview.png
 portfolio_image_alt: SafeDrive SAC-Lagrangian perception and PID cost control architecture diagram
 portfolio_summary: |
-  SafeDrive investigates closed-loop autonomous driving under explicit safety constraints in the MetaDrive simulator. By formulating navigation as a Constrained Markov Decision Process (CMDP), the agent optimizes Soft Actor-Critic with Lagrangian adaptation (SAC-Lagrangian) and a PID-controlled cost multiplier to dynamically bound cumulative collisions and off-road violations below a target threshold (\(d \le 1.0\)) across 1,000 procedural road scenarios.
+  SafeDrive investigates closed-loop autonomous driving under explicit safety constraints in the MetaDrive simulator. By formulating navigation as a Constrained Markov Decision Process (CMDP), the agent optimizes Soft Actor-Critic with Lagrangian adaptation (SAC-Lagrangian) and a PID-controlled cost multiplier to dynamically bound cumulative collisions and off-road violations below a target threshold ($d \le 1.0$) across 1,000 procedural road scenarios.
 
   What makes SafeDrive unique is its end-to-end integration: while standard benchmarks rely on unconstrained reward penalties or fragile multi-stage curriculum switching that causes catastrophic forgetting, SafeDrive combines a 275-dimensional spatial observation space (240 360° LiDAR rays + 4 nearby-vehicle tracking slots) with a multi-domain 12-worker environment mixture over 3-block maps (`map: 3`, densities 0.00, 0.05, 0.30) and an unconstrained Vanilla SAC ablation baseline. A non-overlapping seed evaluation protocol across Screening, Reranking, and Sealed Holdout panels ensures completely auditable safety guarantees.
 ---
 
 SafeDrive is a bounded simulation project in MetaDrive investigating **Constrained Safe Reinforcement Learning** for autonomous vehicle navigation. 
 
-Rather than relying on unconstrained reward shaping or manual multi-stage curriculum switching, the project formulates closed-loop autonomous driving as a **Constrained Markov Decision Process (CMDP)**. The objective is to learn a single policy that maximizes progress and speed rewards while strictly bounding cumulative collision and off-road safety costs below a declared threshold (\(d \le 1.0\)).
+Rather than relying on unconstrained reward shaping or manual multi-stage curriculum switching, the project formulates closed-loop autonomous driving as a **Constrained Markov Decision Process (CMDP)**. The objective is to learn a single policy that maximizes progress and speed rewards while strictly bounding cumulative collision and off-road safety costs below a declared threshold ($d \le 1.0$).
 
 ---
 
@@ -31,10 +31,10 @@ Rather than relying on unconstrained reward shaping or manual multi-stage curric
 
 If asked what sets SafeDrive apart from standard RL baselines or benchmark implementations:
 
-1. **PID-Controlled Cost Multiplier Adaptation**: Standard Lagrangian methods suffer from severe multiplier oscillations and hyperparameter instability. SafeDrive implements a proportional-integral-derivative (PID) feedback controller on the dual multiplier \(\lambda\), dynamically adjusting penalty intensity to prevent constraint overshooting and ensure smooth convergence.
-2. **Multi-Domain 12-Worker Mixture over 3-Block Maps**: Instead of multi-stage curricula that suffer from catastrophic forgetting when transitioning from geometry to traffic, SafeDrive trains end-to-end on 1,000 procedural 3-block MetaDrive maps (`map: 3`) under a frozen 12-worker mixture (3 geometry workers @ 0.00 density, 4 introductory traffic workers @ 0.05 density, and 5 stress traffic workers @ 0.30 density) to cover diverse road geometries and background traffic conditions.
-3. **High-Resolution Perceptual Integration (275-D)**: Couples dense 240-ray 360° LiDAR spatial sensing with 4-vehicle relative motion state vectors and ego kinematics into a 512-wide dual-critic MLP, natively integrated into Stable-Baselines3.
-4. **Elimination of Center-Lane Lock-in Reward Traps**: Explicitly disables lateral reward shaping (`use_lateral_reward: false`) and introduces quadratic steering smoothness regularization (0.10) and speed-adaptive range penalties to prevent center-lane lock-in reward traps while preserving dynamic lane-changing and overtaking capabilities.
+1. **PID-Controlled Cost Multiplier Adaptation**: Standard Lagrangian methods suffer from severe multiplier oscillations and hyperparameter instability. SafeDrive implements a proportional-integral-derivative (PID) feedback controller on the dual multiplier $\lambda$, dynamically adjusting penalty intensity to prevent constraint overshooting and ensure smooth convergence.
+2. **Multi-Domain 12-Worker Mixture over 3-Block Maps**: Instead of multi-stage curricula that suffer from catastrophic forgetting when transitioning from geometry to traffic, SafeDrive trains end-to-end on 1,000 procedural 3-block MetaDrive maps (`map: 3`) under a frozen 12-worker mixture (3 geometry workers @ $0.00$ density, 4 introductory traffic workers @ $0.05$ density, and 5 stress traffic workers @ $0.30$ density) to cover diverse road geometries and background traffic conditions.
+3. **High-Resolution Perceptual Integration (275-D)**: Couples dense 240-ray $360^\circ$ LiDAR spatial sensing with 4-vehicle relative motion state vectors and ego kinematics into a 512-wide dual-critic MLP, natively integrated into Stable-Baselines3.
+4. **Elimination of Center-Lane Lock-in Reward Traps**: Explicitly disables lateral reward shaping (`use_lateral_reward: false`) and introduces quadratic steering smoothness regularization ($0.10$) and speed-adaptive range penalties to prevent center-lane lock-in reward traps while preserving dynamic lane-changing and overtaking capabilities.
 5. **Scientifically Isolated Ablation Framework**: Establishes an unconstrained **Vanilla SAC Baseline** (`configs/sac_vanilla_direct_general.yaml`) sharing the exact same 275-D perception, seeds (`40000-40999`), network (`[512, 512]`), batch size (256), 12 gradient steps, and evaluation panels as **SafeDrive SAC-Lagrangian**, isolating the algorithm optimization as the sole experimental variable.
 6. **Leak-Free Auditable Evaluation Protocol**: Enforces strict non-overlapping seed assignments across Screening, Model Reranking, and Sealed Holdout panels, guaranteeing that validation scenarios never overlap with training or final test evaluation.
 
@@ -49,8 +49,8 @@ If asked what sets SafeDrive apart from standard RL baselines or benchmark imple
 
 #### 1. Perception & Observation Space (275-D)
 The policy receives a 275-dimensional feature vector combining spatial range sensing with ego dynamics and nearby vehicle tracking:
-- **240 360° LiDAR Rays**: Radial distance measurements ([0, 50] meters) scanning surrounding obstacles and road boundaries.
-- **4 Nearby Vehicle Slots (16-D)**: Relative coordinates \((x, y)\), heading angle, and velocity vectors for the four closest dynamic traffic obstacles.
+- **240 360° LiDAR Rays**: Radial distance measurements ($[0, 50]$ meters) scanning surrounding obstacles and road boundaries.
+- **4 Nearby Vehicle Slots (16-D)**: Relative coordinates $(x, y)$, heading angle, and velocity vectors for the four closest dynamic traffic obstacles.
 - **Ego Kinematics & Navigation (19-D)**: Speed, steering angle, angular velocity, lane offset, route checkpoints, and navigation target vectors.
 
 #### 2. SAC-Lagrangian Optimization & PID Cost Adaptation
@@ -58,9 +58,9 @@ The Lagrangian objective incorporates a PID feedback mechanism to regulate const
 
 $$\lambda_{t+1} = \left[ \lambda_t + K_p e_t + K_i \int e_t dt + K_d \frac{de_t}{dt} \right]^+$$
 
-- **Episode Cost Limit (\(d\))**: 1.0 cumulative cost.
-- **PID Parameters**: \(K_p = 0.05\), \(K_i = 0.0005\), \(K_d = 0.1\), \(\alpha_{\text{EMA}} = 0.2\), \(\lambda_{\max} = 100.0\).
-- **Network Architecture**: 512-wide MLP (`[512, 512]`) for policy \(\pi_\theta\), reward critic \(Q_R\), and cost critic \(Q_C\).
+- **Episode Cost Limit ($d$)**: $1.0$ cumulative cost.
+- **PID Parameters**: $K_p = 0.05$, $K_i = 0.0005$, $K_d = 0.1$, $\alpha_{\text{EMA}} = 0.2$, $\lambda_{\max} = 100.0$.
+- **Network Architecture**: 512-wide MLP (`[512, 512]`) for policy $\pi_\theta$, reward critic $Q_R$, and cost critic $Q_C$.
 
 #### 3. Multi-Domain Traffic Mixture & MetaDrive Modes
 The training environment allocates 12 parallel subprocess workers to cover distinct driving conditions:
@@ -76,9 +76,9 @@ To evaluate the exact contribution of Lagrangian safety cost constraints, SafeDr
 
 - **Perception & State Space**: 275-D representation (240 360° LiDAR range beams + 4 nearby vehicle tracking slots + 19 ego kinematics features; vehicle length and width excluded).
 - **Network Architecture**: Shared `[512, 512]` MLP policy network and critic architecture.
-- **Hyperparameters**: Learning rate \(1 \times 10^{-4}\) (actor and critics), batch size 256, 12 gradient updates per step (1.0 update-to-data ratio).
+- **Hyperparameters**: Learning rate $1 \times 10^{-4}$ (actor and critics), batch size 256, 12 gradient updates per step (1.0 update-to-data ratio).
 - **Procedural Maps & Seeds**: 1,000 procedural 3-block MetaDrive maps (`map: 3`), training seeds `40000–40999`.
-- **12-Worker Multi-Domain Mixture**: Vectorized 12-worker distribution consisting of 3 geometry workers (0.00 density), 4 introductory traffic workers (0.05 density), and 5 stress traffic workers (0.30 density).
+- **12-Worker Multi-Domain Mixture**: Vectorized 12-worker distribution consisting of 3 geometry workers ($0.00$ density), 4 introductory traffic workers ($0.05$ density), and 5 stress traffic workers ($0.30$ density).
 - **Evaluation Panels**: Non-overlapping Screening (seeds 55000+), Reranking (seeds 60000+), and Sealed Holdout (seeds 70000+) evaluation panels.
 
 By keeping all environmental, perceptual, structural, and evaluation parameters fixed, the experimental variable is strictly isolated to the algorithm optimization formulation:
@@ -86,7 +86,7 @@ By keeping all environmental, perceptual, structural, and evaluation parameters 
 | Primary Experimental Variables | SafeDrive SAC-Lagrangian | Unconstrained Vanilla SAC Baseline |
 | :--- | :--- | :--- |
 | **Config File** | `configs/sac_lagrangian_direct_general.yaml` | `configs/sac_vanilla_direct_general.yaml` |
-| **Optimization Target** | CMDP (\(d \le 1.0\), PID dual multiplier \(\lambda\)) | Standard unconstrained SAC (task reward optimization only) |
+| **Optimization Target** | CMDP ($d \le 1.0$, PID dual multiplier $\lambda$) | Standard unconstrained SAC (task reward optimization only) |
 
 ---
 
@@ -99,32 +99,6 @@ To prevent evaluation leakage and maintain auditability over training runs, Safe
 | **Screening** | Every 50,000 steps | 50 episodes | `55000 - 55049` | `geometry` (0.00), `traffic` (0.30) |
 | **Model Reranking** | Top 5 screening + Terminal checkpoint | 100 fresh episodes | `60000 - 60099` | `geometry` (0.00), `traffic` (0.30) |
 | **Sealed Holdout** | Frozen Reranking Winner (1 evaluation) | 200 untouched episodes | `70000 - 70199` | `geometry` (0.00), `traffic` (0.30) |
-
----
-
-### Empirical Results & Benchmark Performance
-
-Below is the benchmark performance summary template for the training run:
-
-#### Screening Panel Highlights (50K Checkpoints)
-
-| Checkpoint Step | Split / Condition | Safe Completion (%) | Task Success (%) | Route Completion (%) | Cumulative Cost | Collision Rate (%) | Feasibility Status |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| `100,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `100,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `250,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `250,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `500,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| `500,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-
-#### Reranking & Final Sealed Holdout Results
-
-| Model Stage | Evaluation Condition | Episodes | Route Completion (%) | Task Success (%) | Mean Cost | Max Cost | Constraint Satisfied |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Reranking Winner** | `geometry` (0.00) | 100 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| **Reranking Winner** | `traffic` (0.30) | 100 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| **Sealed Holdout** | `geometry` (0.00) | 200 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
-| **Sealed Holdout** | `traffic` (0.30) | 200 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
 
 ---
 
@@ -154,6 +128,30 @@ Below are curated video simulations across key autonomous driving scenarios:
 
 ---
 
-### Codebase & Formal Documentation
+### Empirical Results & Benchmark Performance
 
-The complete PyTorch and MetaDrive codebase is maintained in the [SafeDrive Repository](https://github.com/djdhillxn/safedrive). For full theoretical derivations, preflight verification scripts, and complete BibTeX citations, visit the GitHub repository.
+Below is the benchmark performance summary template for the training run:
+
+#### Screening Panel Highlights (50K Checkpoints)
+
+| Checkpoint Step | Split / Condition | Safe Completion (%) | Task Success (%) | Route Completion (%) | Cumulative Cost | Collision Rate (%) | Feasibility Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `100,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| `100,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| `250,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| `250,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| `500,000` | `geometry` (0.00) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| `500,000` | `traffic` (0.30) | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+
+#### Reranking & Final Sealed Holdout Results
+
+| Model Stage | Evaluation Condition | Episodes | Route Completion (%) | Task Success (%) | Mean Cost | Max Cost | Constraint Satisfied |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Reranking Winner** | `geometry` (0.00) | 100 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| **Reranking Winner** | `traffic` (0.30) | 100 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| **Sealed Holdout** | `geometry` (0.00) | 200 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+| **Sealed Holdout** | `traffic` (0.30) | 200 | *[Populate]* | *[Populate]* | *[Populate]* | *[Populate]* | *[Pending]* |
+
+---
+
+**Codebase & Formal Documentation**: The complete PyTorch and MetaDrive codebase is maintained in the [SafeDrive Repository](https://github.com/djdhillxn/safedrive). For full theoretical derivations, preflight verification scripts, and complete BibTeX citations, visit the GitHub repository.
