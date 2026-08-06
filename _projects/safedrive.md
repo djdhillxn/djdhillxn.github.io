@@ -13,6 +13,7 @@ portfolio_tags:
   - Constrained RL
   - MetaDrive
   - autonomous driving
+portfolio_exclude: true
 portfolio_image: assets/img/safedrive/safedrive_architecture_overview.png
 portfolio_image_alt: SafeDrive SAC-Lagrangian perception and PID cost control architecture diagram
 portfolio_summary: |

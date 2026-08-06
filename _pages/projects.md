@@ -8,7 +8,7 @@ nav_order: 1
 ---
 <div class="projects projects-home">
   <p class="projects-home-intro">
-    All the project's code implementations, along with more, are available at my <a href="https://github.com/djdhillxn">GitHub</a>.
+    All the project's code, along with more, are available at my <a href="https://github.com/djdhillxn">GitHub</a>.
     The cat symbol beside each project goes to that project's GitHub repository.
   </p>
   {%- assign sorted_projects = site.projects | sort: "portfolio_order" -%}

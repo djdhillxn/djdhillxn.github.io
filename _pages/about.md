@@ -24,16 +24,20 @@ social: false  # includes social icons at the bottom of the page
 **TL;DR**
 I am Dheeraj, currently pursuing an MS in Computer Science at UW-Madison, where I will be graduating in May 2027. I have 2 years of industry experience as a data scientist at Gartner and HiLabs, a healthcare data interoperability startup. I completed my undergrad in ECE at IIT Roorkee. The resume detailing my experiences is present **[here](/assets/pdf/Curriculum%20Vitae%20Dheeraj%20Dhillon.pdf)**.
 
-I am looking for opportunities that will challenge me to solve meaningful problems by leveraging methodologies in my domain of study, spanning Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the applications or use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight. Consequently, I am even more excited to be part of and contribute to a startup.
+I am looking for opportunities that will challenge me to solve meaningful problems by leveraging methodologies in my domain of study, spanning Machine Learning, Natural Language Processing, and Reinforcement Learning. Some of the applications or use cases that fascinate me the most are locomotion, robotics, language models, and recommendation systems. I am always excited to be part of teams that will require me to punch above my weight. Consequently, naturally, I am even more excited to be part of and contribute to a startup.
 
 <!-- I am actively seeking internship opportunities for Summer and Fall 2026 to work as an ML researcher, applied scientist, or data scientist. Ping me on email or LinkedIn, I would be happy to connect! -->
 
 <!--fellow enthusiast to another-->
 #### Project work
-My [projects page](/projects) goes into extensive details on several of the projects I have worked on implementing RL and NLP methodologies. These projects range from policy optimization experiments on robotic locomotion and Atari control to post-training RLHF alignment of LLMs and autonomous driving. 
+My [projects page](/projects) expands on several of the projects I have worked on implementing RL and NLP methods. 
+<!-- These projects range from policy optimization experiments on robotic locomotion and Atari control to post-training RLHF alignment of LLMs and autonomous driving.  -->
 
 #### Research work
-InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025. See more details about [InfraNet](/projects/infranet) and read the published **[paper](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**. Find the IEEE eXplore [link](https://ieeexplore.ieee.org/document/11149967).
+During my undergraduate studies, I worked on a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. 
+I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
+
+**Paper**: InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025. See more [here](/projects/infranet),read the paper **[here](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**, and find the IEEE eXplore [here](https://ieeexplore.ieee.org/document/11149967).
 The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. Supervised by Prof. Vinod Pankajakshan at the
 Department of Electronics and Communication Engineering, IIT Roorkee.
 
@@ -43,8 +47,7 @@ Department of Electronics and Communication Engineering, IIT Roorkee.
   <img src="{{ '/assets/img/elephant_detection_results.png' | relative_url }}" alt="Elephant detection results from the IIT Roorkee thermal-imaging research project" loading="lazy" style="width: 100%; height: auto;">
 </figure> -->
 
-During my undergraduate studies, I worked on a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. 
-I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
+
 
 
 
