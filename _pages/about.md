@@ -34,7 +34,9 @@ My [projects page](/projects) expands on several of the projects I have worked o
 <!-- These projects range from policy optimization experiments on robotic locomotion and Atari control to post-training RLHF alignment of LLMs and autonomous driving.  -->
 
 #### Research work
-During my undergraduate studies, I worked on a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. Under supervision of my advising professor in my final year, we collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. 
+During my undergraduate studies, I worked on a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. 
+<!-- Under supervision of my advising professor in my final year,  -->
+We collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. 
 I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
 
 **Paper**: InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025. See more [here](/projects/infranet),read the paper **[here](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**, and find the IEEE eXplore [here](https://ieeexplore.ieee.org/document/11149967).
