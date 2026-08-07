@@ -38,7 +38,7 @@ During my undergraduate studies, I worked on a research project focused on real-
 I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
 
 **Paper**: InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025. See more [here](/projects/infranet),read the paper **[here](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**, and find the IEEE eXplore [here](https://ieeexplore.ieee.org/document/11149967).
-The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. I am grateful to have been supervised by Prof. Vinod Pankajakshan on this work, and more, at the
+The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. I am grateful to have been supervised by [Prof. Vinod Pankajakshan](https://iitr.ac.in/Departments/Electronics%20and%20Communication%20Engineering%20Department/People/Faculty/100564.html) on this work, and more, at the
 Department of Electronics and Communication Engineering, IIT Roorkee.
 
 <!-- #### Research at IIT Roorkee -->
