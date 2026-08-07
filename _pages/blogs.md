@@ -42,10 +42,6 @@ over at [spotify](https://open.spotify.com/user/316evrj3akm6ieuhefckw6kpj6eq?si=
 I am also working on a project to make the playlists better, more inclusive of songs, that you may not have already added to your spotify playlists. 
 My spotify insights dashboard can be found [here](/projects/spotify).
 
-#### Until It Sleeps
-When not typing: 007, Sopranos \\
-Dearest Author: Malcolm Gladwell \\
-Favorite Restaurant: Mom's Spaghetti
 
 <div class="projects projects-home" style="margin-bottom: 1.5rem;">
   {%- assign blog_projects = site.projects | where_exp: "project", "project.show_in_blog == true" | sort: "portfolio_order" -%}
@@ -53,8 +49,11 @@ Favorite Restaurant: Mom's Spaghetti
     {%- include project_feature.html project=project -%}
   {%- endfor -%}
 </div>
+
+I am always going to the top user of these apps here, but you can be the second! And suggest me how to make them more compelling!
+
 <!-- #### I am a cinephile
-I am always going to the top user of these apps here, but you can be the second!
+
 I have also created an app named as Cinefile. It takes in your preferences, remembers them, and gives you personalized recommendations of movies! Find the GitHub to it [here](https://github.com/djdhillxn/cinephile) which gives way to a flask application that can be run locally! -->
 
 Man, I see in Fight Club the strongest and smartest men who’ve ever lived. I see all this potential, and I see it squandered. Goddamn it, an entire generation pumping gas, waiting tables; slaves with white collars. Advertising has us chasing cars and clothes, working jobs we hate so we can buy shit we don’t need. We’re the middle children of history, man. No purpose or place. We have no Great War. No Great Depression. Our great war is a spiritual war. Our great depression is our lives. We’ve all been raised on television to believe that one day we’d all be millionaires, and movie gods, and rock stars, but we won’t. And we’re slowly learning that fact. And we’re very, very pissed off.
@@ -65,6 +64,12 @@ Man, I see in Fight Club the strongest and smartest men who’ve ever lived. I s
   <img src="{{ '/assets/img/hilltop.jpeg' | relative_url }}" alt="December 2022" loading="lazy" style="max-width: 25%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
   <figcaption style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">Somewhere near Ozran beach; Dil Chahta Hai; Dec 2022</figcaption>
 </figure>
+
+**Until It Sleeps**\
+When not typing: 007, Sopranos \\
+Dearest Author: Malcolm Gladwell \\
+Favorite Restaurant: Mom's Spaghetti
+
 
 #### Bangalore, and working at a startup in Bangalore
 
