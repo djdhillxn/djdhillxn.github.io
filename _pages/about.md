@@ -38,7 +38,7 @@ During my undergraduate studies, I worked on a research project focused on real-
 I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
 
 **Paper**: InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025. See more [here](/projects/infranet),read the paper **[here](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**, and find the IEEE eXplore [here](https://ieeexplore.ieee.org/document/11149967).
-The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. Supervised by Prof. Vinod Pankajakshan at the
+The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. I am grateful to have been supervised by Prof. Vinod Pankajakshan on this work, and more, at the
 Department of Electronics and Communication Engineering, IIT Roorkee.
 
 <!-- #### Research at IIT Roorkee -->
@@ -106,13 +106,13 @@ The topics range from broad areas of statistical algorithms, reinforcement learn
 [dheeraj_d@ec.iitr.ac.in](mailto:dheeraj_d@ec.iitr.ac.in) 
 
 <!-- [LinkedIn](https://www.linkedin.com/in/djdhillxn/) \  -->
-<!-- [Twitter](https://x.com/djdhillxn) \ -->
+<!-- [Twitter](https://x.com/djdhillxn) -->
 
 [g scholar](https://scholar.google.com/citations?user=njVX6ngAAAAJ&hl=en), [ORCID](https://orcid.org/0009-0002-0234-124X)
 , [IEEE Xplore](https://ieeexplore.ieee.org/author/542676216429361)
 
 <!-- I am also social with artistic licenses over here in my [blogs](/blogs). -->
-I am also social with creative licenses over here in my [blogs](/blogs).
+I am also social with creative licenses over here in my [blogs](/blogs) and the [tweeter](https://x.com/djdhillxn)!
 
 <!-- See overview in my [work blogs](/blogs). -->
 
