@@ -44,8 +44,12 @@ I was fortunate to start my career in the industry by working at a startup strai
 <!-- *CS224W: Machine Learning with Graphs* Jure Leskovec \\ -->
 <!-- *Statistics 110: Probability* Joe Blitzstein -->
 
-
-
+<div class="projects projects-home" style="margin-bottom: 2.5rem;">
+  {%- assign blog_projects = site.projects | where_exp: "project", "project.show_in_blog == true" | sort: "portfolio_order" -%}
+  {%- for project in blog_projects -%}
+    {%- include project_feature.html project=project -%}
+  {%- endfor -%}
+</div>
 
 #### I am a cinephile
 I am always going to the top user of these apps here, but you can be the second!

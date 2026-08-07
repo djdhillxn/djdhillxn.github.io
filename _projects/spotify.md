@@ -6,6 +6,7 @@ github: "https://github.com/djdhillxn/spotify"
 importance: -2
 category: NLP
 portfolio_order: 80
+show_in_blog: true
 portfolio_tags: [recommendation systems, data visualization, Jaccard similarity, Spotify API]
 portfolio_summary: |
   I built a static Spotify library intelligence dashboard from playlists, liked songs, artist metadata, and saved-track history. It summarizes playlist coverage, curation gaps, artist affinity, playlist diversity, overlap, and listening-memory patterns without requiring a live Spotify login.

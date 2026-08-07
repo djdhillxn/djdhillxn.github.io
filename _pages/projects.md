@@ -13,7 +13,7 @@ nav_order: 1
   </p>
   {%- assign sorted_projects = site.projects | sort: "portfolio_order" -%}
   {%- for project in sorted_projects -%}
-    {%- unless project.portfolio_exclude -%}
+    {%- unless project.portfolio_exclude or project.show_in_blog -%}
       {%- include project_feature.html project=project -%}
     {%- endunless -%}
   {%- endfor -%}
