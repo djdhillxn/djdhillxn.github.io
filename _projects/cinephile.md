@@ -9,7 +9,7 @@ portfolio_order: 90
 show_in_blog: true
 portfolio_tags: [contextual bandits, recommendation systems, N-of-1 system, exploratory ML, Flask]
 portfolio_summary: |
-  Cinephile is a contextual bandit-based movie recommendation engine designed as an N-of-1 system where recommendations are driven exclusively by your individual choices rather than collaborative filtering.
+  Along with being a stan for music, and also, a stan in the literal sense, as per what people say in the pop culture, I am also somewhat of a stan for movies myself, which I attribute to the good taste of movies my friends introduced me to. Also, on the main note, the project 'Cinephile' is a contextual bandit-based movie recommendation engine designed as an N-of-1 system where recommendations are driven exclusively by your individual choices rather than collaborative filtering.
 
   By focusing solely on the movie attributes you are drawn toward while integrating a highly tunable exploratory component, Cinephile ensures recommendations adapt to your evolving taste without trapping you in a repetitive feedback loop.
 ---
