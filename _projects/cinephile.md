@@ -24,3 +24,9 @@ portfolio_summary: |
 - **Contextual Bandit Core**: Learns multi-attribute feature representations of movies to estimate reward probabilities for your preferences.
 - **Tunable Exploration**: Uses exploration strategies (such as Upper Confidence Bound / Thompson Sampling balancing) to continuously surface new genres and hidden gems rather than converging into a narrow recommendation echo chamber.
 - **Local Application**: Built with a lightweight backend framework ([Flask](https://github.com/djdhillxn/cinephile)) that can easily be executed locally.
+
+## What's even new with this project?
+
+I take this rec engine as something that will take you out of your comfort zone. It is not your run-of-the-mill recommendation engine, firstly, it won't be that good to predicting what you would have liked also, movies that are almost so close adn similiar in plots and efverything, that you never challenge yourself to watch something new, but maybe you might atleast get some baroque and serendipitous suggestions from the probabilisitic saampling of movies that this recommendation engine does. 
+
+and also, this engine, unlike netflix, which doesn't even have a number of good shows, whcih have all been taken over by hbo, you never get any good suggestions, speaking from my own expericne. all you get is new, cute, and okay stuff whyich doesn't get an iota close to what the actual good stuff is, which maybe scattered over in the gazillion streaming platforms that are out there. i personally, am in my dog days, the graduate studnet days, where i can't be that prodigal, so i obvious look for sources to watch from platforms of questionable legality (if you're the po-po, i'm kidding). 

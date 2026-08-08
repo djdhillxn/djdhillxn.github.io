@@ -22,9 +22,9 @@ nav_order: 1
 
 <div class="portfolio-project-note" markdown="1">
 
-**This portfolio** A long term project in itself.
+**This portfolio**: A long term project in itself for me, and a dear one.
 
-Working on building this portfolio has brought back memories of childhood and refreshed my knowledge of certain computer languages that I was introduced to in secondary school in my 6th grade. These computer languages were the ones which inspired me to join the world of engineering. These languages are html and css.
+Working on building this portfolio has brought back memories of childhood and refreshed my knowledge of certain computer languages that I was introduced to in secondary school in my 6th grade. These computer languages were the ones that inspired me to join the world of engineering. These languages are html and css.
 
 Over the summer of 26, I also got to work on several passion projects included browser-side music retrieval systems, topic modeling over song lyrics, playlist recommendation heuristics, and contextual bandits for movie recommendations.
 
