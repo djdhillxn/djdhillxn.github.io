@@ -75,3 +75,10 @@ Favorite Restaurant: Mom's Spaghetti
 #### Bangalore, and working at a startup in Bangalore
 
 As I was leaving Bangalore, I knew I would get the change to go there after at least 6-7 years, and I would not hide the fact that I couldn't hold myself but shed a few bittersweet teers for it. A big silver lining was there, though, as the next stop was my home, Haryana. I was fortunate to start my career in the industry by working at a startup straight out of graduation, at [HiLabs](https://www.linkedin.com/company/hilabsinc/). I was lucky to learn under the supervision of a manager who gave me the confidence in my abilities to work on a myriad of problem statements. I became an expert in Git version control. The core product I worked on aimed to automate the ingestion of Medicaid/Medicare roster documents into databases in a standardized format, enabling data interoperability. I also had the opportunity to take on research tasks to extract information for these rosters and store it in structured formats, which I worked through using named entity recognition methods and information extraction methods.
+
+
+**This portfolio**: A long term project in itself for me, and a dear one.
+
+Working on building this portfolio has brought back memories of childhood and refreshed my knowledge of certain computer languages that I was introduced to in secondary school in my 6th grade. These computer languages were the ones that inspired me to join the world of engineering. These languages are html and css. I would also attribute David Fincher.
+
+<!-- Over the summer of 26, I also got to work on several passion projects included browser-side music retrieval systems, topic modeling over song lyrics, playlist recommendation heuristics, and contextual bandits for movie recommendations. -->

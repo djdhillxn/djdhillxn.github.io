@@ -7,6 +7,7 @@ importance: -1
 category: RL
 github: "https://github.com/djdhillxn/warfarin"
 portfolio_order: 70
+portfolio_exclude: True
 portfolio_tags: [contextual bandits, LinUCB, Thompson sampling, Lasso, interpretability]
 #portfolio_image: assets/img/warfarin_lasso_top_coefficients_by_arm.png
 #portfolio_image_alt: Sparse Lasso coefficient explanations for Warfarin dose arms
