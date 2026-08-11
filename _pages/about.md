@@ -34,14 +34,16 @@ My [projects page](/projects) expands on several of the projects I have worked o
 <!-- These projects range from policy optimization experiments on robotic locomotion and Atari control to post-training RLHF alignment of LLMs and autonomous driving.  -->
 
 #### Research work
-During my undergraduate studies, I worked on a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. 
-<!-- Under supervision of my advising professor in my final year,  -->
-We collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. 
-I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment.
+During my undergraduate studies, I worked on a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. The work was also published at IEEE International Conference on Advanced Visual and Signal-Based Systems (AVSS 2025). I am grateful to have been supervised by [Prof. Vinod Pankajakshan](https://iitr.ac.in/Departments/Electronics%20and%20Communication%20Engineering%20Department/People/Faculty/100564.html) on this work, and more, at the Department of Electronics and Communication Engineering, IIT Roorkee. Read more [here](/projects/infranet).
 
-**Paper**: InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025. See more [here](/projects/infranet),read the paper **[here](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**, and find the IEEE eXplore [here](https://ieeexplore.ieee.org/document/11149967).
-The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch. I am grateful to have been supervised by [Prof. Vinod Pankajakshan](https://iitr.ac.in/Departments/Electronics%20and%20Communication%20Engineering%20Department/People/Faculty/100564.html) on this work, and more, at the
-Department of Electronics and Communication Engineering, IIT Roorkee.
+
+<!-- Under supervision of my advising professor in my final year,  -->
+
+<!-- We collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. 
+I devised an ensemble approach using four preprocessed variants with a lightweight pretrained model, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment. -->
+
+<!-- **Paper**: InfraNet: An Ensemble Approach for Real-time Wildlife Detection using Infrared Thermal Imaging, IEEE AVSS August 2025. See more [here](/projects/infranet),read the paper **[here](/assets/pdf/InfraNet%20-%20AVSS%202025.pdf)**, and find the IEEE eXplore [here](https://ieeexplore.ieee.org/document/11149967).
+The source code is available at the [infrared](https://github.com/djdhillxn/infrared/tree/pipeline) repo on the pipeline branch.  -->
 
 <!-- #### Research at IIT Roorkee -->
 

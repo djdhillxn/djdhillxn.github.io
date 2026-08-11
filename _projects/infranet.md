@@ -14,13 +14,13 @@ portfolio_tags:
 portfolio_image: assets/img/elephant_detection_results.png
 portfolio_image_alt: Elephant detection results from thermal-imaging research
 portfolio_summary: |
-  This project aimed to develop real-time elephant detection systems through the use of infrared thermal data for the mitigation of human-elephant conflicts prevelant in various parts of India. We collected and annotated 50,694 thermal frames with humans, elephants, and other animals across varied field conditions with temperatures, occlusions, and foliage. To improve recall performance of the challenging dataset, we evaluated the impact of various preprocessing techniques on the input thermal frames. 
+  This project aimed to develop real-time elephant detection system through the use of infrared thermal data for the mitigation of human-elephant conflicts prevelant in various parts of India. We collected and annotated 50,694 thermal frames with humans, elephants, and other animals across varied field conditions with temperatures, occlusions, and foliage. To improve recall performance of the challenging dataset, we evaluated the impact of various preprocessing techniques on the input thermal frames. 
   
   We found that inversion and bilateral filtering were the most effective techniques, improving contrast and reducing noise, respectively. Combining these techniques yielded even stronger results. Ultimately, we devised an ensemble approach to aggregate predictions from four preprocessed variants with a moderate-sized pretrained model, YOLOv8m, increasing elephant recall on the dataset from 0.35 to 0.62, striking a balance between improved recall and fast inference latency crucial for real-time deployment. 
 
 ---
 
-During my undergraduate studies, I worked on a research project focused on real-time elephant detection using thermal imaging to mitigate human-elephant conflict. 
+This project aimed to develop real-time elephant detection system using thermal imaging to mitigate human-elephant conflict. 
 <!-- Under supervision of my advising professor in my senior year,  -->
 We collected and annotated a dataset of 50,694 thermal frames which included instances of humans, elephants, and other animals. The dataset covered varied and challenging environmental conditions, allowing us to test how different modeling choices generalized across settings. 
 
