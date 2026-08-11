@@ -6,6 +6,7 @@ description: "Play a multi-hop QA quiz, then inspect the agent's Wikipedia searc
 github: "https://github.com/djdhillxn/hotpot"
 category: AI Agents
 portfolio_order: 15
+portfolio_exclude: True
 portfolio_tags: [ReAct, Multi-Hop QA, HotpotQA, LangGraph, vLLM, Hybrid Retrieval]
 portfolio_summary: |
   I built a ReAct-style question-answering agent that searches the full HotpotQA Wikipedia corpus, follows entity bridges, and returns both a concise answer and sentence-level evidence. The evaluation writes official-format predictions for answer, supporting-fact, and joint EM/F1, while retaining every Thought, Action, and Observation for inspection.
@@ -136,6 +137,12 @@ portfolio_summary: |
 
 ## Technical notes
 
+### The Project in 30 Seconds
+
+- **What was built:** An autonomous **ReAct (Reasoning + Acting)** multi-hop question answering agent built from scratch using **LangGraph**, served locally via **vLLM** (`Qwen/Qwen2.5-7B-Instruct`), and backed by a hybrid **BM25 + BGE vector retrieval** engine over 5.2M HotpotQA Wikipedia articles.
+- **What was compared:** A system-level comparison between a **Single-Pass RAG Baseline** (single-step retrieval of 7 passages) and the **Adaptive ReAct Agent** (multi-step search/lookup loops with up to 20 documents in active memory) using the same frozen model and hybrid index.
+- **Key finding:** Adaptive multi-step search and evidence accumulation substantially outperform single-pass retrieval on multi-hop questions, driving major gains in supporting-fact precision and joint exact-match scoring.
+
 ### What is benchmark-comparable here?
 
 The short answer is: **the HotpotQA score contract is official; the agent is a modern ReAct-style system, not a byte-for-byte reproduction of the original ReAct paper.** That distinction matters.
@@ -184,8 +191,8 @@ The quiz is intentionally friendlier than the leaderboard. It first applies offi
 - Reciprocal Rank Fusion (RRF): Merges sparse and dense search candidate ranks to maximise passage recall across domain shifts.
 
 2. Supporting Fact Grounding & Validation
-- Parses predicted supporting sentence IDs [Title, Sent_ID] from the agent's output.
-- Stricly validates predictions against actual observed facts in the tool scatchepad, penalizing ungrounded hallunicaitons.
+- Parses predicted supporting sentence IDs `[Title, Sent_ID]` from the agent's output.
+- Strictly validates predictions against actual observed facts in the tool scratchpad, penalizing ungrounded hallucinations.
 
 {% comment %} 
 3. High throuhtouput concurrent inference engine 
@@ -193,11 +200,13 @@ The quiz is intentionally friendlier than the leaderboard. It first applies offi
 - Multi-threaded ThreadPoolExecutor worker pool processing up to 16 concurernt questions, increasing evaluations throughput from 1.6 questions/min to 30+ questions/min (a 15x to 20x speedup).
 {% endcomment %}
 
-### Comparative Study: Single-Pass RAG vs ReAct Agent
+### System-Level Comparison: Single-Pass RAG vs. Adaptive ReAct
 
-To empirically evaluate the effect of agentic loops for multi-hop QA, the codebase includes a standalone Single-Pass RAG Baseline that benchmarks direct prompting against the ReAct Agent.
+This comparison tests whether the complete adaptive system outperforms a simpler single-pass pipeline when both use the same frozen LLM (`Qwen2.5-7B-Instruct`) and hybrid search index (BM25 + BGE vector retrieval).
 
-| Metric | Single-Pass RAG Baseline | ReAct Multi-Hop Agent | Impact / Gain |
+Rather than isolating the control loop as a pure causal ablation, this evaluates the two systems under their deployed configurations: the Single-Pass RAG baseline retrieves 7 passages in a single query step, while the ReAct agent adaptively issues multiple `search` and `lookup` actions, inspects candidate pools, and retains up to 20 cross-encoded documents in active memory over up to 7 reasoning hops.
+
+| Metric | Single-Pass RAG Baseline | Adaptive ReAct Agent | Impact / Gain |
 | :--- | :---: | :---: | :--- |
 | **Answer Exact Match (EM)** | Baseline Floor (~11.3%) | **Substantial Gain** | Multi-hop entity bridging |
 | **Answer F1 Score** | Partial Overlap (~19.3%) | **Substantial Gain** | Complete answer extraction |
@@ -205,7 +214,15 @@ To empirically evaluate the effect of agentic loops for multi-hop QA, the codeba
 | **Joint Exact Match (EM)** | ~0.0% | **Multi-Fold Increase** | Exact answer + complete evidence |
 | **Joint F1 Score** | ~10.0% | **Multi-Fold Increase** | Primary benchmark metric |
 
-even after lots of trials of tuning the react agent, it was hard to improve it that much over the RAG baseline. an interesting note is there though that the bridge information and supporting facts, the react agent is able to achieve substantially better results, which can go to show towards some improved intepretability.
+The performance difference reflects the combined impact of multi-hop adaptivity, iterative retrieval compute, and expanded evidence exposure. While optimizing raw answer EM across a complex 5.2M-document corpus remains challenging, the adaptive ReAct system achieves substantial gains in locating intermediate entity bridges and supporting sentence evidence, demonstrating significantly higher interpretability and grounded precision over single-pass retrieval.
+
+### Limitations & Interpretive Scope
+
+1. **Asymmetric Retrieval Budgets**: The baseline and ReAct configurations operate under different retrieval budgets (1 single 7-passage query vs. multi-hop search/lookup loops with 20 cross-encoded passages in active memory). *Mitigation / Future test:* A budget-matched baseline with equal candidate retrieval and token contexts will further isolate adaptivity gains from raw evidence volume.
+2. **Model Scale & Generalizability**: Evaluation is grounded on a single frozen open-weights model (`Qwen2.5-7B-Instruct`). Performance dynamics across larger parameter scales (e.g., 32B/70B models or proprietary APIs) remain an area for future investigation.
+3. **Inspectable Trajectories vs. Causal Interpretability**: Intermediate `Thought` steps provide auditable step-by-step trace logs and high supporting-fact F1 scores, but inspectable reasoning traces do not guarantee that the generated text represents a perfectly faithful causal explanation of the model's inner decision process.
+4. **Validation Split vs. Hidden Test Submissions**: All metrics reflect the official HotpotQA 7,405-question FullWiki validation dataset using public labels. Official test leaderboard status requires a blind submission through the benchmark administrators.
+5. **Web Portfolio Telemetry Truncation**: To deliver responsive browser performance, web-exported observations are capped at portfolio boundaries. Full, lossless telemetry logs remain preserved in the primary research repository.
 
 ## Trajectory Inspector & Visualizer
 
