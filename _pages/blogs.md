@@ -70,6 +70,7 @@ Man, I see in Fight Club the strongest and smartest men who’ve ever lived. I s
 When not typing: 007, Sopranos \\
 Dearest Author: Malcolm Gladwell \\
 Favorite Restaurant: Mom's Spaghetti
+Tokyo Drift: Bandoleros
 
 
 #### Bangalore, and working at a startup in Bangalore
