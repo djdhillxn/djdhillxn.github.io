@@ -106,15 +106,6 @@
     return { kind: 'incorrect', label: 'Different answer', detail: '' };
   }
 
-  function fisherYates(values) {
-    const copy = values.slice();
-    for (let index = copy.length - 1; index > 0; index -= 1) {
-      const swap = Math.floor(Math.random() * (index + 1));
-      [copy[index], copy[swap]] = [copy[swap], copy[index]];
-    }
-    return copy;
-  }
-
   function asNumber(value) {
     if (value === null || value === undefined || value === '') return null;
     const number = Number(value);
@@ -368,6 +359,8 @@
       this.input = root.querySelector('[data-hotpot-answer]');
       this.submitButton = root.querySelector('[data-hotpot-submit]');
       this.nextButton = root.querySelector('[data-hotpot-next]');
+      this.previousButton = root.querySelector('[data-hotpot-previous]');
+      this.randomButton = root.querySelector('[data-hotpot-random]');
       this.result = root.querySelector('[data-hotpot-result]');
       this.verdict = root.querySelector('[data-hotpot-verdict]');
       this.verdictNote = root.querySelector('[data-hotpot-verdict-note]');
@@ -407,6 +400,7 @@
         this.input.disabled = false;
         this.submitButton.disabled = false;
         this.nextButton.disabled = false;
+        this.randomButton.disabled = this.filtered.length < 2;
         if (this.dataStatus) {
           this.dataStatus.classList.toggle('is-demo', this.demo);
           this.dataStatus.textContent = this.demo
@@ -428,6 +422,8 @@
         this.checkAnswer();
       });
       this.nextButton.addEventListener('click', () => this.nextQuestion());
+      this.previousButton.addEventListener('click', () => this.previousQuestion());
+      this.randomButton.addEventListener('click', () => this.randomQuestion());
       this.filter.addEventListener('change', () => this.applyFilter(this.filter.value));
     }
 
@@ -463,18 +459,30 @@
         this.filter.value = 'all';
         this.filtered = this.examples.slice();
       }
-      this.order = fisherYates(this.filtered.map((_, index) => index));
+      this.order = this.filtered.map((_, index) => index);
       this.position = 0;
       this.renderQuestion();
     }
 
     nextQuestion() {
       if (!this.order.length) return;
-      this.position += 1;
-      if (this.position >= this.order.length) {
-        this.order = fisherYates(this.order);
-        this.position = 0;
+      this.position = (this.position + 1) % this.order.length;
+      this.renderQuestion();
+    }
+
+    previousQuestion() {
+      if (!this.order.length || this.position === 0) return;
+      this.position -= 1;
+      this.renderQuestion();
+    }
+
+    randomQuestion() {
+      if (this.order.length < 2) return;
+      let nextPosition = this.position;
+      while (nextPosition === this.position) {
+        nextPosition = Math.floor(Math.random() * this.order.length);
       }
+      this.position = nextPosition;
       this.renderQuestion();
     }
 
@@ -493,6 +501,8 @@
       this.submitButton.disabled = false;
       this.submitButton.textContent = 'Check answer';
       this.nextButton.textContent = 'Different question';
+      this.previousButton.disabled = this.position === 0;
+      this.randomButton.disabled = this.order.length < 2;
       this.result.hidden = true;
       this.trace.hidden = true;
       this.traceDetails.open = false;
