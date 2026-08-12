@@ -6,7 +6,7 @@ description: "Play a multi-hop QA quiz, then inspect the agent's Wikipedia searc
 github: "https://github.com/djdhillxn/hotpot"
 category: AI Agents
 portfolio_order: 15
-portfolio_exclude: True
+portfolio_exclude: False
 portfolio_tags: [ReAct, Multi-Hop QA, HotpotQA, LangGraph, vLLM, Hybrid Retrieval]
 portfolio_summary: |
   I built a ReAct-style question-answering agent that searches the full HotpotQA Wikipedia corpus, follows entity bridges, and returns both a concise answer and sentence-level evidence. The evaluation writes official-format predictions for answer, supporting-fact, and joint EM/F1, while retaining every Thought, Action, and Observation for inspection.
