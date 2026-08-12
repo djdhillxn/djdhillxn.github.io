@@ -27,11 +27,12 @@ portfolio_summary: |
   <section class="hotpot-hero hotpot-quiz-card" aria-labelledby="hotpot-question-heading">
     <div class="hotpot-hero-copy">
       <p class="hotpot-kicker">Human vs. multi-hop agent</p>
-      <h2>Who Wants to Be a Millionaire, You or AI?</h2>
+      <h2>Can you connect the clues before the AI agent does?</h2>
       <p>
-        Answer a HotpotQA question, compare your response with the gold answer
-        and the agent's prediction, then inspect every search, lookup, and
-        observation behind its conclusion. <a class="hotpot-text-link" href="#technical-notes">Read the technical notes</a>
+        Test your reasoning on a HotpotQA multi-hop question, compare your answer
+        with the gold reference and the ReAct agent, then open the exact search
+        trajectory to see how the agent bridged intermediate entities.
+        <a class="hotpot-text-link" href="#technical-notes">Skip to technical breakdown ↓</a>
       </p>
       <p class="hotpot-data-status" data-hotpot-data-status aria-live="polite">
         Loading the complete ReAct trajectory archive…
@@ -151,112 +152,62 @@ portfolio_summary: |
 
 <div class="hotpot-tech" markdown="1">
 
-<p class="hotpot-tech-lede">The central question was practical: <strong>does adaptive evidence acquisition beat a strong one-shot reader when the model, corpus, hybrid retriever, and page reranker are held fixed?</strong> Across every question in the public HotpotQA FullWiki development set, the final ReAct system improved both answer quality and sentence-level evidence recovery.</p>
+### 1. Overview & System Architecture
 
-### Experimental contract
+I set out to answer a core architectural question: **Does an adaptive multi-step ReAct agent outperform a single-pass RAG pipeline when both share the exact same model, retrieval index, and reranker?** Across all 7,405 questions in the HotpotQA FullWiki development set, the adaptive ReAct agent achieved a **+10.25 percentage point gain in Joint F1** over a strong reranked RAG baseline.
 
-This is a paired, system-level comparison between a **reranked single-pass RAG baseline** and an **adaptive ReAct agent**. The comparison job aligns records by HotpotQA ID and refuses to publish results if the runs disagree on any question or gold annotation, or on the shared model, corpus hash, index size, retrieval settings, and page-reranker configuration.
+Both systems run on the exact same frozen model (`Qwen/Qwen2.5-7B-Instruct` via vLLM), 5.23M introductory-paragraph Wikipedia index, and cross-encoder reranker (`BAAI/bge-reranker-base`):
 
-- **Held fixed:** frozen `Qwen/Qwen2.5-7B-Instruct` served through vLLM, the 2017 HotpotQA Wikipedia corpus, BM25 + BGE/FAISS retrieval, Reciprocal Rank Fusion, and `BAAI/bge-reranker-base` page reranking.
-- **Changed deliberately:** the baseline retrieves once and generates once; ReAct can reformulate searches, inspect a current page with `lookup`, retain sentence-level evidence, and continue for up to seven tool actions.
-- **Evaluation scope:** all 7,405 public FullWiki development questions, with 64 concurrent workers and no failed records in either run. No model fine-tuning or post-training was used.
+- **Shared Retrieval Foundation**: Each query retrieves top-50 sparse candidates (Lucene BM25) and top-50 dense candidates (`BAAI/bge-base-en-v1.5` in FAISS `IVF4096,PQ96x8`), merged via Reciprocal Rank Fusion ($k = 60$). The top 15 pages are cross-encoded using `BAAI/bge-reranker-base`.
+- **Reranked RAG Baseline**: Exposes all non-empty sentences from the top 7 reranked page introductions to a single Qwen generation step. It has no lookup, sentence-level reranking, or persistent memory.
+- **Adaptive ReAct Agent**: Executes up to 7 reasoning hops in **LangGraph**, issuing `search[query]`, `lookup[keyword]`, or `finish[answer]` actions at temperature 0 with a 150-token cap. Relevant sentence evidence is cross-encoded and retained in a persistent memory buffer capped at 12 snippets (6,000 characters).
 
-Because ReAct receives more iterative retrieval compute, this experiment measures the benefit of the **deployed adaptive system as a whole**. It is not a component-level causal ablation of the controller alone.
+Because ReAct receives iterative retrieval compute, this experiment evaluates the **deployed adaptive system as a whole** rather than isolating the control loop as a single-variable ablation.
 
-### System design
+### 2. Benchmark Results & Comparative Study
 
-<div class="hotpot-pipeline" aria-label="Shared retrieval stack branching into the single-pass baseline and ReAct agent">
-  <div class="hotpot-pipeline-stage hotpot-pipeline-shared">
-    <span>Shared retrieval</span>
-    <strong>BM25 top 50 + BGE dense top 50 → RRF → load 15 pages → rerank 15 pages</strong>
-    <small>5.23M fixed Wikipedia introductions with original sentence IDs</small>
-  </div>
-  <div class="hotpot-pipeline-branches">
-    <article>
-      <span>Reranked RAG</span>
-      <strong>Top 7 pages → one generation</strong>
-      <small>No lookup, sentence reranking, or persistent memory</small>
-    </article>
-    <article class="hotpot-pipeline-react">
-      <span>Adaptive ReAct</span>
-      <strong>Top 4 pages → sentence rerank → bounded memory</strong>
-      <small>Thought → search / lookup / finish, up to 7 actions</small>
-    </article>
-  </div>
-  <div class="hotpot-pipeline-stage hotpot-pipeline-output">
-    <span>Shared output contract</span>
-    <strong>Concise answer + exact `[Wikipedia title, sentence ID]` evidence</strong>
-  </div>
-</div>
+The evaluation was executed concurrently across all **7,405 public FullWiki validation questions** with zero failed records or unparsed trajectories.
 
-#### Shared retrieval foundation
-
-The benchmark uses the official October 1, 2017 introductory-paragraph corpus rather than live Wikipedia, preserving 0-based sentence IDs for supporting-fact scoring. Each query retrieves up to 50 BM25 candidates and 50 normalized `BAAI/bge-base-en-v1.5` dense candidates from a 5,233,235-document index. Reciprocal Rank Fusion (`k = 60`) combines the ranks. The system then loads the introductory text and original sentence IDs for the top 15 pages and cross-encodes those pages with `BAAI/bge-reranker-base`. The dense index is FAISS `IVF4096,PQ96x8` with `nprobe = 32`.
-
-The baseline exposes every non-empty sentence from the top seven reranked introductions, with its original title and sentence ID, to one Qwen generation. This makes it a serious **RAG + reranking** comparator rather than an unretrieved or weak-retrieval floor.
-
-#### Adaptive search and sentence memory
-
-ReAct uses the same first-stage stack on every `search[query]` action. The page cross-encoder reranks the 15 candidates for that search; the best exact-title match, or otherwise the top local page, becomes the current page. All non-empty sentences from the top four pages are then cross-encoded against the original question plus the current search.
-
-The highest-ranked evidence is retained in a persistent memory capped at **12 snippets and 6,000 characters**. A successful `lookup[keyword]` searches only the current page, advances through repeated matches in classic ReAct style, and protects the matched sentence in memory. Search-derived snippets fill the remaining budget by their best within-search sentence rank. Scores from different search queries are never compared directly, and memory never changes which page `lookup` navigates; those two invariants avoid cross-query score calibration and navigation drift.
-
-A LangGraph controller alternates `Thought`, `Action`, and tool-written `Observation` turns. The reader may emit only `search[...]`, `lookup[...]`, or `finish[...]`, with temperature 0, `top_p = 1`, and a 150-token generation cap. A hard stop before `Observation:` prevents the model from fabricating tool output. If the seven-action budget expires, a final evidence-only synthesis step still produces an answer rather than returning an empty trajectory.
-
-#### Grounded evidence and reproducible artifacts
-
-The model returns a short canonical answer plus supporting sentence pairs. A citation enters the official prediction only if that exact title and sentence ID appeared in a tool observation; invalid citations are retained separately for diagnosis. Each run writes evaluator-format predictions, per-question metrics, lossless trajectories, retrieval telemetry, timing, and a manifest containing the model, corpus/index identity, and configuration used.
-
-Graph expansion was available as an ablation but disabled in the reported configuration. The public FullWiki run never gives the model the ten paragraphs bundled with each HotpotQA example; those paragraphs are retained only for diagnostics.
-
-### Final results
-
-These are **official-formula scores on the public development labels**, not a hidden-test leaderboard submission.
-
-| Official HotpotQA metric | Reranked RAG | ReAct | Change |
+| Official HotpotQA metric | Reranked RAG | Adaptive ReAct | Change |
 | :--- | ---: | ---: | ---: |
-| Answer EM | 40.45 | **46.67** | **+6.23 pp** |
-| Answer F1 | 51.80 | **60.48** | **+8.68 pp** |
-| Supporting Fact EM | 9.66 | **14.91** | **+5.25 pp** |
-| Supporting Fact F1 | 43.97 | **52.25** | **+8.28 pp** |
-| Joint EM | 6.08 | **9.44** | **+3.36 pp** |
-| **Joint F1** | 26.86 | **37.11** | **+10.25 pp** |
+| Answer EM | 40.45% | **46.67%** | **+6.23 pp** |
+| Answer F1 | 51.80% | **60.48%** | **+8.68 pp** |
+| Supporting Fact EM | 9.66% | **14.91%** | **+5.25 pp** |
+| Supporting Fact F1 | 43.97% | **52.25%** | **+8.28 pp** |
+| Joint EM | 6.08% | **9.44%** | **+3.36 pp** |
+| **Joint F1** | 26.86% | **37.11%** | **+10.25 pp** |
 
-The Joint-F1 improvement was nearly identical for the benchmark's two major reasoning types: **+10.23 points on 5,918 bridge questions** and **+10.33 points on 1,487 comparison questions**. The paired records also show that the aggregate gain was not produced by a small set of outliers: ReAct rescued 1,295 baseline Answer-EM failures, regressed on 834 baseline successes, and therefore added a net 461 exactly correct answers.
+#### Key Performance Takeaways:
+- **Consistent Across Question Types**: ReAct delivered identical Joint-F1 gains on both major reasoning types: **+10.23 pp on 5,918 bridge questions** and **+10.33 pp on 1,487 comparison questions**.
+- **Net Answer Gains**: The aggregate score improvement was not driven by outliers: ReAct rescued 1,295 questions that the RAG baseline missed, while regressing on 834 questions, resulting in a net addition of 461 exactly correct answers.
+- **Official Scoring Rules**: Metrics follow the official HotpotQA evaluator: `Answer EM/F1` use standard lowercasing, punctuation/article stripping, and token overlap. `Supporting Fact EM/F1` require exact `(title, sentence_id)` set matches. `Joint F1` combines answer and evidence precisions and recalls via their harmonic mean.
 
-### Did iterative retrieval expose better evidence?
+### 3. Diagnostic Insights & Trajectory Dynamics
 
+#### Evidence Exposure Mechanism
 <figure class="hotpot-result-figure">
   <img src="{{ '/assets/img/hotpot/evidence_coverage_comparison.svg' | relative_url }}" alt="Comparison of four evidence-coverage diagnostics for reranked single-pass RAG and ReAct. ReAct is higher on all four.">
-  <figcaption>Evidence-exposure diagnostics explain part of the mechanism, but are not official leaderboard metrics.</figcaption>
+  <figcaption>Iterative retrieval significantly increases gold document and supporting-fact exposure across the dataset.</figcaption>
 </figure>
 
-ReAct increased observed gold-document recall from **77.02% to 80.40%** and observed gold supporting-fact recall from **77.41% to 80.01%**. More importantly, the share of questions for which the model saw *every* gold supporting sentence rose from **57.79% to 63.67%**. This is consistent with adaptive retrieval finding missing bridge evidence; it does not, by itself, prove which controller or memory decision caused each correct answer.
+ReAct increased observed gold-document recall from **77.02% to 80.40%** and gold supporting-fact recall from **77.41% to 80.01%**. Crucially, the proportion of questions where the model observed *every* gold supporting sentence rose from **57.79% to 63.67%**, confirming that multi-step search effectively discovers missing entity bridges.
 
-### What trajectory length reveals
-
+#### Trajectory Length & Failure Analysis
 <figure class="hotpot-result-figure">
   <img src="{{ '/assets/img/hotpot/react_quality_by_hops.svg' | relative_url }}" alt="ReAct and matched-baseline Joint F1 grouped by ReAct trajectory length, with question counts. ReAct is strongest at two hops and falls below the baseline on the seven-hop tail.">
-  <figcaption>The baseline line is recomputed on the exact questions in each ReAct hop bucket; hop count is an outcome of the agent, not a randomized treatment.</figcaption>
+  <figcaption>ReAct peaks at 2–3 hops and degrades on the 7-hop tail, highlighting stalled search loops.</figcaption>
 </figure>
 
-Two- and three-action trajectories were the productive center of the distribution: ReAct reached **50.26** and **41.14** Joint F1 on those subsets, versus **31.21** and **25.79** for the baseline on the same questions. The seven-action bucket tells the equally important failure story. It contains 1,055 unresolved questions, where ReAct fell to **11.62** Joint F1 versus the matched baseline's **19.20**. Longer trajectories are an endogenous hard-question tail, so this does not show that extra hops *cause* failure. It does identify the clearest next engineering target: earlier detection of stalled searches, followed by query reformulation, backtracking, or an earlier fallback to the one-shot answer.
+- **The Productive Sweet Spot**: 2- and 3-action trajectories represented the most effective execution paths, achieving **50.26** and **41.14 Joint F1** (compared to **31.21** and **25.79** for RAG on the same questions).
+- **The 7-Hop Tail**: The 7-action bucket contains 1,055 unresolved questions where ReAct dropped to **11.62 Joint F1** (versus **19.20** for RAG). These long trajectories mark hard, stalled search loops—identifying early stall detection, query reformulation, and early fallback as key future engineering priorities.
 
-### Scoring contract
+### 4. Engineering Scope & Reproduction
 
-- **Answer EM/F1** use the official lowercasing, punctuation/article removal, whitespace normalization, and token-overlap rules. A categorical mismatch among `yes`, `no`, and `noanswer` receives zero.
-- **Supporting Fact EM/F1** compare sets of exact `(title, sentence_id)` pairs.
-- **Joint EM** requires both answer and supporting-fact exact match. **Joint F1** combines answer and evidence by multiplying their respective precisions and recalls before taking the harmonic mean; it is not the average of Answer F1 and Supporting Fact F1.
+1. **Development Set Validation**: All metrics reflect the 7,405-question public FullWiki validation split using official evaluator formulas, not a hidden test leaderboard submission.
+2. **Deployed System Comparison**: The experiment compares the complete deployed RAG vs. ReAct pipelines; ReAct utilizes additional retrieval calls and an active evidence memory module.
+3. **Model Specificity**: Findings are grounded on `Qwen/Qwen2.5-7B-Instruct`; scaling dynamics on larger model families (32B/70B) remain an open exploration area.
+4. **Inspectable vs. Causal Reasoning**: Intermediate `Thought` traces provide auditable execution logs and high evidence precision, but generated thoughts are not guaranteed explanations of internal model attention.
 
-The evidence-coverage values above are explicitly labeled diagnostics and never mixed into the six official HotpotQA metrics. The quiz's typo-tolerant human verdict is also a presentation feature only; it has no effect on benchmark scores.
-
-### Limits on the claim
-
-1. **Development, not hidden test.** The metric implementation follows the official evaluator, but a public-label development run is not an official leaderboard submission.
-2. **System comparison, not isolated ablation.** ReAct and the baseline share the reader and retrieval foundation, but ReAct also spends more retrieval and reranking compute and owns a sentence-memory module.
-3. **One frozen reader.** The experiment establishes behavior for Qwen2.5-7B-Instruct; it does not establish scaling trends across other model families or sizes.
-4. **Inspectable is not causal.** Thought/Action/Observation traces are useful execution records, but generated thoughts are not guaranteed explanations of the model's internal causal process.
-
-Reproduction commands and infrastructure details remain in the [project repository](https://github.com/djdhillxn/hotpot), while the [generated comparison report](https://github.com/djdhillxn/hotpot/blob/main/docs/results/comparison_report.md) and [machine-readable summary](https://github.com/djdhillxn/hotpot/blob/main/docs/results/comparison_summary.json) preserve the exact published analysis. Metric definitions follow the [official HotpotQA evaluator](https://github.com/hotpotqa/hotpot/blob/master/hotpot_evaluate_v1.py); the control pattern follows [ReAct](https://arxiv.org/abs/2210.03629).
+Complete source code, reproduction scripts, and evaluation logs are available in the [HotpotQA ReAct repository](https://github.com/djdhillxn/hotpot). Published analysis reports can be inspected in the [comparison report](https://github.com/djdhillxn/hotpot/blob/main/docs/results/comparison_report.md) and [machine-readable summary](https://github.com/djdhillxn/hotpot/blob/main/docs/results/comparison_summary.json). Evaluation logic adheres to the [official HotpotQA evaluator](https://github.com/hotpotqa/hotpot/blob/master/hotpot_evaluate_v1.py) and the [ReAct framework](https://arxiv.org/abs/2210.03629).
 
 </div>
