@@ -27,7 +27,7 @@ portfolio_summary: |
   <section class="hotpot-hero hotpot-quiz-card" aria-labelledby="hotpot-question-heading">
     <div class="hotpot-hero-copy">
       <p class="hotpot-kicker">Human vs. multi-hop agent</p>
-      <h2>Make your call—then audit the agent's evidence trail.</h2>
+      <h2>Who Wants to Be a Millionaire, You or AI?</h2>
       <p>
         Answer a HotpotQA question, compare your response with the gold answer
         and the agent's prediction, then inspect every search, lookup, and
@@ -69,8 +69,16 @@ portfolio_summary: |
           disabled
         >
         <button type="submit" data-hotpot-submit disabled>Check answer</button>
-        <button type="button" class="hotpot-button-secondary" data-hotpot-next disabled>
-          Different question
+        <div class="hotpot-next-stack">
+          <button type="button" class="hotpot-button-secondary" data-hotpot-next disabled>
+            Different question
+          </button>
+          <button type="button" class="hotpot-previous-link" data-hotpot-previous disabled>
+            ← Previous question
+          </button>
+        </div>
+        <button type="button" class="hotpot-button-secondary" data-hotpot-random disabled>
+          Random question
         </button>
       </div>
       <p class="hotpot-answer-hint">

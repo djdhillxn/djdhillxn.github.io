@@ -184,7 +184,13 @@
 .hotpot-answer-row {
   display: grid;
   gap: 0.6rem;
-  grid-template-columns: minmax(180px, 1fr) auto auto;
+  grid-template-columns: minmax(180px, 1fr) auto auto auto;
+}
+
+.hotpot-next-stack {
+  align-items: center;
+  display: grid;
+  gap: 0.18rem;
 }
 
 .hotpot-answer-form input {
@@ -222,6 +228,24 @@
   background: transparent;
   border-color: var(--hotpot-border);
   color: var(--hotpot-ink);
+}
+
+.hotpot-answer-form button.hotpot-previous-link {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--hotpot-muted);
+  font-size: 0.68rem;
+  font-weight: 650;
+  justify-self: start;
+  min-height: auto;
+  padding: 0.08rem 0.2rem;
+}
+
+.hotpot-answer-form button.hotpot-previous-link:hover:not(:disabled) {
+  filter: none;
+  text-decoration: underline;
+  transform: none;
 }
 
 .hotpot-answer-form button:disabled,
@@ -560,11 +584,16 @@
   }
 
   .hotpot-answer-row {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .hotpot-answer-row .hotpot-button-secondary {
+  .hotpot-answer-row > input {
     grid-column: 1 / -1;
+  }
+
+  .hotpot-answer-row > button,
+  .hotpot-next-stack > button:not(.hotpot-previous-link) {
+    width: 100%;
   }
 
   .hotpot-answer-comparison {
@@ -594,10 +623,6 @@
 
   .hotpot-answer-row {
     grid-template-columns: 1fr;
-  }
-
-  .hotpot-answer-row .hotpot-button-secondary {
-    grid-column: auto;
   }
 
   .hotpot-trace details > summary {
