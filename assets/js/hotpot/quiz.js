@@ -2,14 +2,6 @@
   'use strict';
 
   const CATEGORICAL_ANSWERS = new Set(['yes', 'no', 'noanswer']);
-  const METRIC_DEFINITIONS = [
-    ['Answer EM', 'answer_em'],
-    ['Answer F1', 'answer_f1'],
-    ['Support EM', 'supporting_fact_em'],
-    ['Support F1', 'supporting_fact_f1'],
-    ['Joint EM', 'joint_em'],
-    ['Joint F1', 'joint_f1'],
-  ];
 
   function officialNormalize(value) {
     return String(value || '')
@@ -110,13 +102,6 @@
     if (value === null || value === undefined || value === '') return null;
     const number = Number(value);
     return Number.isFinite(number) ? number : null;
-  }
-
-  function formatRunPercent(value) {
-    const number = asNumber(value);
-    if (number === null) return 'Pending';
-    const percent = number >= 0 && number <= 1 ? number * 100 : number;
-    return `${percent.toFixed(1)}%`;
   }
 
   function formatExamplePercent(value) {
@@ -343,13 +328,14 @@
       this.sourceUrl = root.dataset.sourceUrl;
       this.examples = [];
       this.filtered = [];
-      this.order = [];
       this.position = 0;
+      this.history = [];
+      this.historyCursor = -1;
+      this.randomize = true;
       this.current = null;
       this.demo = false;
       this.metrics = {};
 
-      this.metricsContainer = root.querySelector('[data-hotpot-metrics]');
       this.dataStatus = root.querySelector('[data-hotpot-data-status]');
       this.filter = root.querySelector('[data-hotpot-filter]');
       this.positionLabel = root.querySelector('[data-hotpot-position]');
@@ -360,7 +346,8 @@
       this.submitButton = root.querySelector('[data-hotpot-submit]');
       this.nextButton = root.querySelector('[data-hotpot-next]');
       this.previousButton = root.querySelector('[data-hotpot-previous]');
-      this.randomButton = root.querySelector('[data-hotpot-random]');
+      this.randomizeButton = root.querySelector('[data-hotpot-randomize]');
+      this.randomizeState = root.querySelector('[data-hotpot-randomize-state]');
       this.result = root.querySelector('[data-hotpot-result]');
       this.verdict = root.querySelector('[data-hotpot-verdict]');
       this.verdictNote = root.querySelector('[data-hotpot-verdict-note]');
@@ -392,7 +379,6 @@
         this.examples = normalized.examples;
         this.demo = normalized.demo;
         this.metrics = normalized.metrics;
-        this.renderRunMetrics();
         this.bindEvents();
         this.applyFilter('all');
 
@@ -400,7 +386,7 @@
         this.input.disabled = false;
         this.submitButton.disabled = false;
         this.nextButton.disabled = false;
-        this.randomButton.disabled = this.filtered.length < 2;
+        this.randomizeButton.disabled = false;
         if (this.dataStatus) {
           this.dataStatus.classList.toggle('is-demo', this.demo);
           this.dataStatus.textContent = this.demo
@@ -423,28 +409,8 @@
       });
       this.nextButton.addEventListener('click', () => this.nextQuestion());
       this.previousButton.addEventListener('click', () => this.previousQuestion());
-      this.randomButton.addEventListener('click', () => this.randomQuestion());
+      this.randomizeButton.addEventListener('click', () => this.toggleRandomize());
       this.filter.addEventListener('change', () => this.applyFilter(this.filter.value));
-    }
-
-    renderRunMetrics() {
-      document.querySelectorAll('[data-hotpot-score]').forEach((element) => {
-        const key = element.dataset.hotpotScore;
-        if (key && this.metrics && this.metrics[key] !== undefined) {
-          element.textContent = this.demo ? 'Pending' : formatRunPercent(this.metrics[key]);
-        }
-      });
-      if (this.metricsContainer) {
-        this.metricsContainer.replaceChildren();
-        METRIC_DEFINITIONS.forEach(([label, key]) => {
-          const card = createElement('div', 'hotpot-metric');
-          card.append(
-            createElement('span', '', label),
-            createElement('strong', '', this.demo ? 'Pending' : formatRunPercent(this.metrics[key]))
-          );
-          this.metricsContainer.appendChild(card);
-        });
-      }
     }
 
     applyFilter(filterValue) {
@@ -459,35 +425,55 @@
         this.filter.value = 'all';
         this.filtered = this.examples.slice();
       }
-      this.order = this.filtered.map((_, index) => index);
-      this.position = 0;
+      this.position = this.randomPosition();
+      this.history = [this.position];
+      this.historyCursor = 0;
       this.renderQuestion();
     }
 
     nextQuestion() {
-      if (!this.order.length) return;
-      this.position = (this.position + 1) % this.order.length;
-      this.renderQuestion();
-    }
+      if (!this.filtered.length) return;
+      const nextPosition = this.randomize
+        ? this.randomPosition(this.position)
+        : (this.position + 1) % this.filtered.length;
 
-    previousQuestion() {
-      if (!this.order.length || this.position === 0) return;
-      this.position -= 1;
-      this.renderQuestion();
-    }
-
-    randomQuestion() {
-      if (this.order.length < 2) return;
-      let nextPosition = this.position;
-      while (nextPosition === this.position) {
-        nextPosition = Math.floor(Math.random() * this.order.length);
-      }
+      this.history = this.history.slice(0, this.historyCursor + 1);
+      this.history.push(nextPosition);
+      this.historyCursor += 1;
       this.position = nextPosition;
       this.renderQuestion();
     }
 
+    previousQuestion() {
+      if (this.historyCursor <= 0) return;
+      this.historyCursor -= 1;
+      this.position = this.history[this.historyCursor];
+      this.renderQuestion();
+    }
+
+    randomPosition(exclude = null) {
+      if (this.filtered.length < 2) return 0;
+      let position = exclude;
+      while (position === exclude) {
+        position = Math.floor(Math.random() * this.filtered.length);
+      }
+      return position;
+    }
+
+    toggleRandomize() {
+      this.randomize = !this.randomize;
+      this.updateNavigation();
+    }
+
+    updateNavigation() {
+      this.previousButton.disabled = this.historyCursor <= 0;
+      this.randomizeButton.setAttribute('aria-pressed', String(this.randomize));
+      this.randomizeButton.classList.toggle('is-active', this.randomize);
+      this.randomizeState.textContent = this.randomize ? 'On' : 'Off';
+    }
+
     renderQuestion() {
-      this.current = this.filtered[this.order[this.position]];
+      this.current = this.filtered[this.position];
       if (!this.current) return;
 
       this.positionLabel.textContent = `${this.position + 1} of ${this.filtered.length}`;
@@ -500,9 +486,8 @@
       this.input.disabled = false;
       this.submitButton.disabled = false;
       this.submitButton.textContent = 'Check answer';
-      this.nextButton.textContent = 'Different question';
-      this.previousButton.disabled = this.position === 0;
-      this.randomButton.disabled = this.order.length < 2;
+      this.nextButton.textContent = 'New question';
+      this.updateNavigation();
       this.result.hidden = true;
       this.trace.hidden = true;
       this.traceDetails.open = false;
@@ -559,7 +544,7 @@
       this.input.disabled = true;
       this.submitButton.disabled = true;
       this.submitButton.textContent = 'Answer checked';
-      this.nextButton.textContent = 'Another question';
+      this.nextButton.textContent = 'New question';
       this.renderExampleMetrics();
       this.renderTrace();
       this.result.hidden = false;
