@@ -173,14 +173,13 @@
       agent_answer: String(record.agent_answer ?? record.predicted_answer ?? record.pred_answer ?? 'No Answer'),
       scores: {
         answer_em: readScore(record, 'answer_em', 'exact_match'),
-        answer_f1: readScore(record, 'answer_f1', 'f1'),
+        answer_f1: record.scores?.answer_f1 ?? record.answer_f1 ?? record.f1,
         supporting_fact_em: readScore(record, 'supporting_fact_em', 'supporting_fact_em'),
         supporting_fact_f1: readScore(record, 'supporting_fact_f1', 'supporting_fact_f1'),
         joint_em: readScore(record, 'joint_em', 'joint_em'),
         joint_f1: readScore(record, 'joint_f1', 'joint_f1'),
       },
       tool_steps: Number(record.tool_steps ?? record.step_count ?? 0),
-      latency_seconds: asNumber(record.latency_seconds ?? record.latency),
       visited_pages: Array.isArray(record.visited_pages) ? record.visited_pages : [],
       agent_supporting_facts:
         record.agent_supporting_facts || record.predicted_supporting_facts || [],
@@ -203,6 +202,138 @@
       demo: Boolean(!Array.isArray(payload) && payload.demo),
       metrics: rawMetrics,
       source: Array.isArray(payload) ? {} : payload.source || {},
+      examples,
+    };
+  }
+
+  function summarizeExamples(examples) {
+    const keys = [
+      'answer_em',
+      'answer_f1',
+      'supporting_fact_em',
+      'supporting_fact_f1',
+      'joint_em',
+      'joint_f1',
+    ];
+    const metrics = { count: examples.length };
+    keys.forEach((key) => {
+      const values = examples
+        .map((example) => asNumber(example.scores[key]))
+        .filter((value) => value !== null);
+      metrics[key] = values.length
+        ? values.reduce((total, value) => total + value, 0) / values.length
+        : null;
+    });
+    return metrics;
+  }
+
+  async function loadQuizPayload(response, onProgress) {
+    if (!response.body || typeof response.body.getReader !== 'function') {
+      return normalizePayload(await response.json());
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    const examples = [];
+    const objectParts = [];
+    const recordParts = [];
+    let mode = null;
+    let collecting = false;
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+
+    function appendRecord(rawRecord) {
+      const example = normalizeExample(rawRecord, examples.length);
+      if (example.question && example.gold_answer) examples.push(example);
+      if (examples.length && examples.length % 250 === 0 && onProgress) {
+        onProgress(examples.length);
+      }
+    }
+
+    function consume(text) {
+      let offset = 0;
+      if (mode === null) {
+        const firstContent = text.search(/\S/);
+        if (firstContent === -1) return;
+        if (text[firstContent] === '[') {
+          mode = 'array';
+          offset = firstContent + 1;
+        } else if (text[firstContent] === '{') {
+          mode = 'object';
+          objectParts.push(text.slice(firstContent));
+          return;
+        } else {
+          throw new Error('Trajectory artifact must contain a JSON array or object.');
+        }
+      } else if (mode === 'object') {
+        objectParts.push(text);
+        return;
+      }
+
+      let segmentStart = collecting ? offset : -1;
+      for (let index = offset; index < text.length; index += 1) {
+        const character = text[index];
+        if (!collecting) {
+          if (character === '{') {
+            collecting = true;
+            depth = 1;
+            inString = false;
+            escaped = false;
+            segmentStart = index;
+          }
+          continue;
+        }
+
+        if (inString) {
+          if (escaped) {
+            escaped = false;
+          } else if (character === '\\') {
+            escaped = true;
+          } else if (character === '"') {
+            inString = false;
+          }
+          continue;
+        }
+
+        if (character === '"') {
+          inString = true;
+        } else if (character === '{') {
+          depth += 1;
+        } else if (character === '}') {
+          depth -= 1;
+          if (depth === 0) {
+            recordParts.push(text.slice(segmentStart, index + 1));
+            appendRecord(JSON.parse(recordParts.join('')));
+            recordParts.length = 0;
+            collecting = false;
+            segmentStart = -1;
+          }
+        }
+      }
+
+      if (collecting && segmentStart >= 0) {
+        recordParts.push(text.slice(segmentStart));
+      }
+    }
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      consume(decoder.decode(value, { stream: true }));
+    }
+    consume(decoder.decode());
+
+    if (mode === 'object') {
+      return normalizePayload(JSON.parse(objectParts.join('')));
+    }
+    if (collecting || depth !== 0) {
+      throw new Error('Trajectory artifact ended inside a JSON record.');
+    }
+    return {
+      demo: false,
+      metrics: summarizeExamples(examples),
+      source: {},
       examples,
     };
   }
@@ -258,7 +389,11 @@
       try {
         const response = await fetch(this.sourceUrl, { cache: 'no-store' });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const normalized = normalizePayload(await response.json());
+        const normalized = await loadQuizPayload(response, (count) => {
+          if (this.dataStatus) {
+            this.dataStatus.textContent = `${count.toLocaleString()} ReAct trajectories prepared…`;
+          }
+        });
         if (!normalized.examples.length) throw new Error('No quiz examples were found.');
 
         this.examples = normalized.examples;
@@ -428,11 +563,8 @@
         ['Answer F1', formatExamplePercent(scores.answer_f1)],
         ['Support F1', formatExamplePercent(scores.supporting_fact_f1)],
         ['Joint F1', formatExamplePercent(scores.joint_f1)],
-        ['Tool calls', String(this.current.tool_steps || Math.max(0, this.current.steps.length - 1))],
+        ['Recorded turns', String(this.current.steps.length)],
       ];
-      if (this.current.latency_seconds !== null) {
-        chips.push(['Latency', `${this.current.latency_seconds.toFixed(2)} s`]);
-      }
 
       this.exampleMetrics.replaceChildren();
       chips.forEach(([label, value]) => {

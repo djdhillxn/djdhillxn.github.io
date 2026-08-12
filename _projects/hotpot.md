@@ -21,17 +21,20 @@ portfolio_summary: |
 <div
   class="hotpot-quiz"
   data-hotpot-quiz
-  data-source-url="{{ '/assets/json/hotpot/quiz.json' | relative_url }}"
+  data-source-url="{{ '/assets/json/hotpot/react_trajectories.json' | relative_url }}"
   markdown="1"
 >
   <section class="hotpot-hero hotpot-quiz-card" aria-labelledby="hotpot-question-heading">
     <div class="hotpot-hero-copy">
       <p class="hotpot-kicker">Human vs. multi-hop agent</p>
-      <h2>Can you connect the clues before the AI does?</h2>
+      <h2>Make your call—then audit the agent's evidence trail.</h2>
       <p>
-        Answer a HotpotQA question, then compare your response with the gold
-        answer and the agent's prediction. Once you commit, the complete
-        search to lookup to finish trajectory opens for inspection. <a class="hotpot-text-link" href="#technical-notes">See to the technical notes</a>
+        Answer a HotpotQA question, compare your response with the gold answer
+        and the agent's prediction, then inspect every search, lookup, and
+        observation behind its conclusion. <a class="hotpot-text-link" href="#technical-notes">Read the technical notes</a>
+      </p>
+      <p class="hotpot-data-status" data-hotpot-data-status aria-live="polite">
+        Loading the complete ReAct trajectory archive…
       </p>
     </div>
 
@@ -136,169 +139,116 @@ portfolio_summary: |
 </div>
 
 ## Technical notes
+{: #technical-notes }
 
-### The Project in 30 Seconds
+<div class="hotpot-tech" markdown="1">
 
-- **What was built:** An autonomous **ReAct (Reasoning + Acting)** multi-hop question answering agent built from scratch using **LangGraph**, served locally via **vLLM** (`Qwen/Qwen2.5-7B-Instruct`), and backed by a hybrid **BM25 + BGE vector retrieval** engine over 5.2M HotpotQA Wikipedia articles.
-- **What was compared:** A system-level comparison between a **Single-Pass RAG Baseline** (single-step retrieval of 7 passages) and the **Adaptive ReAct Agent** (multi-step search/lookup loops with up to 20 documents in active memory) using the same frozen model and hybrid index.
-- **Key finding:** Adaptive multi-step search and evidence accumulation substantially outperform single-pass retrieval on multi-hop questions, driving major gains in supporting-fact precision and joint exact-match scoring.
+<p class="hotpot-tech-lede">The central question was practical: <strong>does adaptive evidence acquisition beat a strong one-shot reader when the model, corpus, hybrid retriever, and page reranker are held fixed?</strong> Across every question in the public HotpotQA FullWiki development set, the final ReAct system improved both answer quality and sentence-level evidence recovery.</p>
 
-### What is benchmark-comparable here?
+### Experimental contract
 
-The short answer is: **the HotpotQA score contract is official; the agent is a modern ReAct-style system, not a byte-for-byte reproduction of the original ReAct paper.** That distinction matters.
+This is a paired, system-level comparison between a **reranked single-pass RAG baseline** and an **adaptive ReAct agent**. The comparison job aligns records by HotpotQA ID and refuses to publish results if the runs disagree on any question or gold annotation, or on the shared model, corpus hash, index size, retrieval settings, and page-reranker configuration.
 
-HotpotQA's FullWiki task requires a system to retrieve from the full Wikipedia corpus, answer each question, and identify the supporting sentences. The evaluator expects one JSON object with an `answer` map and an `sp` map keyed by question ID. This project writes that exact structure to `official_predictions.json` and uses the same normalization, categorical-answer rule, supporting-fact set comparison, and joint-score equations as the [official HotpotQA evaluator](https://github.com/hotpotqa/hotpot/blob/master/hotpot_evaluate_v1.py). The [official leaderboard](https://hotpotqa.github.io/) reports six columns: answer EM/F1, supporting-fact EM/F1, and joint EM/F1.
+- **Held fixed:** frozen `Qwen/Qwen2.5-7B-Instruct` served through vLLM, the 2017 HotpotQA Wikipedia corpus, BM25 + BGE/FAISS retrieval, Reciprocal Rank Fusion, and `BAAI/bge-reranker-base` page reranking.
+- **Changed deliberately:** the baseline retrieves once and generates once; ReAct can reformulate searches, inspect a current page with `lookup`, retain sentence-level evidence, and continue for up to seven tool actions.
+- **Evaluation scope:** all 7,405 public FullWiki development questions, with 64 concurrent workers and no failed records in either run. No model fine-tuning or post-training was used.
 
-The current run evaluates the 7,405-question FullWiki **validation** split against the October 1, 2017 HotpotQA Wikipedia corpus. These are therefore official-formula development results. They become an official test-leaderboard result only after a test-set submission through the benchmark's submission process; I do not conflate the two on this page.
+Because ReAct receives more iterative retrieval compute, this experiment measures the benefit of the **deployed adaptive system as a whole**. It is not a component-level causal ablation of the controller alone.
 
-### How close is the agent to original ReAct?
+### System design
 
-The control language is deliberately faithful to ReAct: the model alternates `Thought`, `Action`, and tool-supplied `Observation` turns and may issue only `search[query]`, `lookup[keyword]`, or `finish[answer]`. `lookup` advances through matching sentences on the current page, and the model stops as soon as it has enough evidence. This is the core pattern introduced in [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629) and implemented in its [released Wikipedia environment](https://github.com/ysymyth/ReAct/blob/master/wikienv.py).
+<div class="hotpot-pipeline" aria-label="Shared retrieval stack branching into the single-pass baseline and ReAct agent">
+  <div class="hotpot-pipeline-stage hotpot-pipeline-shared">
+    <span>Shared retrieval</span>
+    <strong>BM25 top 50 + BGE dense top 50 → RRF → load 15 pages → rerank 15 pages</strong>
+    <small>5.23M fixed Wikipedia introductions with original sentence IDs</small>
+  </div>
+  <div class="hotpot-pipeline-branches">
+    <article>
+      <span>Reranked RAG</span>
+      <strong>Top 7 pages → one generation</strong>
+      <small>No lookup, sentence reranking, or persistent memory</small>
+    </article>
+    <article class="hotpot-pipeline-react">
+      <span>Adaptive ReAct</span>
+      <strong>Top 4 pages → sentence rerank → bounded memory</strong>
+      <small>Thought → search / lookup / finish, up to 7 actions</small>
+    </article>
+  </div>
+  <div class="hotpot-pipeline-stage hotpot-pipeline-output">
+    <span>Shared output contract</span>
+    <strong>Concise answer + exact `[Wikipedia title, sentence ID]` evidence</strong>
+  </div>
+</div>
 
-The surrounding experiment is intentionally stronger and more benchmark-oriented than the original release. The paper's environment queried live Wikipedia, returned the first five sentences of a matched page (or five title suggestions), used six in-context HotpotQA examples, and reported answer EM on 500 random development examples in the public code. This project instead searches HotpotQA's fixed 2017 corpus, evaluates all 7,405 validation questions, predicts sentence-level supporting facts, and reports the complete official six-metric panel. I therefore describe it as a **ReAct-style FullWiki agent with official HotpotQA evaluation**, not as a reproduction of the paper's reported number.
+#### Shared retrieval foundation
 
-### The evaluated pipeline
+The benchmark uses the official October 1, 2017 introductory-paragraph corpus rather than live Wikipedia, preserving 0-based sentence IDs for supporting-fact scoring. Each query retrieves up to 50 BM25 candidates and 50 normalized `BAAI/bge-base-en-v1.5` dense candidates from a 5,233,235-document index. Reciprocal Rank Fusion (`k = 60`) combines the ranks. The system then loads the introductory text and original sentence IDs for the top 15 pages and cross-encodes those pages with `BAAI/bge-reranker-base`. The dense index is FAISS `IVF4096,PQ96x8` with `nprobe = 32`.
 
-1. **Fixed benchmark input.** The runner loads the HotpotQA `fullwiki` validation split. The ten paragraphs bundled with each example are retained only for diagnostics; in the reported `fullwiki` mode, the agent searches the global corpus rather than receiving those paragraphs as its context.
-2. **Hybrid global retrieval.** Each adaptive search combines a Lucene BM25 index with normalized `BAAI/bge-base-en-v1.5` dense embeddings. Reciprocal Rank Fusion merges a 100-document candidate pool with `k = 60`.
-3. **Bounded evidence memory.** A search returns up to 40 candidates. `BAAI/bge-reranker-base` cross-encodes question–passage pairs and retains the strongest 20 unique documents in active memory. The standard YAML configuration caps each rendered observation at 22,000 characters.
-4. **ReAct loop.** `Qwen/Qwen2.5-7B-Instruct`, served locally through vLLM, runs at temperature 0 with `top_p = 1`. On every hop it receives the same system contract, the original question, the current active evidence memory, and the accumulated Thought/Action/Observation scratchpad, ending at a fresh `Thought:` prefix. Generation is capped at 150 tokens and stops before `Observation:` so only the tool can write observations. The prompt contains three formatting demonstrations and requires concise canonical answers plus `[Wikipedia title, sentence ID]` citations. A LangGraph state machine allows up to seven search/lookup actions before routing to evidence-only forced synthesis.
-5. **Grounding guard.** A predicted supporting fact is accepted only if that exact title and sentence ID appeared in an observation. Unsupported citations are retained separately for diagnosis and excluded from the official prediction.
-6. **Deterministic scoring and artifacts.** Every question produces its answer, supporting facts, official per-example scores, visited pages, timing, retrieval diagnostics, and complete step records. Worker concurrency changes throughput, not the score definition.
+The baseline exposes every non-empty sentence from the top seven reranked introductions, with its original title and sentence ID, to one Qwen generation. This makes it a serious **RAG + reranking** comparator rather than an unretrieved or weak-retrieval floor.
 
-Graph expansion exists as an ablation, but the standard configuration shown here keeps it disabled. Likewise, `offline` mode—which searches only the supplied ten paragraphs—is useful for debugging but is not presented as a FullWiki result. Live Wikipedia mode is qualitative because current sentence boundaries do not match HotpotQA's 2017 sentence IDs.
+#### Adaptive search and sentence memory
 
-### Benchmark Metrics & Scoring Definitions
+ReAct uses the same first-stage stack on every `search[query]` action. The page cross-encoder reranks the 15 candidates for that search; the best exact-title match, or otherwise the top local page, becomes the current page. All non-empty sentences from the top four pages are then cross-encoded against the original question plus the current search.
 
-| Leaderboard measure | FullWiki Score | Computation |
-| :--- | :---: | :--- |
-| **Answer EM** | <strong data-hotpot-score="answer_em">Pending</strong> | Exact equality after lowercasing, removing punctuation and articles, and fixing whitespace. |
-| **Answer F1** | <strong data-hotpot-score="answer_f1">Pending</strong> | Token overlap precision/recall/F1; mismatched `yes`, `no`, or `noanswer` receives zero. |
-| **Supporting-fact EM** | <strong data-hotpot-score="supporting_fact_em">Pending</strong> | Exact set match over every predicted `(title, sentence_id)` pair. |
-| **Supporting-fact F1** | <strong data-hotpot-score="supporting_fact_f1">Pending</strong> | Precision/recall/F1 over those sentence-level pairs. |
-| **Joint EM** | <strong data-hotpot-score="joint_em">Pending</strong> | Answer EM × supporting-fact EM. Both must be exact. |
-| **Joint F1** | <strong data-hotpot-score="joint_f1">Pending</strong> | Harmonic mean of joint precision and recall, where each is the product of its answer and supporting-fact counterpart. |
+The highest-ranked evidence is retained in a persistent memory capped at **12 snippets and 6,000 characters**. A successful `lookup[keyword]` searches only the current page, advances through repeated matches in classic ReAct style, and protects the matched sentence in memory. Search-derived snippets fill the remaining budget by their best within-search sentence rank. Scores from different search queries are never compared directly, and memory never changes which page `lookup` navigates; those two invariants avoid cross-query score calibration and navigation drift.
 
-One useful sanity check follows directly from these definitions: mean answer F1 cannot be below mean answer EM, because every exact answer has per-example F1 = 1. The page reads metric names and values directly from the final export so an answer score cannot accidentally be labeled as a joint score.
+A LangGraph controller alternates `Thought`, `Action`, and tool-written `Observation` turns. The reader may emit only `search[...]`, `lookup[...]`, or `finish[...]`, with temperature 0, `top_p = 1`, and a 150-token generation cap. A hard stop before `Observation:` prevents the model from fabricating tool output. If the seven-action budget expires, a final evidence-only synthesis step still produces an answer rather than returning an empty trajectory.
 
-The quiz is intentionally friendlier than the leaderboard. It first applies official answer normalization, then grants a human “close enough” result for high token overlap or a small edit distance. That relaxed verdict is only for play; it never changes the agent's official metric.
+#### Grounded evidence and reproducible artifacts
 
-### Key System Components
+The model returns a short canonical answer plus supporting sentence pairs. A citation enters the official prediction only if that exact title and sentence ID appeared in a tool observation; invalid citations are retained separately for diagnosis. Each run writes evaluator-format predictions, per-question metrics, lossless trajectories, retrieval telemetry, timing, and a manifest containing the model, corpus/index identity, and configuration used.
 
-1. Hybrid Fullwiki retrieval backend
-- Sparse Retrieval: BM25 indexed over 5.2M Wikipedia articles using Pyserini/Lucene.
-- Dense Retrieval: Vector embeddings generated using BAAI/bge-base-en-v1.5 and indexed with FAISS.
-- Reciprocal Rank Fusion (RRF): Merges sparse and dense search candidate ranks to maximise passage recall across domain shifts.
+Graph expansion was available as an ablation but disabled in the reported configuration. The public FullWiki run never gives the model the ten paragraphs bundled with each HotpotQA example; those paragraphs are retained only for diagnostics.
 
-2. Supporting Fact Grounding & Validation
-- Parses predicted supporting sentence IDs `[Title, Sent_ID]` from the agent's output.
-- Strictly validates predictions against actual observed facts in the tool scratchpad, penalizing ungrounded hallucinations.
+### Final results
 
-{% comment %} 
-3. High throuhtouput concurrent inference engine 
-- Integrated vLLM continuous batching server running on an NVIDIA L4 GPU (24GB VRAM)
-- Multi-threaded ThreadPoolExecutor worker pool processing up to 16 concurernt questions, increasing evaluations throughput from 1.6 questions/min to 30+ questions/min (a 15x to 20x speedup).
-{% endcomment %}
+These are **official-formula scores on the public development labels**, not a hidden-test leaderboard submission.
 
-### System-Level Comparison: Single-Pass RAG vs. Adaptive ReAct
+| Official HotpotQA metric | Reranked RAG | ReAct | Change |
+| :--- | ---: | ---: | ---: |
+| Answer EM | 40.45 | **46.67** | **+6.23 pp** |
+| Answer F1 | 51.80 | **60.48** | **+8.68 pp** |
+| Supporting Fact EM | 9.66 | **14.91** | **+5.25 pp** |
+| Supporting Fact F1 | 43.97 | **52.25** | **+8.28 pp** |
+| Joint EM | 6.08 | **9.44** | **+3.36 pp** |
+| **Joint F1** | 26.86 | **37.11** | **+10.25 pp** |
 
-This comparison tests whether the complete adaptive system outperforms a simpler single-pass pipeline when both use the same frozen LLM (`Qwen2.5-7B-Instruct`) and hybrid search index (BM25 + BGE vector retrieval).
+The Joint-F1 improvement was nearly identical for the benchmark's two major reasoning types: **+10.23 points on 5,918 bridge questions** and **+10.33 points on 1,487 comparison questions**. The paired records also show that the aggregate gain was not produced by a small set of outliers: ReAct rescued 1,295 baseline Answer-EM failures, regressed on 834 baseline successes, and therefore added a net 461 exactly correct answers.
 
-Rather than isolating the control loop as a pure causal ablation, this evaluates the two systems under their deployed configurations: the Single-Pass RAG baseline retrieves 7 passages in a single query step, while the ReAct agent adaptively issues multiple `search` and `lookup` actions, inspects candidate pools, and retains up to 20 cross-encoded documents in active memory over up to 7 reasoning hops.
+### Did iterative retrieval expose better evidence?
 
-| Metric | Single-Pass RAG Baseline | Adaptive ReAct Agent | Impact / Gain |
-| :--- | :---: | :---: | :--- |
-| **Answer Exact Match (EM)** | Baseline Floor (~11.3%) | **Substantial Gain** | Multi-hop entity bridging |
-| **Answer F1 Score** | Partial Overlap (~19.3%) | **Substantial Gain** | Complete answer extraction |
-| **Supporting Facts F1** | Single-hop Facts (~32.1%) | **Substantial Gain** | Multi-document sentence tracking |
-| **Joint Exact Match (EM)** | ~0.0% | **Multi-Fold Increase** | Exact answer + complete evidence |
-| **Joint F1 Score** | ~10.0% | **Multi-Fold Increase** | Primary benchmark metric |
+<figure class="hotpot-result-figure">
+  <img src="{{ '/assets/img/hotpot/evidence_coverage_comparison.svg' | relative_url }}" alt="Comparison of four evidence-coverage diagnostics for reranked single-pass RAG and ReAct. ReAct is higher on all four.">
+  <figcaption>Evidence-exposure diagnostics explain part of the mechanism, but are not official leaderboard metrics.</figcaption>
+</figure>
 
-The performance difference reflects the combined impact of multi-hop adaptivity, iterative retrieval compute, and expanded evidence exposure. While optimizing raw answer EM across a complex 5.2M-document corpus remains challenging, the adaptive ReAct system achieves substantial gains in locating intermediate entity bridges and supporting sentence evidence, demonstrating significantly higher interpretability and grounded precision over single-pass retrieval.
+ReAct increased observed gold-document recall from **77.02% to 80.40%** and observed gold supporting-fact recall from **77.41% to 80.01%**. More importantly, the share of questions for which the model saw *every* gold supporting sentence rose from **57.79% to 63.67%**. This is consistent with adaptive retrieval finding missing bridge evidence; it does not, by itself, prove which controller or memory decision caused each correct answer.
 
-### Limitations & Interpretive Scope
+### What trajectory length reveals
 
-1. **Asymmetric Retrieval Budgets**: The baseline and ReAct configurations operate under different retrieval budgets (1 single 7-passage query vs. multi-hop search/lookup loops with 20 cross-encoded passages in active memory). *Mitigation / Future test:* A budget-matched baseline with equal candidate retrieval and token contexts will further isolate adaptivity gains from raw evidence volume.
-2. **Model Scale & Generalizability**: Evaluation is grounded on a single frozen open-weights model (`Qwen2.5-7B-Instruct`). Performance dynamics across larger parameter scales (e.g., 32B/70B models or proprietary APIs) remain an area for future investigation.
-3. **Inspectable Trajectories vs. Causal Interpretability**: Intermediate `Thought` steps provide auditable step-by-step trace logs and high supporting-fact F1 scores, but inspectable reasoning traces do not guarantee that the generated text represents a perfectly faithful causal explanation of the model's inner decision process.
-4. **Validation Split vs. Hidden Test Submissions**: All metrics reflect the official HotpotQA 7,405-question FullWiki validation dataset using public labels. Official test leaderboard status requires a blind submission through the benchmark administrators.
-5. **Web Portfolio Telemetry Truncation**: To deliver responsive browser performance, web-exported observations are capped at portfolio boundaries. Full, lossless telemetry logs remain preserved in the primary research repository.
+<figure class="hotpot-result-figure">
+  <img src="{{ '/assets/img/hotpot/react_quality_by_hops.svg' | relative_url }}" alt="ReAct and matched-baseline Joint F1 grouped by ReAct trajectory length, with question counts. ReAct is strongest at two hops and falls below the baseline on the seven-hop tail.">
+  <figcaption>The baseline line is recomputed on the exact questions in each ReAct hop bucket; hop count is an outcome of the agent, not a randomized treatment.</figcaption>
+</figure>
 
-## Trajectory Inspector & Visualizer
+Two- and three-action trajectories were the productive center of the distribution: ReAct reached **50.26** and **41.14** Joint F1 on those subsets, versus **31.21** and **25.79** for the baseline on the same questions. The seven-action bucket tells the equally important failure story. It contains 1,055 unresolved questions, where ReAct fell to **11.62** Joint F1 versus the matched baseline's **19.20**. Longer trajectories are an endogenous hard-question tail, so this does not show that extra hops *cause* failure. It does identify the clearest next engineering target: earlier detection of stalled searches, followed by query reformulation, backtracking, or an earlier fallback to the one-shot answer.
 
-The project includes an interactive web interface built with **Streamlit** and **PyVis** to inspect full reasoning trajectories:
+### Scoring contract
 
-1. **Step-by-Step Scratchpad Inspector**: Displays intermediate `Thought`, `Action`, and `Observation` text blocks for any question.
-2. **Interactive Evidence Bridge Graph**: Renders a dynamic network graph showing how the agent transitioned between Wikipedia articles to bridge intermediate entities.
-3. **Standalone Portfolio Viewer**: Exported trajectory JSONs (`portfolio/portfolio_trajectories.json`) power an embedded web component for interactive trajectory exploration.
+- **Answer EM/F1** use the official lowercasing, punctuation/article removal, whitespace normalization, and token-overlap rules. A categorical mismatch among `yes`, `no`, and `noanswer` receives zero.
+- **Supporting Fact EM/F1** compare sets of exact `(title, sentence_id)` pairs.
+- **Joint EM** requires both answer and supporting-fact exact match. **Joint F1** combines answer and evidence by multiplying their respective precisions and recalls before taking the harmonic mean; it is not the average of Answer F1 and Supporting Fact F1.
 
+The evidence-coverage values above are explicitly labeled diagnostics and never mixed into the six official HotpotQA metrics. The quiz's typo-tolerant human verdict is also a presentation feature only; it has no effect on benchmark scores.
 
-{% comment %} 
-## Repository & Execution Commands
-The compact exporter keeps only the question, gold and agent answers, the six scores, supporting facts, visited titles, and readable Thought/Action/Observation steps. Observations are shortened at the portfolio boundary, with the truncation marked in the interface; the research artifact remains lossless.
- 
+### Limits on the claim
 
-```bash
-# 1. Launch local vLLM model server
-export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
-python -m vllm.entrypoints.openai.api_server --model Qwen/Qwen2.5-7B-Instruct --port 8000 --dtype bfloat16 --enforce-eager
+1. **Development, not hidden test.** The metric implementation follows the official evaluator, but a public-label development run is not an official leaderboard submission.
+2. **System comparison, not isolated ablation.** ReAct and the baseline share the reader and retrieval foundation, but ReAct also spends more retrieval and reranking compute and owns a sentence-memory module.
+3. **One frozen reader.** The experiment establishes behavior for Qwen2.5-7B-Instruct; it does not establish scaling trends across other model families or sizes.
+4. **Inspectable is not causal.** Thought/Action/Observation traces are useful execution records, but generated thoughts are not guaranteed explanations of the model's internal causal process.
 
-# 2. Run Single-Pass RAG Baseline
-python eval/run_baseline.py --mode offline --source official_json --output-dir eval_results/baseline
+Reproduction commands and infrastructure details remain in the [project repository](https://github.com/djdhillxn/hotpot), while the [generated comparison report](https://github.com/djdhillxn/hotpot/blob/main/docs/results/comparison_report.md) and [machine-readable summary](https://github.com/djdhillxn/hotpot/blob/main/docs/results/comparison_summary.json) preserve the exact published analysis. Metric definitions follow the [official HotpotQA evaluator](https://github.com/hotpotqa/hotpot/blob/master/hotpot_evaluate_v1.py); the control pattern follows [ReAct](https://arxiv.org/abs/2210.03629).
 
-# 3. Run High-Throughput ReAct Agent Benchmark
-python eval/run_eval.py --mode offline --source official_json --concurrency 16 --max-hops 7 --output-dir eval_results/react
-
-# 4. Generate Comparative Analysis & Bar Charts
-python eval/compare_results.py --baseline eval_results/baseline/results.json --react eval_results/react/results.json --output-dir eval_results/comparison
-```
-{% endcomment %}
-
-{% comment %}
-## Agent Architecture & ReAct Control Loop
-
-The core execution engine is modeled as a stateful graph in **LangGraph**, enforcing a strict `Thought -> Action -> Observation` control cycle. If the max hop budget is reached without a explicit finish action, the state graph routes to a **Forced Synthesis Node** to generate the best possible answer from accumulated evidence rather than truncating.
-
-`` mermaid
-graph TD
-    Start([User Question]) -> AgentNode[Agent Reasoning Node\nQwen2.5-7B-Instruct]
-    AgentNode -> ParseAction{Parse LLM Output}
-    
-    ParseAction -- "Action: search[entity]" -> ToolNode[Tool Execution Node\nBM25 + BGE Dense Retrieval]
-    ParseAction -- "Action: lookup[keyword]" -> ToolNode
-    ParseAction -- "Action: finish[answer]" -> End([Final Answer & Supporting Facts])
-    
-    ToolNode -> UpdateScratchpad[Update Observation Scratchpad\n& Evidence Graph]
-    UpdateScratchpad -> CheckBudget{Hop Budget Exhausted?}
-    
-    CheckBudget -- No (< Max Hops) -> AgentNode
-    CheckBudget -- Yes (>= Max Hops) -> SynthesisNode[Forced Synthesis Node\nSynthesize from Evidence]
-    SynthesisNode -> End
-``` 
-{% endcomment %}
-
-### From evaluation artifact to this page
-
-The evaluator keeps exhaustive `trajectories.json` and `results.json` files for analysis and also writes evaluator-compatible gold and prediction files. Shipping that full payload to a browser would include large rank lists, model outputs, active-memory snapshots, and retrieval telemetry that the quiz never uses.
-
-The compact exporter keeps only the question, gold and agent answers, the six scores, supporting facts, visited titles, and readable Thought/Action/Observation steps. Observations are shortened at the portfolio boundary, with the truncation marked in the interface; the research artifact remains lossless.
-
-```bash
-python3 portfolio/export_quiz_data.py \
-  portfolio/portfolio_trajectories.json \
-  ../djdhillxn.github.io/assets/json/hotpot/quiz.json
-```
-
-Executing this export script processes raw trajectory logs into the web-optimized `quiz.json` artifact powering the interactive quiz and metric cards above, while maintaining lossless research outputs in the primary repository.
-
-The complete implementation is available in the [HotpotQA ReAct repository](https://github.com/djdhillxn/hotpot). Dataset and evaluator details come from the [HotpotQA project](https://hotpotqa.github.io/); the agent pattern follows the [official ReAct code release](https://github.com/ysymyth/ReAct).
-
-
-{% comment %}
- - Built an autonomous ReAct (Reasoning + Acting) agent from scratch using LangGraph, Python, and local vLLM inference (`Qwen/Qwen2.5-7B-Instruct`) to solve HotpotQA's FullWiki multi-hop benchmark via an explicit `Thought -> Action -> Observation` control loop and a hybrid BM25 + BGE vector search engine.
-  - Developed an official evaluation pipeline and Single-Pass RAG baseline comparison, demonstrating how agentic multi-step entity bridging solves multi-hop reasoning failures, accompanied by an interactive trajectory visualizer and PyVis knowledge graph inspector.
-
-Multi-hop question answering requires an AI system to connect disparate pieces of information scattered across multiple documents. Standard **Single-Pass RAG (Retrieval-Augmented Generation)** fails on these complex queries because a single retrieval step cannot anticipate intermediate entity bridges (e.g., discovering *Person A*'s birthplace to subsequently search for *Person B*).
-
-This project implements a classic **ReAct (Reasoning + Acting)** autonomous agent built from scratch using **LangGraph** and served locally with **vLLM** (`Qwen/Qwen2.5-7B-Instruct`). The agent dynamically alternates between reasoning thoughts, issuing Wikipedia search and paragraph lookup actions, reading observations, and synthesizing final grounded answers with supporting evidence.
-{% endcomment %}
+</div>
