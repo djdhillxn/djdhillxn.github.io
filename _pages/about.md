@@ -69,7 +69,7 @@ At Gartner, I was an Associate Data Scientist in the Client Retention Analytics 
 Masters of Science, Computer Science
 
 Graduate coursework: \
-Non-linear Optimization, Natural Language Processing (Planned for Fall 2026) \
+Non-linear Optimization, Natural Language Processing, Intelligent Robotics, Advanced Algorithms (Ongoing in Fall 2026) \
 Machine Learning, Reinforcement Learning (Spring 2026) \
 Game Theory, Operating Systems (Fall 2025) 
 
