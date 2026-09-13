@@ -52,6 +52,70 @@ This representative trajectory succeeds repeatedly before the grasp is finally l
 
 ---
 
+### Simulation Platform & Manipulator
+
+DICE Dial is implemented entirely in simulation. The manipulator, the physics engine, and the learning framework are all explicitly identified here so that the project's scope and assumptions are clear.
+
+#### The Shadow Dexterous Hand
+
+The **Shadow Dexterous Hand**, developed by the [Shadow Robot Company](https://www.shadowrobot.com/dexterous-hand-series/), is a five-fingered anthropomorphic robotic hand widely used as the benchmark platform for dexterous manipulation research. Its kinematic chain contains **24 revolute joints** distributed across five fingers (including an opposable thumb with five joints) and a two-joint wrist, closely approximating the range of motion of a human hand.
+
+<div style="text-align: center; margin: 1.5rem auto 2rem auto;">
+  <img src="/assets/img/dice/shadow_dexterous_hand.png" alt="Shadow Dexterous Hand by Shadow Robot Company" style="max-width: 520px; width: 100%; border-radius: 6px;" />
+  <p style="font-size: 0.85em; color: #666; margin-top: 0.5rem;">
+    The Shadow Dexterous Hand. Image credit:
+    <a href="https://www.shadowrobot.com/dexterous-hand-series/" target="_blank" rel="noopener">Shadow Robot Company</a>.
+  </p>
+</div>
+
+Of the 24 mechanical joints, **four pairs of distal interphalangeal (DIP) and proximal interphalangeal (PIP) joints** on the index, middle, ring, and little fingers are mechanically coupled via a shared tendon, so each pair moves as a single actuated degree of freedom. This leaves **20 independently actuated DoF**, which are exactly the 20 continuous action dimensions commanded by the DICE Dial policy at each control step.
+
+#### Grübler's Formula: Counting the Degrees of Freedom
+
+The number of independent motions available to a kinematic chain is given by the **Chebychev–Grübler–Kutzbach mobility criterion**. For a spatial (3D) mechanism the general formula is
+
+$$
+M = 6(N - 1 - J) + \sum_{i=1}^{J} f_i,
+$$
+
+where $$M$$ is the mobility (degrees of freedom), $$N$$ is the number of rigid links including the fixed base, $$J$$ is the number of joints, and $$f_i$$ is the number of degrees of freedom permitted by joint $$i$$.
+
+**Applied to the Shadow Hand.** The hand has $$N=25$$ links (the palm plus one link per phalanx/segment), $$J=24$$ revolute joints (each with $$f_i=1$$), and the palm is the grounded base:
+
+$$
+M = 6\,(25 - 1 - 24) + 24 \times 1 = 6(0) + 24 = 24.
+$$
+
+The Grübler count confirms **24 mechanical DoF**. However, the four coupled DIP/PIP tendon pairs each remove one independent actuation channel, giving
+
+$$
+M_{\text{actuated}} = 24 - 4 = 20,
+$$
+
+which matches the **20-dimensional continuous action space** used throughout DICE Dial training and evaluation.
+
+| Kinematic group | Joints | Independent DoF |
+|---|---|---:|
+| Index finger (MCP ab/ad, MCP flex, PIP, DIP coupled) | 4 | 3 |
+| Middle finger | 4 | 3 |
+| Ring finger | 4 | 3 |
+| Little finger (+ LFJ5 metacarpal) | 5 | 4 |
+| Thumb (5 joints, all independent) | 5 | 5 |
+| Wrist (flexion, deviation) | 2 | 2 |
+| **Total** | **24** | **20** |
+
+#### Simulation Stack
+
+The full simulation and training stack is:
+
+- **[NVIDIA Isaac Sim](https://docs.isaacsim.omniverse.nvidia.com/)** — the GPU-accelerated physics simulator runtime, built on **NVIDIA PhysX**, that handles rigid-body dynamics, multi-point contact resolution, and friction modeling for the hand–die interaction.
+- **[NVIDIA Isaac Lab](https://github.com/isaac-sim/IsaacLab)** — the robot-learning framework layered on top of Isaac Sim. DICE Dial is implemented as a custom `DirectRLEnv` that inherits the Shadow Hand articulation model, the stock DexCube object, the contact pipeline, and the low-level position-target action path from the framework.
+- **[RSL-RL](https://github.com/leggedrobotics/rsl_rl)** — the GPU-oriented reinforcement-learning library used for PPO collection, optimization, checkpointing, and actor/critic network execution.
+
+All 2,048 parallel environments, training, and evaluation run entirely inside Isaac Sim; no real-robot hardware is used.
+
+---
+
 ### Task Formulation
 
 Let $$\mathbf{n}_k$$ denote the object-frame outward normal of requested face $$k\in\{1,\dots,6\}$$ and let $$R_{\text{die}}\in SO(3)$$ be the current die rotation. The requested normal in world coordinates is
